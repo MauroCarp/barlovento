@@ -227,7 +227,7 @@ class ControladorAgro{
 
         if($respuesta){
 
-            return $respuesta = ModeloAgro::mdlEditarCostos($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2,$costo);
+            return $respuesta = ModeloAgro::mdlEditarCosto($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2,$costo);
             
         }else{
             
@@ -235,6 +235,84 @@ class ControladorAgro{
 
         }
             
+	}
+
+    /*=============================================
+	EDITAR COSTOS
+	=============================================*/
+
+	static public function ctrEditarCostos(){
+
+        if(isset($_POST['btnEditarCosto'])){
+
+            $tabla = "costo".$_POST['seccion'];
+
+            $data = array();
+
+            foreach ($_POST as $key => $value) {
+                
+                if($key != 'seccion' AND $key != 'btnEditarCosto' AND $key != 'campania1' AND $key != 'campania2'){
+                        
+                    $data[str_replace('Costo','',$key)] = $value;
+
+                }
+
+            }
+            
+            $item = 'cultivo';
+
+            $item2 = 'campania1';
+            
+            $item3 = 'campania2';
+
+            $errors = array();
+            foreach ($data as $key => $value) {
+                        
+                $errors[] = ModeloAgro::mdlEditarCosto($tabla,$item,$key,$item2,$_POST['campania1'],$item3,$_POST['campania2'],$value);
+            
+            }
+            
+            if(in_array('error',$errors)){
+
+                echo'<script>
+
+                    swal({
+                            type: "error",
+                            title: "¡No se pudieron modificar los costos!",
+                            showConfirmButton: true,
+                            confirmButtonText: "Cerrar"
+                            }).then(function(result) {
+                            if (result.value) {
+                                
+                                
+
+                            }
+                        })
+
+                    </script>';
+
+            }else{
+
+                echo'<script>
+
+                swal({
+                        type: "success",
+                        title: "Los costos han sido modificados correctamente",
+                        showConfirmButton: true,
+                        confirmButtonText: "Cerrar"
+                        }).then(function(result) {
+                                if (result.value) {
+
+
+                                }
+                            })
+
+                </script>';
+
+            }
+
+        }
+
 	}
 
     /*=============================================

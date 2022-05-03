@@ -95,6 +95,7 @@ const cargarGraficoPlanificacion = (props)=>{
       
       let data = new FormData()
       data.append('accion','mostrarCostos')
+      data.append('cultivo','')
       data.append('campania1',props.campania1)
       data.append('campania2',props.campania2)
       data.append('seccion','planificacion')
@@ -325,6 +326,105 @@ if(campania){
   cargarGraficoPlanificacion(props)
 
 }
+
+const btnCostosPlanificacion = document.getElementById('btnCostosPlanificacion')
+
+const btnEditarCostoPlanificacion = document.getElementById('btnEditarCostoPlanificacion')
+
+setTimeout(() => {
+  
+  if(btnCostosPlanificacion != null){
+    
+    let campania = document.getElementById('campania').innerText.split('/')
+    
+    let [campania1,campania2] = campania
+
+    let url = 'ajax/agro.ajax.php'
+  
+    let data = new FormData()
+    data.append('accion','mostrarCostos')
+    data.append('cultivo','')
+    data.append('campania1',campania1)
+    data.append('campania2',campania2)
+    data.append('seccion','planificacion')
+  
+    fetch(url,{
+      method:'post',
+      body:data
+    }).then(resp => resp.json())
+    .then(respuesta=>{
+      
+      document.getElementById('tituloCostoPlanifiacion').innerText = 'Costos Planificación'
+
+      let inputs = document.createDocumentFragment()
+      
+      let inputCampania1 = document.createElement('INPUT')
+      let inputCampania2 = document.createElement('INPUT')
+      inputCampania1.setAttribute('name','campania1')      
+      inputCampania2.setAttribute('name','campania2')      
+      inputCampania1.setAttribute('type','hidden')      
+      inputCampania2.setAttribute('type','hidden')     
+      inputCampania1.setAttribute('value',campania1)      
+      inputCampania2.setAttribute('value',campania2)    
+       
+      inputs.appendChild(inputCampania1)
+      inputs.appendChild(inputCampania2)
+
+      respuesta.map(reg=>{
+
+        let row = document.createElement('DIV')
+        let label = row.cloneNode(true)
+        let inputDiv = row.cloneNode(true)
+        let input = document.createElement('INPUT')
+
+        row.setAttribute('class','row')
+        row.setAttribute('style','margin-bottom:5px;')
+        
+        label.setAttribute('class','col-md-8')
+        
+        inputDiv.setAttribute('class','col-md-4')
+        input.setAttribute('class','form-control')
+        input.setAttribute('type','number')
+        input.setAttribute('step','0.01')
+        input.setAttribute('name',`${reg.cultivo}Costo`)
+        input.setAttribute('id',`${reg.cultivo}Costo`)
+        input.setAttribute('required','required')
+        input.setAttribute('value', reg.costo)
+        
+        let regex = /(\d+)/g
+        
+        let cultivoNumerico = reg.cultivo.match(regex)
+            
+        let cultivo = reg.cultivo
+
+        if(cultivoNumerico != null){
+
+            let index = reg.cultivo.indexOf(cultivoNumerico[0])
+
+            cultivo = reg.cultivo.split('')
+            cultivo.splice(index, 0, ' ')
+            cultivo = cultivo.join('')
+          
+        }
+                
+        label.innerText = capitalizarPrimeraLetra(cultivo)        
+
+        inputDiv.appendChild(input)
+        row.appendChild(label)
+        row.appendChild(inputDiv)
+
+        inputs.appendChild(row)
+
+      })
+      
+      document.getElementById('formCostosPlanificacion').appendChild(inputs)
+      
+    })
+    .catch(er=>console.log(er))
+  
+  }
+
+}, 200);
 
 
 

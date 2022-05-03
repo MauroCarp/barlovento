@@ -542,7 +542,7 @@ if($_SESSION["perfil"] != "Agro"){
 
 if($_SESSION["perfil"] != "Ganadero"){
 
-	include 'modales/cargarAgro.modal.php';
+	include 'modales/agro/cargarAgro.modal.php';
 
 }
 

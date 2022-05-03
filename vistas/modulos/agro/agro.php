@@ -54,3 +54,9 @@
     </div>
 
 </div>
+
+<?php
+
+include 'vistas/modulos/modales/agro/costosPlanificacion.modal.php';
+
+?>

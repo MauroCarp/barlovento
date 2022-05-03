@@ -43,7 +43,7 @@ class AjaxAgro{
 
 		$item = 'cultivo';
 
-		$valor = '';
+		$valor = $this->cultivo;
 
 		$item2 = "campania1";
 		
@@ -55,7 +55,7 @@ class AjaxAgro{
 
 		$tabla = $this->seccion;
 
-		$respuesta = ControladorAgro::ctrMostrarCostos($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2);
+		$respuesta = ControladorAgro::ctrMostrarCostos($tabla,$item,$valor,$item2,$campania1,$item3,$campania2);
 
 		echo json_encode($respuesta);
 
@@ -83,6 +83,7 @@ if(isset($_POST["accion"])){
 	if($accion == 'mostrarCostos'){
 
 		$mostrarData = new AjaxAgro();
+        $mostrarData -> cultivo = $_POST["cultivo"];
         $mostrarData -> campania1 = $_POST["campania1"];
         $mostrarData -> campania2 = $_POST["campania2"];
         $mostrarData -> seccion = $_POST["seccion"];

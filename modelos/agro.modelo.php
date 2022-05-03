@@ -90,15 +90,14 @@ class ModeloAgro{
 
 	}
 
-
 	/*=============================================
-	CARGAR COSTO
+	EDITAR COSTO
 	=============================================*/
 
-	static public function mdlEditarCostos($tabla,$item,$value,$item2,$value2,$item3,$value3,$costo){
+	static public function mdlEditarCosto($tabla,$item,$value,$item2,$value2,$item3,$value3,$costo){
 				
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET 
-		$costo = :$costo		
+		costo = :costo		
 		WHERE $item = :$item AND $item2 = :$item2 AND $item3 = :$item3");
 	
 		$stmt->bindParam(":".$item, $value, PDO::PARAM_STR);
@@ -111,6 +110,7 @@ class ModeloAgro{
 			return "ok";	
 			
 		}else{
+
 			return 'error';
 			return $stmt->errorInfo();
 			
@@ -122,6 +122,7 @@ class ModeloAgro{
 	
 
 	}
+
 
 	/*=============================================
 	MOSTRAR DATA
