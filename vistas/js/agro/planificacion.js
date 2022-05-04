@@ -51,6 +51,7 @@ const cargarGraficoPlanificacion = (props)=>{
           
           datos.label.push(`${registro.lote} / ${capitalizarPrimeraLetra(registro.planificado)}`)
           datos.has.lote.push(Number(registro.has))
+          datos.has.total += Number(registro.has)
           
           // DATA PARA INFO
           if(registro.tipoCultivo == 'Invernal' && registro.tipoCultivo != '')
@@ -64,19 +65,8 @@ const cargarGraficoPlanificacion = (props)=>{
           
           if(registro.planificado == 'carinata')
             datos.has.carinata.push(Number(registro.has))
-
-          if(cobertura.includes(registro.planificado) && registro.planificado != ''){
-                          
-              let cultivoHas = {
-                'cultivo': registro.planificado,
-                'has': Number(registro.has)
-              }  
-
-              datos.has.cobertura.push(cultivoHas)
-
-          }
           
-          if(!cobertura.includes(registro.planificado) && registro.planificado != 'trigo' && registro.planificado != 'carinata' && registro.planificado != ''){
+          if(registro.planificado != 'trigo' && registro.planificado != 'carinata' && registro.planificado != ''){
             
             let cultivoHas = {
               'cultivo': registro.planificado,
@@ -89,9 +79,23 @@ const cargarGraficoPlanificacion = (props)=>{
         
         }
         
+        if(registro.cobertura != ''){
+                          
+            let cultivoHas = {
+              'cultivo': registro.cobertura,
+              'has': Number(registro.has)
+            }  
+
+            datos.has.total += Number(registro.has)
+
+            datos.has.cobertura.push(cultivoHas)
+
+        }
         
 
       });
+      
+      console.log(datos);
       
       let data = new FormData()
       data.append('accion','mostrarCostos')
@@ -148,6 +152,9 @@ const cargarGraficoPlanificacion = (props)=>{
               if(cultivo.cultivo.replace(' ','') == reg.cultivo){              
                 
                 datos.costos.cobertura.push( cultivo.has * reg.costo)
+
+                datos.costos.total.push(reg.costo * cultivo.has);
+                
                 
               }
     
@@ -217,7 +224,8 @@ const cargarGraficoPlanificacion = (props)=>{
         document.getElementById(`totalCostoRestoPlanificacion${props.idInfo}`).innerText = (datos.costos.resto.length > 0) ? (datos.costos.resto.reduce((acc,cur)=> acc + cur)).toLocaleString('de-DE') : 0;
  
         // TOTAL ->HAS - COSTO
-        document.getElementById(`totalHasPlanificadas${props.idInfo}`).innerText = datos.has.lote.reduce((acc,cur)=> acc + cur)
+        // document.getElementById(`totalHasPlanificadas${props.idInfo}`).innerText = datos.has.lote.reduce((acc,cur)=> acc + cur)
+        document.getElementById(`totalHasPlanificadas${props.idInfo}`).innerText =  datos.has.total
         document.getElementById(`totalInversionPlanificada${props.idInfo}`).innerText = (datos.costos.total.reduce((acc,cur)=> acc + cur)).toLocaleString('de-DE')        
         
         let configPlanificacion = {
