@@ -76,14 +76,15 @@ class ControladorAgro{
                     $Reader->ChangeSheet($i);
 
                     foreach ($Reader as $Row){
+
+                        if($rowNumber  > 0 AND $Row[8] != ''){
+
+                            $costo = trim(str_replace(',','.',str_replace('u$s/ha','',$Row[9])), "\xC2\xA0");
+                            $cultivo = htmlentities(str_replace(' ','',$Row[8]));
+                            $cultivo = strtolower(str_replace('&nbsp;','',$cultivo));
+
+                            $cultivoCosto[$cultivo] = trim($costo);
                         
-                        if($rowNumber  > 0){
-
-                            if($Row[8] == '')
-                                break;
-
-                            $cultivoCosto[str_replace(' ','',$Row[8])] = trim(str_replace(',','.',str_replace('u$s/ha','',$Row[9])));
-
                         }
 
                         if($rowNumber == 1){
@@ -156,8 +157,6 @@ class ControladorAgro{
                         
                 }
 
-                var_dump($data);
-                die();
                 $respuesta = ModeloAgro::mdlCargarArchivo($tabla,$data);
 
                 $errors = array($respuesta);
@@ -178,8 +177,6 @@ class ControladorAgro{
 
                 }
                 
-                die();
-
                 if(in_array('error',$respuesta)){
 
                     echo'<script>
@@ -233,13 +230,13 @@ class ControladorAgro{
 
         $respuesta = ControladorAgro::ctrMostrarCostos($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2);
 
-        if($respuesta){
+        if(empty($respuesta)){
 
-            return $respuesta = ModeloAgro::mdlEditarCosto($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2,$costo);
+            return $respuesta = ModeloAgro::mdlCargarCostos($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2,$costo);
             
         }else{
             
-            return $respuesta = ModeloAgro::mdlCargarCostos($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2,$costo);
+            return $respuesta = ModeloAgro::mdlEditarCosto($tabla,$item,$cultivo,$item2,$campania1,$item3,$campania2,$costo);
 
         }
             
@@ -253,7 +250,7 @@ class ControladorAgro{
 
         if(isset($_POST['btnEditarCosto'])){
 
-            $tabla = "costo".$_POST['seccion'];
+            $tabla = $_POST['seccion'];
 
             $data = array();
 

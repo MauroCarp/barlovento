@@ -65,7 +65,9 @@ class ModeloAgro{
 	=============================================*/
 
 	static public function mdlCargarCostos($tabla,$item,$value,$item2,$value2,$item3,$value3,$costo){
-				
+
+		$tabla = 'costo'.$tabla;
+
 		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla($item,$item2,$item3,costo) VALUES (:$item,:$item2,:$item3,:costo)");
 	
 		$stmt->bindParam(":".$item, $value, PDO::PARAM_STR);
@@ -78,8 +80,8 @@ class ModeloAgro{
 			return "ok";	
 			
 		}else{
-			return 'error';
 			return $stmt->errorInfo();
+			return 'error';
 			
 		}
 		
@@ -95,7 +97,9 @@ class ModeloAgro{
 	=============================================*/
 
 	static public function mdlEditarCosto($tabla,$item,$value,$item2,$value2,$item3,$value3,$costo){
-				
+
+		$tabla = 'costo'.$tabla;
+
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET 
 		costo = :costo		
 		WHERE $item = :$item AND $item2 = :$item2 AND $item3 = :$item3");
@@ -111,8 +115,8 @@ class ModeloAgro{
 			
 		}else{
 
-			return 'error';
 			return $stmt->errorInfo();
+			return 'error';
 			
 		}
 		
