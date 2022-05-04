@@ -53,7 +53,7 @@ class ControladorUsuarios{
 
 						if($ultimoLogin == "ok"){
 
-							$inicio = ($_SESSION['perfil'] == 'Agro') ? 'agro' : 'inicio';
+							$inicio = ($_SESSION['perfil'] == 'Agro' || $_SESSION['perfil'] == 'Administrador Agro') ? 'agro' : 'inicio';
 
 							echo '<script>
 

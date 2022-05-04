@@ -4,7 +4,9 @@
             <div class="col-lg-12">
 
                 <div class="box box-widget widget-user">
-        
+    
+                    <button type="button" class="close eliminarArchivoAgro" style="padding:15px;font-size:2.5em;" campo="<?php echo $campo;?>" seccion="planificacion">&times;</button>
+
                     <div class="widget-user-header bg-aqua-active infoPlanificacion">
 
                         <h2 class="widget-user-username">

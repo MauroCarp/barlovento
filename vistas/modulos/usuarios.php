@@ -223,13 +223,13 @@ MODAL AGREGAR USUARIO
                   
                   <option value="">Selecionar perfil</option>
 
-                  <option value="Master">Master</option>
+                  <option value="Administrador Agro">Administrador Agro</option>
 
-                  <option value="Administrador">Administrador</option>
-
-                  <option value="Ganadero">Ganadero</option>
+                  <option value="Administrador Ganadero">Administrador Ganadero</option>
 
                   <option value="Agro">Agro</option>
+                  
+                  <option value="Ganadero">Ganadero</option>
 
                 </select>
 
@@ -357,11 +357,13 @@ MODAL EDITAR USUARIO
                   
                   <option value="" id="editarPerfil"></option>
 
-                  <option value="Administrador">Administrador</option>
+                  <option value="Administrador Ganadero">Administrador Ganadero</option>
+
+                  <option value="Administrador Agro">Administrador Agro</option>
+
+                  <option value="Agro">Agro</option>
 
                   <option value="Ganadero">Ganadero</option>
-
-                  <option value="Vendedor">Vendedor</option>
 
                 </select>
 

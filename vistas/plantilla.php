@@ -161,7 +161,7 @@ CUERPO DOCUMENTO
     CONTENIDO
     =============================================*/
     
-    if($_SESSION["perfil"] != 'Agro'){
+    if($_SESSION["perfil"] != 'Agro' AND $_SESSION["perfil"] != 'Administrador Agro'){
 
       if(isset($_GET["ruta"])){
 
@@ -212,7 +212,7 @@ CUERPO DOCUMENTO
 
     }
 
-    if($_SESSION["perfil"] != 'Ganadero'){
+    if($_SESSION["perfil"] != 'Ganadero' AND $_SESSION["perfil"] != 'Administrador Ganadero'){
 
       if(isset($_GET["ruta"])){
         
@@ -265,7 +265,7 @@ CUERPO DOCUMENTO
   <?php
 // <!-- SOLO EN AGRO -->
 
-if($_SESSION["perfil"] != 'Ganadero'){
+if($_SESSION["perfil"] != 'Ganadero' AND $_SESSION["perfil"] != 'Administrador Ganadero'){
 
 ?>
 
@@ -276,8 +276,8 @@ if($_SESSION["perfil"] != 'Ganadero'){
 }
 
 // SOLO EN GANADERO
-if($_SESSION["perfil"] != 'Agro'){
-?>
+if($_SESSION["perfil"] != 'Agro' AND $_SESSION["perfil"] != 'Administrador Agro'){
+  ?>
 
 <script src="vistas/js/compras.js"></script>
 <script src="vistas/js/muertes.js"></script>

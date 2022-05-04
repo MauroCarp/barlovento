@@ -11,16 +11,16 @@ class ModeloAgro{
 		
 		$data = implode(',',$data);
 		
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(campania1,campania2,campo,tipoCultivo,lote,has,actual,planificado,dateTime) VALUES $data");
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(campania1,campania2,campo,tipoCultivo,lote,has,actual,cobertura,planificado,periodoTime) VALUES $data");
 		
 		if($stmt->execute()){
 			
 			return "ok";	
 			
 		}else{
-			return 'error';
-
+			
 			return $stmt->errorInfo();
+			return 'error';
 			
 		}
 		
@@ -150,6 +150,33 @@ class ModeloAgro{
 			$stmt -> execute();
 			
 			return $stmt -> fetchAll();
+
+		}
+
+		$stmt -> close();
+
+		$stmt = null;
+
+	}
+
+	/*=============================================
+	MOSTRAR DATA
+	=============================================*/
+	static public function mdlEliminarArchivo($tabla,$item,$valor,$item2,$valor2,$item3,$valor3){
+
+		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE $item = :$item AND $item2 = :$item2 AND $item3 = :$item3");
+
+		$stmt -> bindParam(":".$item, $valor, PDO::PARAM_INT);
+		$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_INT);
+		$stmt -> bindParam(":".$item3, $valor3, PDO::PARAM_INT);
+
+		if($stmt -> execute()){
+
+			return "ok";
+		
+		}else{
+			return $stmt->errorInfo();
+			return "error";	
 
 		}
 

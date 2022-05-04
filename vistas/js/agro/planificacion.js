@@ -105,7 +105,14 @@ const cargarGraficoPlanificacion = (props)=>{
         body:data
       }).then(res=>res.json())
       .then(costos=>{
-
+        
+        if(props.campania1 == '' || props.campania1 == ''){
+        
+          props.campania1 = costos[0].campania1
+          props.campania2 = costos[0].campania2
+        
+        }
+        
         for (const reg of costos) {
 
             if(reg.cultivo == 'trigo'){
@@ -174,6 +181,13 @@ const cargarGraficoPlanificacion = (props)=>{
           }
           
         let ratio = (hasInvernales + hasCobertura) / hasEstivales 
+
+
+        // RENDER NUMERO CAMPAÑA
+        let campania = `${props.campania1}/${props.campania2}`
+
+        document.getElementById('campania').innerText = campania
+
 
         // HAS -> INV- EST- COB
         document.getElementById(`hasInvPlanificacion${props.idInfo}`).innerText = hasInvernales
@@ -328,8 +342,6 @@ if(campania){
 }
 
 const btnCostosPlanificacion = document.getElementById('btnCostosPlanificacion')
-
-const btnEditarCostoPlanificacion = document.getElementById('btnEditarCostoPlanificacion')
 
 setTimeout(() => {
   

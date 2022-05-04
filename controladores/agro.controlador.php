@@ -77,9 +77,12 @@ class ControladorAgro{
 
                     foreach ($Reader as $Row){
                         
-                        if($rowNumber < 6){
+                        if($rowNumber  > 0){
 
-                            $cultivoCosto[str_replace(' ','',trim(lcfirst($Row[6])))] = trim(preg_replace('/[^0-9]/', '', $Row[7]));
+                            if($Row[8] == '')
+                                break;
+
+                            $cultivoCosto[str_replace(' ','',$Row[8])] = trim(str_replace(',','.',str_replace('u$s/ha','',$Row[9])));
 
                         }
 
@@ -114,11 +117,12 @@ class ControladorAgro{
                                     $has = $Row[1];
                                     $actual = $Row[2];
                                     $variedad = $Row[3];
-                                    $dobleCultivoValido = strpos($Row[5],'/');
+                                    $cobertura = strtolower($Row[5]);
+                                    $dobleCultivoValido = strpos($Row[6],'/');
 
                                     if($dobleCultivoValido){
 
-                                        $cultivos = explode('/',$Row[5]);
+                                        $cultivos = explode('/',$Row[6]);
 
                                         for ($i=0; $i < sizeof($cultivos) ; $i++) { 
                                             
@@ -126,17 +130,17 @@ class ControladorAgro{
                                             
                                             $tipoCultivo = tipoCultivo($planificado);
                                             
-                                            $data[] = "('$campania1','$campania2','$campo','$tipoCultivo','$lote',$has,'$actual','$planificado','$dateTime')";
+                                            $data[] = "('$campania1','$campania2','$campo','$tipoCultivo','$lote',$has,'$actual','$cobertura','$planificado','$dateTime')";
 
                                         }
 
                                     }else{
 
-                                        $planificado = str_replace(' ','',trim(strtolower($Row[5])));
+                                        $planificado = str_replace(' ','',trim(strtolower($Row[6])));
                                         
                                         $tipoCultivo = tipoCultivo($planificado);
 
-                                        $data[] = "('$campania1','$campania2','$campo','$tipoCultivo','$lote',$has,'$actual','$planificado','$dateTime')";
+                                        $data[] = "('$campania1','$campania2','$campo','$tipoCultivo','$lote',$has,'$actual','$cobertura','$planificado','$dateTime')";
 
                                     }
 
@@ -151,9 +155,11 @@ class ControladorAgro{
                     }
                         
                 }
-                
+
+                var_dump($data);
+                die();
                 $respuesta = ModeloAgro::mdlCargarArchivo($tabla,$data);
-                
+
                 $errors = array($respuesta);
                 
                 $tabla = 'planificacion';
@@ -171,7 +177,9 @@ class ControladorAgro{
                     $errors[] = $respuesta;
 
                 }
-              
+                
+                die();
+
                 if(in_array('error',$respuesta)){
 
                     echo'<script>
@@ -334,6 +342,51 @@ class ControladorAgro{
         return $respuesta = ModeloAgro::mdlMostrarData($tabla, $item, $valor, $item2, $valor2, $item3, $valor3);
 
 	}
+
+    /*=============================================
+	ELIMINAR ARCHIVO
+	=============================================*/
+    
+	static public function ctrEliminarArchivo(){
+        
+        if(isset($_GET['campo'])){
+
+            $tabla = $_GET['tabla'];
+
+            $item = 'campo';
+            
+            $item2 = 'campania1';
+
+            $item3 = 'campania2';
+
+
+            $respuesta = ModeloAgro::mdlEliminarArchivo($tabla,$item,$_GET['campo'],$item2,$_GET['campania1'],$item3,$_GET['campania2']);
+
+            if($respuesta == "ok"){
+
+				echo'<script>
+
+				swal({
+					  type: "success",
+					  title: "El archivo ha sido borrado correctamente",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar",
+					  closeOnConfirm: false
+					  }).then(function(result) {
+								if (result.value) {
+
+								window.location = "index.php?ruta=agro/agro";
+
+								}
+							})
+
+				</script>';
+
+			}		
+        }
+
+    }
+
 }
 
 	

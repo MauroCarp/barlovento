@@ -6,7 +6,7 @@
 
           <div class="widget-user-header bg-aqua-active">
 
-              <h2 class="widget-user-username" style="padding:10px;margin-top:5px;">Campa&ntilde;a: <span id="campania">2022/2023</span></h2>
+              <h2 class="widget-user-username" style="padding:10px;margin-top:5px;">Campa&ntilde;a: <span id="campania"></span></h2>
           
           </div>
 
@@ -58,5 +58,8 @@
 <?php
 
 include 'vistas/modulos/modales/agro/costosPlanificacion.modal.php';
+        
+$eliminarArchivo = new ControladorAgro;
+$eliminarArchivo-> ctrEliminarArchivo();
 
 ?>
