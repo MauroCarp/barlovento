@@ -1,0 +1,11 @@
+<svg version="1.2" id="svgAmarilla2" xmlns="http://www.w3.org/2000/svg" width="384" height="523">
+
+	<path id="13" cell="yellow" class="lotesPath" d="m170 157.4l61 0.6v276h-42l-13.5-41.6 16.5-38.4-10.5-48.6-40.5-128z"/>
+	<path id="14" cell="yellow" class="lotesPath" d="m101 36h230v120l-100 0.4-72-6-31.5-27.5z"/>
+	<path id="12.5" cell="yellow" class="lotesPath" d="m232 377.9h137v55.1h-137z"/>
+	<path id="12.4" cell="yellow" class="lotesPath" d="m231 321.4l139-0.5v57.1l-139-1.6z"/>
+	<path id="12.3" cell="yellow" class="lotesPath" d="m231 266.9l138-1v55.1h-137z"/>
+	<path id="12.2" cell="yellow" class="lotesPath" d="m232 210h137v60h-137z"/>
+	<path id="12.1" cell="yellow" class="lotesPath" d="m230.5 160.4l139.5 4-1 46.6h-137z"/>
+	
+</svg>

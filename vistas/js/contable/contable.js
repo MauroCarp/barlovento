@@ -1,0 +1,1864 @@
+ 
+    const generarColores = (cantidad,tipo)=>{
+
+        let coloresBg = ['rgba(255, 99, 132, 0.2)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)','rgba(100, 255, 64, 0.2)'];
+
+        let coloresBr = ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)','rgba(100, 255, 64, 1)'];
+
+        let colores = [];
+
+        for (let index = 0; index < cantidad; index++) {
+
+        if(tipo == 'bg'){
+            
+            colores.push(coloresBg[index])
+            
+        }else{
+            
+            colores.push(coloresBr[index]);
+            
+        }
+        
+        }
+
+        return colores;
+
+    }
+
+    const formatearFecha = (fecha)=>{
+
+        if(fecha){
+
+            let fechaSplit = fecha.split('-')
+            
+            return `${fechaSplit[2]}-${fechaSplit[1]}-${fechaSplit[0]}`
+        
+        }else{
+
+            return '-'
+        
+        }
+    }
+
+    const numberWithCommas = (num)=>{
+
+        var parts = num.toString().split(".");
+        
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        return parts.join(",");
+    
+    }
+
+    const format = (number)=>{
+
+      if(number > 1){
+
+      
+        let num = number.toString().replace(/\./g,'*');
+              
+        num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+      
+        num = num.split('').reverse().join('').replace(/^[\.]/,'');
+      
+        num = num.replace('*',',');
+
+        return num
+
+      }else{
+        return number
+      }
+    }
+
+    const generarGraficoBarSimple = (registros,divId,labels,tituloLabel)=>{
+
+        let coloresBg = generarColores(registros.length,'bg');
+                
+        let coloresBr = generarColores(registros.length,'br');
+                
+        let ctx = document.getElementById(divId).getContext('2d');
+
+
+        let myChart = new Chart(ctx, {
+                                      type: 'bar',
+                                      data: {
+                                          labels: labels,
+                                          datasets: [{
+                                              label: tituloLabel,
+                                              data: registros,
+                                              backgroundColor: coloresBg,
+                                              borderColor: coloresBr,
+                                              borderWidth: 1
+                                          }]
+                                      },
+                                      options: {
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    callback: function(value, index, ticks) {
+                                                        return  format(value);
+                                                    }
+                                                }
+                                            }]
+                                        },
+                                        tooltips: {
+                                          callbacks: {
+                                            label: function(tooltipItem, data) {
+                                                  return `U$D ${tooltipItem.yLabel.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+                                              }
+                                          }
+                                        },
+                                        legend:{
+                                          labels: {
+                                            boxWidth: 0 // Establece el tamaño del cuadro de color en cero
+                                          }            
+                                        },
+                                        plugins: {
+                                          labels: {
+                                            // render: 'value'
+                                            render: (val)=>{ 
+                                              // return format(val.value);
+                                              return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+                                            },
+
+                                          },
+                                          legend: {
+                                            display: false,
+                                          },
+                                          tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+
+                                                    let label = `$ ${context.dataset.label}`;
+
+                                                    return label;
+                                                }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    });   
+      
+        return myChart; 
+      
+    }
+
+    const generarGraficoPieContable = (idDiv,data,label)=>{
+        
+        let colores = generarColores(data.length,'bg');
+
+        let pieChart = document.getElementById(idDiv).getContext('2d');   
+
+        let configuracion = {
+            type: 'pie',
+            data: {
+              datasets: [{
+                data: data,
+                backgroundColor:colores,
+                label: 'Porcentaje'
+              }],
+              labels: label
+            },
+            options: {
+              responsive: true,
+              title: {
+                display: false,
+              },
+              scales: {
+                yAxes: [{
+                    ticks: {
+                        callback: function(value, index, ticks) {
+                            return  format(value);
+                        }
+                    }
+                }]
+              },
+              legend: {
+                labels: {
+                    boxWidth: 5
+                }
+              }
+        
+            }
+        };   
+
+        let grafico = new Chart(pieChart, configuracion);
+      
+        return grafico;
+      
+    }
+
+    const generarGraficoMultiBar = (divId,labels,dataset)=>{
+  
+      let ctx = document.getElementById(divId).getContext('2d');
+     
+      let myChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: {
+                                      labels  : labels,
+                                      datasets: dataset
+                                    },
+                                    options: {
+                                      tooltips: {
+                                        callbacks: {
+                                          label: function(tooltipItem, data) {
+                                                return `U$D ${tooltipItem.yLabel.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+                                            }
+                                        }
+                                      },
+                                      scales: {
+                                        xAxes: [{
+                                              gridLines: {
+                                                  color: "rgba(0, 0, 0, 0)",
+                                              }
+                                          }],
+                                          yAxes: [{
+                                            ticks: {
+                                                  beginAtZero: true,
+                                                  callback: function(value, index, ticks) {
+                                                      return  format(value);
+                                                  }
+                                              }
+                                            }]
+                                      
+                                        },
+                                        plugins: {
+                                          labels: {
+
+                                            render: (val)=>{ 
+                                              if(divId == 'saldoIvaBarlovento' || divId == 'saldoIvaPaihuen'){
+                                                return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+                                              }else{
+                                                return '';
+                                              }
+                                            },
+                                            // render: 'value',
+                                          },
+                                        }
+                                    }
+                                  });
+      return myChart; 
+    
+    }
+
+    const generarGraficoStackedGroup = (divId,labels,dataset)=>{
+  
+      let ctx = document.getElementById(divId).getContext('2d');
+      
+      let myChart = new Chart(ctx,
+                                  {
+                                    type: 'bar',
+                                    data: dataset,
+                                    options: {
+                                      tooltips: {
+                                        callbacks: {
+                                          label: function(tooltipItem, data) {
+                                                return `U$D ${tooltipItem.yLabel.toLocaleString('de-DE',{minimumFractionDigits: 2,
+                                                  maximumFractionDigits: 2})}`
+                                            }
+                                        }
+                                      },
+                                      interaction:{
+                                        intersect:false
+                                      },
+                                      scales: {
+                                        xAxes: [{
+                                              gridLines: {
+                                                  color: "rgba(0, 0, 0, 0)",
+                                              }
+                                        }],
+                                        yAxes: [{
+                                          ticks: {
+                                                beginAtZero: true,
+                                                callback: function(value, index, values) {
+                                                  return value
+                                                }
+                                            }
+                                        }],
+                                        x:{
+                                          stacked:true
+                                        },
+                                        y:{
+                                          stacked:true
+                                        }
+                                      },
+                                      plugins: {
+                                        labels: {
+                                          render: (val)=>{ 
+                                            if(divId == 'sueldos12VentasBarlovento' || divId == 'sueldos12VentasPaihuen' || divId == 'sueldos12HonorariosVentasBarlovento' || divId == 'sueldos12HonorariosVentasPaihuen'){
+                                              return format(val.value);
+                                            }else{
+                                              return '';
+                                            }
+                                          }
+                                          // render: 'value',
+                                        },
+                                      }
+                                    }
+                                  });
+      return myChart; 
+
+
+
+    
+    }
+
+
+    const getMonthData = (respuesta,dato,start = 'Jun')=>{
+
+      let data = []
+
+      for (const key in respuesta) {
+
+        if(respuesta.length > 1){
+
+            if(respuesta[key].periodo == start){
+
+              data.push(Number(dolarizar(respuesta[key].graficos[dato],respuesta[key].dolar,2).replace(/\./g,'').replace(',','.')))
+            
+              break
+
+            }else{
+
+              data.push(Number(dolarizar(respuesta[key].graficos[dato],Number(respuesta[key].dolar),2).replace(/\./g,'').replace(',','.')) - Number(dolarizar(respuesta[Number(key) + 1].graficos[dato],respuesta[Number(key) + 1].dolar,2).replace(/\./g,'').replace(',','.')))
+              }
+
+          }else{
+            data.push(Number(dolarizar(respuesta[key].graficos[dato],respuesta[key].dolar,2).replace(/\./g,'').replace(',','.')))
+          } 
+
+      }
+  
+      return data
+      
+    }
+    
+    const getMonthDataCajas = (respuesta,dato,start = 'Jun')=>{
+      
+      let data = []
+
+
+        if(respuesta.length > 1){
+
+          if(respuesta[0].periodo == start){
+            data.push(Number(respuesta[0].cajas[dato]).toFixed(2))
+          }else{
+            data.push((respuesta[0].cajas[dato] - respuesta[1].cajas[dato]).toFixed(2))
+          }
+
+        }else{
+          data.push(Number(respuesta[0].cajas[dato]).toFixed(2))
+        }
+
+    
+
+      return data
+      
+    }
+
+    const getMonthDataResultados = (respuesta,dato,start = 'Jun')=>{
+      
+      let data = []
+
+
+        if(respuesta.length > 1){
+
+          if(respuesta[0].periodo == start){
+            data.push(Number(respuesta[0].resultados[dato]).toFixed(2))
+          }else{
+            data.push((respuesta[0].resultados[dato] - respuesta[1].resultados[dato]).toFixed(2))
+          }
+
+        }else{
+          data.push(Number(respuesta[0].resultados[dato]).toFixed(2))
+        }
+
+    
+
+      return data
+      
+    }
+
+    const btnGenerarReporte = document.getElementById('generarReporteContabilidad')
+
+    const dolarizar = (number,dolar,decimales = 0)=>{
+      let dolarizado = number / dolar
+
+      return dolarizado.toLocaleString('de-DE', {
+        minimumFractionDigits: decimales,
+        maximumFractionDigits: decimales
+      })
+
+    }
+
+    const dolarizarArray = (arr,respuesta) => {
+        let arrLength = arr.length - 1
+
+        for (const key in arr) {
+
+          let dolar = respuesta[arrLength].dolar
+          arr[key] = arr[key] / dolar
+
+          arrLength--
+        }
+
+        return arr
+
+    }
+
+    const cargarDatosCampo = (campo,respuesta)=>{
+
+      let start = (campo != 'Paihuen') ? 'Jun' : 'Ene'
+      var months = {
+        "Ene": 1, "Feb": 2, "Mar": 3, "Abr": 4, "May": 5, "Jun":6,
+        "Jul": 7, "Ago": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dic": 12
+      };
+      // TABLA
+
+      if (campo != 'Paihuen'){
+
+        $(`#precioDolarCCL`).html(respuesta[0].dolar)
+
+        
+        let parts = respuesta[0].periodoVisible.split(" ");
+        let month = parts[0];
+        let year = parseInt(parts[1]);
+        
+        let lastDayOfMonth = new Date(year, new Date(Date.parse(months[month] + " 1, " + year)).getMonth() + 1, 0);
+        let formattedDate = lastDayOfMonth.getDate() + '/' + (lastDayOfMonth.getMonth() + 1) + '/' + lastDayOfMonth.getFullYear();        
+        
+        $(`#periodoResultadoAl${campo}`).html(formattedDate)
+        $(`#periodoPatrimonioAl${campo}`).html(formattedDate)
+        let resultadoAl = Number(respuesta[0].tabla.produccionGanancias) - Number(respuesta[0].tabla.produccionPerdidas)
+
+        $(`#resultadoAl${campo}`).html('<b>' + dolarizar(resultadoAl,respuesta[0].dolar,2) + '</b>')
+        $(`#produccionGanancias${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionGanancias),respuesta[0].dolar,2))
+        $(`#produccionGananciasDirectas${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionGananciasDirectas),respuesta[0].dolar,2))
+        $(`#produccionGananciasFinancieras${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionGananciasFinancieras),respuesta[0].dolar,2))
+        $(`#produccionPerdidas${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionPerdidas),respuesta[0].dolar,2))
+        $(`#produccionPerdidasDirectas${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionPerdidasDirectas),respuesta[0].dolar,2))
+        $(`#produccionPerdidasIndirectas${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionPerdidasIndirectas),respuesta[0].dolar,2))
+        $(`#produccionPerdidasFinancieras${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionPerdidasFinancieras),respuesta[0].dolar,2))
+        $(`#produccionImpuestos${campo}`).html(dolarizar(Number(respuesta[0].tabla.produccionPerdidasImpuestos),respuesta[0].dolar,2))
+        
+        
+        $(`#patrimonioActivo${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivo),respuesta[0].dolar,2))
+        $(`#patrimonioActivoCorriente${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoCorriente),respuesta[0].dolar,2))
+        $(`#patrimonioDisponibilidad${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoDisponibilidades),respuesta[0].dolar,2))
+        $(`#patrimonioInversiones${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoInversiones),respuesta[0].dolar,2))
+        $(`#patrimonioMonedaExtranjera${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoMonedaExtranjera),respuesta[0].dolar,2))
+        $(`#patrimonioCreditos${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoCreditos),respuesta[0].dolar,2))
+        $(`#patrimonioBienesDeCambio${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoBienesDeCambio),respuesta[0].dolar,2))
+
+        $(`#patrimonioActivoNoCorriente${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoNoCorriente),respuesta[0].dolar,2))
+        $(`#patrimonioBienesDeUso${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoNCBienesDeUso),respuesta[0].dolar,2))
+        $(`#patrimonioOtrosCreditos${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoNCOtrosCreditos),respuesta[0].dolar,2))
+        $(`#patrimonioPasivo${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioPasivo),respuesta[0].dolar,2))
+        $(`#patrimonioPasivoCorriente${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioPasivoCorriente),respuesta[0].dolar,2))
+        $(`#patrimonioDeudas${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioPasivoDeudas),respuesta[0].dolar,2))
+
+        let patrimonioNeto = Number(respuesta[0].tabla.patrimonioNetoCapital) + Number(respuesta[0].tabla.patrimonioNetoReservas) + Number(respuesta[0].tabla.patrimonioNetoResultadosAcumulados)
+       + Number(resultadoAl)
+
+        $(`#patrimonioPatrimonioNeto${campo}`).html('<b>' + dolarizar(Number(patrimonioNeto),respuesta[0].dolar,2) + '</b>')
+
+        $(`#patrimonioCapital${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioNetoCapital),respuesta[0].dolar,2))
+        $(`#patrimonioReservas${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioNetoReservas),respuesta[0].dolar,2))
+        $(`#patrimonioResultadoAcumulado${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioNetoResultadosAcumulados),respuesta[0].dolar,2))
+        $(`#patrimonioResultadoEjercicio${campo}`).html(dolarizar(Number(resultadoAl),respuesta[0].dolar,2))
+
+
+
+      }
+
+      /* CAJAS */
+      
+      // ECONOMICO
+          let ventasTotales = 0;
+
+          if (campo != 'Paihuen'){
+
+            $(`#resultadoBruto${campo}`).html(dolarizar(Number(Number(respuesta[0].tabla.produccionGananciasDirectas) - Number(respuesta[0].tabla.produccionPerdidasDirectas)), respuesta[0].dolar))
+            
+            $(`#ganaderiaResto1${campo}`).html(dolarizar(Number(respuesta[0].cajas.ganaderiaResto1), respuesta[0].dolar))
+            $(`#ganaderiaResto2${campo}`).html(dolarizar(Number(respuesta[0].cajas.ganaderiaResto2), respuesta[0].dolar))
+
+            ventasTotales = respuesta[0].cajas.ganaderiaResto1 + respuesta[0].cajas.ganaderiaResto2
+
+            $(`#resultadoOperativo${campo}`).html(dolarizar(Number(respuesta[0].cajas.resultadoOperativo), respuesta[0].dolar))
+
+            $(`#margenUtilidadBruta${campo}`).html((respuesta[0].cajas.margenUtilidadBruta).toFixed(2))
+            $(`#margenUtilidadNeta${campo}`).html((respuesta[0].cajas.margenUtilidadNeta).toFixed(2))
+            $(`#margenUtilidadOperativa${campo}`).html((respuesta[0].cajas.margenUtilidadOperativa).toFixed(2))
+            $(`#ratioGastosOperativos${campo}`).html((respuesta[0].cajas.ratioGastosOperativos).toFixed(2))
+            $(`#resultadoOperativoActivo${campo}`).html((Number(respuesta[0].resultados.resultadoNeto) / Number(respuesta[0].cajas.activos) * 100).toFixed(2))
+            $(`#resultadoOperativoPatrimonio${campo}`).html((Number(respuesta[0].resultados.resultadoNeto) / Number(respuesta[0].cajas.patrimonioNeto) * 100).toFixed(2))
+
+            $(`#activo${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivo),respuesta[0].dolar))
+            $(`#activoCorriente${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoCorriente),respuesta[0].dolar))
+            $(`#activoNoCorriente${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioActivoNoCorriente),respuesta[0].dolar))
+            $(`#pasivo${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioPasivo),respuesta[0].dolar))
+            $(`#patrimonioNeto${campo}`).html(dolarizar(Number(respuesta[0].tabla.patrimonioNeto),respuesta[0].dolar))
+
+
+
+            $(`#capitalTrabajo${campo}`).html(dolarizar((Number(respuesta[0].tabla.patrimonioActivoCorriente) - Number(respuesta[0].tabla.patrimonioPasivoCorriente)),respuesta[0].dolar))
+
+            $(`#solvencia${campo}`).html((Number(respuesta[0].tabla.patrimonioActivoCorriente) / Number(respuesta[0].tabla.patrimonioPasivoCorriente)).toFixed(2))
+
+            $(`#solvenciaAcida${campo}`).html(((Number(respuesta[0].tabla.patrimonioActivoCorriente) - Number(respuesta[0].tabla.patrimonioActivoBienesDeCambio)) / Number(respuesta[0].tabla.patrimonioPasivoCorriente)).toFixed(2))
+
+            $(`#inmovilizacion${campo}`).html(((Number(respuesta[0].tabla.patrimonioActivoNoCorriente) + Number(respuesta[0].graficos.bienesDeUso.buGastosEstructura)) / Number(respuesta[0].tabla.patrimonioActivo)).toFixed(2))
+
+            
+          } else {
+
+            // $(`#agricultura1${campo}`).html(
+            //   '$ ' + numberWithCommas((respuesta[0].cajas.agricultura / 1000).toFixed(0))
+            // )
+            // $(`#agricultura2${campo}`).html(
+            //   '$ ' + 0)
+              
+            // $(`#ganaderiaResto1${campo}`).html(
+            //   '$ ' + numberWithCommas((respuesta[0].cajas.ganaderiaResto / 1000).toFixed(0))
+            // )
+            // $(`#ganaderiaResto2${campo}`).html(
+            //   '$ ' + 0)
+              
+            // ventasTotales = respuesta[0].cajas.agricultura + respuesta[0].cajas.ganaderiaResto
+            
+          }
+
+          $(`#ventasTotales${campo}`).html(
+            dolarizar(Number(ventasTotales), respuesta[0].dolar)
+            // '$ ' + numberWithCommas((ventasTotales / 1000).toFixed(0))
+          )
+
+        // FINANCIERO
+          $(`#deudaTotal${campo}`).html(
+            dolarizar(Number(respuesta[0].cajas.deudaTotal), respuesta[0].dolar)
+            // '$ ' + numberWithCommas((respuesta[0].cajas.deudaTotal / 1000).toFixed(0))
+          )          
+          $(`#pasivoTotal${campo}`).html(
+            dolarizar(Number(respuesta[0].cajas.pasivoTotal), respuesta[0].dolar)
+            
+            // '$ ' + numberWithCommas((respuesta[0].cajas.pasivoTotal / 1000).toFixed(0))
+          )          
+          $(`#activoCirculante${campo}`).html(
+            dolarizar(Number(respuesta[0].cajas.activoCirculante), respuesta[0].dolar)
+            
+            // '$ ' + numberWithCommas((respuesta[0].cajas.activoCirculante / 1000).toFixed(0))
+          )          
+          // $(`#patrimonioNeto${campo}`).html('$ ' + numberWithCommas((respuesta[0].cajas.patrimonioNeto / 1000).toFixed(0)))          
+
+          let deudaBienes = respuesta[0].cajas.deudaBancaria / respuesta[0].cajas.bienesDeCambio
+          $(`#duedaBienes${campo}`).html(numberWithCommas((deudaBienes * 100).toFixed(2)) + '%')          
+
+          let activoCircActivoCorr = respuesta[0].cajas.activoCirculante / respuesta[0].cajas.activoCorriente
+
+          $(`#activoCircActivoCorr${campo}`).html(numberWithCommas((activoCircActivoCorr * 100).toFixed(2)) + '%')          
+
+          let pasivoPatrimonio = respuesta[0].cajas.pasivoTotal / respuesta[0].cajas.patrimonioNeto
+          $(`#pasivoPatrimonio${campo}`).html(numberWithCommas((pasivoPatrimonio * 100).toFixed(2)) + '%')
+
+          let actPasCorriente = Number(respuesta[0].cajas.activoCorriente) / Number(respuesta[0].cajas.pasivoCorriente)
+          $(`#indiceActPasCorriente${campo}`).html(numberWithCommas((actPasCorriente).toFixed(2)))
+
+        // IMPOSITIVO
+          $(`#ingresoBruto${campo}`).html(
+            // '$ ' + numberWithCommas((getMonthDataCajas(respuesta,'ingresosBrutos',start)/ 1000).toFixed(0))
+            dolarizar(Number(getMonthDataCajas(respuesta,'ingresosBrutos',start)), respuesta[0].dolar)
+
+          )
+
+          $(`#inmobiliarioComuna${campo}`).html(
+            // '$ ' + numberWithCommas((getMonthDataCajas(respuesta,'inmobiliario',start) / 1000).toFixed(0))
+            dolarizar(Number(getMonthDataCajas(respuesta,'inmobiliario',start)), respuesta[0].dolar)
+
+          )
+
+          $(`#cargasSociales${campo}`).html(
+            // '$ ' + numberWithCommas((getMonthDataCajas(respuesta,'cargasSociales',start) / 1000).toFixed(0))
+            dolarizar(Number(getMonthDataCajas(respuesta,'cargasSociales',start)), respuesta[0].dolar)
+
+          )
+
+          $(`#sueldosVentas${campo}`).html(
+            // '$ ' + numberWithCommas((getMonthDataCajas(respuesta,'sueldos12',start) / 1000).toFixed(0))
+            dolarizar(Number(getMonthDataCajas(respuesta,'sueldos12',start)), respuesta[0].dolar)
+
+          )
+
+          $(`#sueldosTotal${campo}`).html(
+            // '$ ' + numberWithCommas((getMonthDataCajas(respuesta,'sueldos12Honorarios',start) / 1000).toFixed(0))
+            dolarizar(Number(getMonthDataCajas(respuesta,'sueldos12Honorarios',start)), respuesta[0].dolar)
+
+          )
+
+          $(`#ingresoBrutoAcum${campo}`).html(
+            // '$ ' + numberWithCommas((respuesta[0].cajas.ingresosBrutos / 1000).toFixed(0))
+            dolarizar(Number(respuesta[0].cajas.ingresosBrutos), respuesta[0].dolar)
+
+          )
+
+          $(`#inmobiliarioComunaAcum${campo}`).html(
+            // '$ ' + numberWithCommas((respuesta[0].cajas.inmobiliario / 1000).toFixed(0))
+            dolarizar(Number(respuesta[0].cajas.inmobiliario), respuesta[0].dolar)
+
+          )
+
+          $(`#cargasSocialesAcum${campo}`).html(
+            // '$ ' + numberWithCommas((respuesta[0].cajas.cargasSociales / 1000).toFixed(0))
+            dolarizar(Number(respuesta[0].cajas.cargasSociales), respuesta[0].dolar)
+
+          )
+
+          $(`#sueldosVentasAcum${campo}`).html(
+            // '$ ' + numberWithCommas((respuesta[0].cajas.sueldos12 / 1000).toFixed(0))
+            dolarizar(Number(respuesta[0].cajas.sueldos12), respuesta[0].dolar)
+
+          )
+
+          $(`#sueldosTotalAcum${campo}`).html(
+            // '$ ' + numberWithCommas((respuesta[0].cajas.sueldos12Honorarios / 1000).toFixed(0))
+            dolarizar(Number(respuesta[0].cajas.sueldos12Honorarios), respuesta[0].dolar)
+
+          )
+
+      /* GRAFICOS */
+
+        // ECONOMICO
+          let divId = `ventasChart${campo}`
+
+          let datoVariable = 'agricultura1'
+          if(campo == 'Paihuen') datoVariable = 'agricultura'
+
+          let dataAgricultura1 = getMonthData(respuesta,datoVariable,start)
+          dataAgricultura1.reverse()
+          let dataAgricultura2 = getMonthData(respuesta,'agricultura2',start)
+          dataAgricultura2.reverse()
+
+          let dataGanaderiaResto1= getMonthData(respuesta,'ganaderiaResto1',start)
+          dataGanaderiaResto1.reverse()
+          // dolarizarArray(dataGanaderiaResto1,respuesta)
+          
+          let dataGanaderiaResto2 = getMonthData(respuesta,'ganaderiaResto2',start)
+          dataGanaderiaResto2.reverse()
+          // dolarizarArray(dataGanaderiaResto2,respuesta)
+          
+          let dataProduccionHacienda= getMonthData(respuesta,'produccionHacienda',start)
+
+          dataProduccionHacienda.reverse()
+          // dolarizarArray(dataProduccionHacienda,respuesta)
+
+
+          // let monthsLabel = {
+          //   "Ene": 1,
+          //   "Feb": 2,
+          //   "Mar": 3,
+          //   "Abr": 4,
+          //   "May": 5,
+          //   "Jun": 6,
+          //   "Jul": 7,
+          //   "Ago": 8,
+          //   "Sep": 9,
+          //   "Oct": 10,
+          //   "Nov": 11,
+          //   "Dic": 12
+          // }
+
+          const monthsLabel = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+          // Mes cargado desde el sistema
+          let currentMonth = respuesta[0].periodo; // Suponiendo que el formato es 'Mayo', 'Junio', etc.
+
+          // Convertir el mes a su índice en el array
+          let startIndex = monthsLabel.indexOf('Jun'); // Siempre comienza en Junio
+          let endIndex = monthsLabel.indexOf(currentMonth); // Último mes cargado
+
+          let labels = [];
+
+          // Si el mes cargado es antes de Junio, agregamos de Junio a Mayo del siguiente año
+          if (endIndex < startIndex) {
+          labels = [...monthsLabel.slice(startIndex), ...monthsLabel.slice(0, endIndex + 1)];
+          } else {
+          labels = monthsLabel.slice(startIndex, endIndex + 1);
+          }
+
+
+          // let labelsLength = Number(months[respuesta[0].periodo]) - 6
+          
+          //  labels = []; 
+        
+          // for (let index = 0; index <= labelsLength; index++) {
+
+          //   if(respuesta[index]?.periodo != undefined){
+          //     labels.push(respuesta[index]?.periodo)
+          //   }
+            
+          // }
+
+          // labels.reverse() 
+          console.log(labels);
+
+          let labelsLength = labels.length
+
+          divId = `ventasChart2${campo}`
+          
+          var registrosGanaderia = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'G/R 1',
+                data: dataGanaderiaResto1,
+                backgroundColor: 'rgba(255,0,100,.2)',
+                borderColor: 'rgb(255,0,0)',
+                borderWidth: 1, 
+                stack: 'Stack 0',
+              },
+              {
+                label: 'G/R 2',
+                data: dataGanaderiaResto2,
+                backgroundColor: 'rgba(50,0,255,.2)',
+                borderColor: 'rgb(0,0,255)',
+                borderWidth: 1,
+                stack: 'Stack 0',
+              },
+              {
+                label: 'Prod. Hacienda',
+                data: dataProduccionHacienda,
+                backgroundColor: 'rgba(0,255,255,.2)',
+                borderColor: 'rgb(0,255,255)',
+                borderWidth: 1,
+                stack: 'Stack 0',
+              },
+            ]
+          };
+                                
+          generarGraficoStackedGroup(divId,labels,registrosGanaderia)
+          generarGraficoStackedGroup(`idGraficoVentas2${campo}`,labels,registrosGanaderia)
+
+          divId = `ventasGanaderiaChart${campo}`
+                        
+          let dataVaquillonasNovillos= getMonthData(respuesta,'vaquillonasNovillos',start)
+          dataVaquillonasNovillos.reverse()
+          // dolarizarArray(dataVaquillonasNovillos,respuesta)
+
+          let dataCarneSubproductos= getMonthData(respuesta,'carneSubproductos',start)
+          dataCarneSubproductos.reverse()
+          // dolarizarArray(dataCarneSubproductos,respuesta)
+
+          let dataExportacion= getMonthData(respuesta,'exportacion',start)
+          dataExportacion.reverse()
+          // dolarizarArray(dataExportacion,respuesta)
+     
+          registrosGanaderia2 = [{
+              label: 'Vaquillonas y Novillos',
+              backgroundColor: 'rgba(255,0,100,.2)',
+              borderColor: 'rgb(255,0,0)',
+              borderWidth: 1, 
+              data: dataVaquillonasNovillos
+            },{
+              label: 'Carnes y Subproductos',
+              backgroundColor: 'rgba(50,0,255,.2)',
+              borderColor: 'rgb(0,0,255)',
+              borderWidth: 1, 
+              data: dataCarneSubproductos
+            },{
+              label: 'Exportación',
+              backgroundColor: 'rgba(0,255,0,.2)',
+              borderColor: 'rgb(0,255,0)',
+              borderWidth: 1, 
+              data: dataExportacion
+            },{
+              label: 'Prod. Hacienda',
+              backgroundColor: 'rgba(0,255,255,.2)',
+              borderColor: 'rgb(0,255,255)',
+              borderWidth: 1, 
+              data: dataProduccionHacienda
+          }]
+
+          generarGraficoMultiBar(divId,labels,registrosGanaderia2)
+          generarGraficoMultiBar(`idGraficoGanaderia2${campo}`,labels,registrosGanaderia2)
+
+          divId = `margenRtdoOpereativoVentasChart${campo}`    
+          
+          let directo = getMonthData(respuesta,'gananciasDirectas',start)
+          directo.reverse()      
+
+          let perdidas = getMonthData(respuesta,'perdidas',start)
+          perdidas.reverse()      
+
+          let ventas = getMonthData(respuesta,'denominadorVentas',start)
+
+          let registrosRtdoOperativo = []
+          let registrosRtdoNeto = []
+          let registrosRtdoBruto = []
+
+          let resultadoBruto = getMonthData(respuesta,'resultadoBruto',start)
+          let resultadoNeto = getMonthData(respuesta,'resultadoNeto',start)
+          let resultadoOperativo = getMonthData(respuesta,'resultadoOperativo',start)
+
+          for (const key in resultadoNeto) {
+
+            let rtdoNeto =  Number(resultadoNeto[key]) / Number(ventas[key])
+            let rtdoBruto = Number(resultadoBruto[key]) / Number(ventas[key])
+            let rtdoOperativo = Number(resultadoOperativo[key]) / Number(ventas[key])
+ 
+            registrosRtdoOperativo.push(rtdoOperativo.toFixed(2))
+            registrosRtdoNeto.push(rtdoNeto.toFixed(2))
+            registrosRtdoBruto.push(rtdoBruto.toFixed(2))
+            
+          }
+
+          registrosRtdoOperativo.reverse()
+
+          registrosRtdoNeto.reverse()
+
+          registrosRtdoBruto.reverse()
+
+          let configRtdoVentas = {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  type: 'line',
+                  label: 'Rdo. B/V',
+                  borderColor: window.chartColors.red,
+                  backgroundColor:'rgba(255,0,0,.2)',
+                  borderColor: 'rgb(255,0,0)',
+                  yAxisID: 'A',
+                  data: registrosRtdoBruto
+                }
+                ,
+                {
+                  type: 'line',
+                  label: 'Rdo. O/V',
+                  borderColor: window.chartColors.blue,
+                  fill:false,
+                  yAxisID: 'A',
+                  data: registrosRtdoOperativo,
+                  borderWidth: 2
+
+                },
+                {
+                  type: 'line',
+                  label: 'Rdo. N/V',
+                  borderColor: window.chartColors.green,
+                  fill:false,
+                  yAxisID: 'A',
+                  data: registrosRtdoNeto,
+                  borderWidth: 2
+
+                },
+              ]
+            },
+            options: {
+              tooltips: {
+                callbacks: {
+                  label: function(tooltipItem, data) {
+
+                      return `${tooltipItem.yLabel}%`
+
+                    }
+                }
+              },
+              scaleShowValues: true,
+              scales: {
+                xAxes: [{
+                  display:true,
+                  ticks: {
+                    autoSkip: false,
+                  }
+                }],
+                yAxes: [{
+                  id: 'A',
+                  type: 'linear',
+                  position: 'left',
+                  ticks:{
+                    beginAtZero: true,
+                    callback: function(value, index, ticks) {
+                      return  format(value);
+                    }     
+                  }
+                }, {
+                  id: 'B',
+                  type: 'linear',
+                  position: 'right',
+                  ticks:{
+                    beginAtZero: true
+                  }
+                }]
+              },
+              plugins:{
+                labels:{                  
+                  render: (val)=>{ return ''},
+                }
+              },
+              legend:{
+                labels: {
+                      boxWidth: 5
+                }
+              }
+            }
+          }
+
+          generarGraficoBar(divId,configRtdoVentas,'noOption');
+          // generarGraficoBar(`idGraficoMargenRtdoOpereativoVentas${campo}`,configRtdoVentas,'noOption')
+
+          divId = `margenVentasChart${campo}`
+          tituloLabel = 'Rdo. Neto - Rdo. Acum.'
+
+          dataResultExpl = getMonthData(respuesta,'resultadoNeto',start)
+          dataResultExpl.reverse()
+          // dolarizarArray(dataResultExpl,respuesta)
+
+          if(campo != 'Paihuen'){
+            
+            let baaiAccum = []
+
+            for (let index = 0; index < labelsLength; index++) {
+
+              baaiAccum.push(dolarizar(respuesta[index]['graficos']['resultadoNeto'],respuesta[index]['dolar'],2).replace('.','').replace(',','.'))
+              
+            }
+
+            baaiAccum.reverse()
+            // dolarizarArray(baaiAccum,respuesta)
+        
+            let configBAAI = {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    type: 'bar',
+                    label: 'Resultado Neto',
+                    borderColor: window.chartColors.red,
+                    backgroundColor:'rgba(255,0,0,.2)',
+                    borderColor: 'rgb(255,0,0)',
+                    borderWidth: 2,
+                    yAxisID: 'A',
+                    data: dataResultExpl
+                  }
+                  ,
+                  {
+                    type: 'line',
+                    label: 'Resultado Neto Acum.',
+                    borderColor: window.chartColors.blue,
+                    borderColor: 'rgb(0,0,255)',
+                    yAxisID: 'A',
+                    data: baaiAccum,
+                    borderWidth: 2
+
+                  } 
+                ]
+              },
+              options: {
+                tooltips: {
+                  callbacks: {
+                    label: function(tooltipItem, data) {
+
+                        if(tooltipItem.datasetIndex == 2){
+                          return `${tooltipItem.yLabel}%`
+                        }else{
+                          return `$ ${tooltipItem.yLabel.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+                        }
+                      }
+                  }
+                },
+                scaleShowValues: true,
+                scales: {
+                  xAxes: [{
+                    display:true,
+                    ticks: {
+                      autoSkip: false,
+                    }
+                  }],
+                  yAxes: [{
+                    id: 'A',
+                    type: 'linear',
+                    position: 'left',
+                    ticks:{
+                      beginAtZero: true,
+                      callback: function(value, index, ticks) {
+                        return  format(value);
+                      }     
+                    }
+                  }, {
+                    id: 'B',
+                    type: 'linear',
+                    position: 'right',
+                    ticks:{
+                      beginAtZero: true
+                    }
+                  }]
+                },
+                plugins:{
+                  labels:{                  
+                    render: (val)=>{ return ''},
+                  }
+                },
+                legend:{
+                  labels: {
+                        boxWidth: 5
+                  }
+                }
+              }
+            }
+                  
+
+            generarGraficoBar(divId,configBAAI,'noOption');
+            generarGraficoBar(`idGraficoMargenVentas${campo}`,configBAAI,'noOption')
+        
+            divId = `rentabilidadEconomicaChart${campo}`
+            tituloLabel = 'Rdo. Neto / Activo - / Patrimonio Neto'
+
+            let registrosRtdoNetoActivo = []
+            let registrosRtdoNetoPatrimonioNeto = []
+
+            for (const key in resultadoNeto) {
+
+              let rtdoNetoActivo =  Number(resultadoNeto[key]) / Number(dolarizar(respuesta[key].graficos.activos,respuesta[key].dolar,2).replace(/\./g,'').replace(',','.')) * 100
+              let rtdoNetoPatrimonioNeto = Number(resultadoNeto[key]) / Number(dolarizar(respuesta[key].graficos.patrimonioNeto,respuesta[key].dolar,2).replace(/\./g,'').replace(',','.')) * 100
+
+              registrosRtdoNetoActivo.push(rtdoNetoActivo.toFixed(2))
+              registrosRtdoNetoPatrimonioNeto.push(rtdoNetoPatrimonioNeto.toFixed(2))
+              
+            }
+
+            registrosRtdoNetoActivo.reverse()
+            registrosRtdoNetoPatrimonioNeto.reverse()
+
+            let configRentabilidadChart = {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    type: 'line',
+                    label: 'Rdo. Neto/Activo',
+                    borderColor: window.chartColors.red,
+                    data: registrosRtdoNetoActivo
+                  },
+                  {
+                    type: 'line',
+                    label: 'Rdo. Neto/Patrimonio Neto',
+                    borderColor: window.chartColors.blue,
+                    data: registrosRtdoNetoPatrimonioNeto
+                  },
+                ]
+              },
+              options: {
+                tooltips: {
+                  callbacks: {
+                    label: function(tooltipItem, data,i) {
+                          return `${tooltipItem.yLabel}`
+                      }
+                  }
+                },
+                scaleShowValues: true,
+                scales: {
+                  xAxes: [{
+                    display:true,
+                    ticks: {
+                      autoSkip: false,
+                    }
+                  }],
+                },
+                plugins:{
+                  labels:{                  
+                    render: (val)=>{ return format(val.value);},
+                  }
+                },
+                legend:{
+                  labels: {
+                        boxWidth: 5
+                  }
+                }
+              }
+            }
+
+            generarGraficoBar(divId,configRentabilidadChart,'noOption');
+            /********************************* */
+
+            let dataABG = []
+
+            for (const key in respuesta) {
+              
+               dataABG.push(Number(respuesta[key].graficos.bienesDeCambio.activosBiologicosGan) / Number(respuesta[key].dolar))
+
+            }
+
+            dataABG = dataABG.slice(0, labelsLength);
+
+            dataABG.reverse()
+
+
+            let dataPA = []
+
+            for (const key in respuesta) {
+               dataPA.push(Number(respuesta[key].graficos.bienesDeCambio.productosAgropecuarios) / Number(respuesta[key].dolar))
+            }
+
+            dataPA = dataPA.slice(0, labelsLength);
+
+            dataPA.reverse()
+
+            let dataBUPP = []
+
+            for (const key in respuesta) {
+              
+               dataBUPP.push(Number(respuesta[key].graficos.bienesDeCambio.bienesUPP) / Number(respuesta[key].dolar)) 
+              
+            }
+
+            dataBUPP = dataBUPP.slice(0, labelsLength);
+
+            dataBUPP.reverse()
+
+            registros = [{
+                              label: 'Activos biologicos ganaderos',
+                              backgroundColor: 'rgba(255,0,100,.2)',
+                              borderColor: 'rgb(255,0,0)',
+                              borderWidth: 1, 
+                              data: dataABG
+                          },{
+                            label: 'Productos Agropecuarios (granos)',
+                            backgroundColor: 'rgba(50,0,255,.2)',
+                            borderColor: 'rgb(0,0,255)',
+                            borderWidth: 1, 
+                            data: dataPA
+                          },{
+                            label: 'Bienes a utilizar proceso productivo',
+                            backgroundColor: 'rgba(0,255,0,.2)',
+                            borderColor: 'rgb(0,255,0)',
+                            borderWidth: 1, 
+                            data: dataBUPP
+                          }]
+
+            divId = `bienesDeCambioChart${campo}`
+
+            generarGraficoMultiBar(divId,labels,registros)
+            generarGraficoMultiBar(`idGraficoBienesDeCambio${campo}`,labels,registros)
+            
+            /******************************** */
+
+            let dataBUE = []
+
+            for (const key in respuesta) {
+              
+                dataBUE.push(Number(respuesta[key].graficos.bienesDeUso.buEstructura) / Number(respuesta[key].dolar))
+              
+            }
+
+            dataBUE = dataBUE.slice(0, labelsLength);
+
+            dataBUE.reverse()
+
+            let dataBUM = []
+
+            for (const key in respuesta) {
+              
+                dataBUM.push(Number(respuesta[key].graficos.bienesDeUso.buMoviles) / Number(respuesta[key].dolar))
+              
+            }
+
+            dataBUM = dataBUM.slice(0, labelsLength);
+
+            dataBUM.reverse()
+
+            let dataBUR = []
+
+            for (const key in respuesta) {
+              
+                dataBUR.push(Number(respuesta[key].graficos.bienesDeUso.buReproductores) / Number(respuesta[key].dolar))
+              
+            }
+
+            dataBUR = dataBUR.slice(0, labelsLength);
+
+            dataBUR.reverse()
+
+            let dataBUD = []
+
+            for (const key in respuesta) {
+              
+                dataBUD.push(Number(respuesta[key].graficos.bienesDeUso.buDiversos) / Number(respuesta[key].dolar))
+              
+            }
+
+            dataBUD = dataBUD.slice(0, labelsLength);
+
+            dataBUD.reverse()
+
+            let dataBUGE = []
+
+            for (const key in respuesta) {
+              
+                dataBUGE.push(Number(respuesta[key].graficos.bienesDeUso.buGastosEstructura) / Number(respuesta[key].dolar))
+              
+            }
+
+            dataBUGE = dataBUGE.slice(0, labelsLength);
+            
+            dataBUGE.reverse()
+
+            registros = [{
+                              label: 'Estructura',
+                              backgroundColor: 'rgba(255,0,100,.2)',
+                              borderColor: 'rgb(255,0,0)',
+                              borderWidth: 1, 
+                              data: dataBUE
+                          },{
+                            label: 'Moviles',
+                            backgroundColor: 'rgba(50,0,255,.2)',
+                            borderColor: 'rgb(0,0,255)',
+                            borderWidth: 1, 
+                            data: dataBUM
+                          },{
+                            label: 'Diversos',
+                            backgroundColor: 'rgba(0,255,0,.2)',
+                            borderColor: 'rgb(0,255,0)',
+                            borderWidth: 1, 
+                            data: dataBUD
+                          },
+                          {
+                            label: 'Reproductores',
+                            backgroundColor: 'rgba(0,255,255,.2)',
+                            borderColor: 'rgb(0,255,0)',
+                            borderWidth: 1, 
+                            data: dataBUR
+                          },
+                          {
+                            label: 'Gastos Estructura',
+                            backgroundColor: 'rgba(100,0,100,.2)',
+                            borderColor: 'rgb(0,255,0)',
+                            borderWidth: 1, 
+                            data: dataBUGE
+                          },
+                        ]
+
+            divId = `bienesDeUsoChart${campo}`
+
+            generarGraficoMultiBar(divId,labels,registros)
+            generarGraficoMultiBar(`idGraficoBienesDeUso${campo}`,labels,registros)
+          
+          }
+
+        // FINANCIERO
+          divId = `endeudamientoChart${campo}`
+
+          /** */
+
+          let dataPrestamos = []
+
+          for (const key in respuesta) {
+            
+              dataPrestamos.push(Number(respuesta[key].graficos.endeudamiento.prestamos).toFixed(2))
+            
+          }
+
+          dataPrestamos.reverse()
+          dolarizarArray(dataPrestamos,respuesta)
+          /** */
+
+          let dataTarjetas = []
+
+          for (const key in respuesta) {
+            
+              dataTarjetas.push(Number(respuesta[key].graficos.endeudamiento.tarjetas).toFixed(2))
+            
+          }
+
+          dataTarjetas.reverse()
+          dolarizarArray(dataTarjetas,respuesta)
+
+          /** */
+
+          let dataProveedores = []
+
+          for (const key in respuesta) {
+            
+              dataProveedores.push(Number(respuesta[key].graficos.endeudamiento.proveedores).toFixed(2))
+            
+          }
+
+          dataProveedores.reverse()
+          dolarizarArray(dataProveedores,respuesta)
+
+          /** */
+
+          let dataSgr = []
+
+          for (const key in respuesta) {
+            
+              dataSgr.push(Number(respuesta[key].graficos.endeudamiento.sgr).toFixed(2))
+            
+          }
+
+          dataSgr.reverse()
+          dolarizarArray(dataSgr,respuesta)
+
+          /** */
+          
+          let dataMutuales = []
+
+          for (const key in respuesta) {
+            
+              dataMutuales.push(Number(respuesta[key].graficos.endeudamiento.mutuales).toFixed(2))
+            
+          }
+
+          dataMutuales.reverse()
+          dolarizarArray(dataMutuales,respuesta)
+          
+          /** */
+
+          let dataCLP = []
+
+          for (const key in respuesta) {
+              dataCLP.push(Number(respuesta[key].graficos.endeudamiento.cerealPL).toFixed(2))
+          }
+
+          dataCLP.reverse()
+          dolarizarArray(dataCLP,respuesta)
+
+          registros = [{
+                            label: 'Prestamos',
+                            backgroundColor: 'rgba(255,0,100,.2)',
+                            borderColor: 'rgb(255,0,0)',
+                            borderWidth: 1, 
+                            data: dataPrestamos
+                        },{
+                          label: 'Tarjetas',
+                          backgroundColor: 'rgba(50,0,255,.2)',
+                          borderColor: 'rgb(0,0,255)',
+                          borderWidth: 1, 
+                          data: dataTarjetas
+                        },{
+                          label: 'Sgr',
+                          backgroundColor: 'rgba(0,255,0,.2)',
+                          borderColor: 'rgb(0,255,0)',
+                          borderWidth: 1, 
+                          data: dataSgr
+                        },{
+                          label: 'Mutuales',
+                          backgroundColor: 'rgba(0,255,255,.2)',
+                          borderColor: 'rgb(0,255,255)',
+                          borderWidth: 1, 
+                          data: dataMutuales
+                        },{
+                          label: 'Proveedores',
+                          backgroundColor: 'rgba(200,0,255,.2)',
+                          borderColor: 'rgb(200,0,255)',
+                          borderWidth: 1, 
+                          data: dataProveedores
+                        },{
+                          label: 'CPL',
+                          backgroundColor: 'rgba(236,255,0,.2)',
+                          borderColor: 'rgb(236,255,0)',
+                          borderWidth: 1, 
+                          data: dataCLP
+                        }]
+
+          generarGraficoMultiBar(divId,labels,registros)
+          generarGraficoMultiBar(`idGraficoDeudaBancaria${campo}`,labels,registros)
+
+          /** */
+
+          divId = `endeudamientoPasivoChart${campo}`
+
+          let dataEvolucionPasivo = []
+
+          for (const key in respuesta) {
+              dataEvolucionPasivo.push(Number(respuesta[key].cajas.pasivoTotal).toFixed(2))
+          }
+          
+          dataEvolucionPasivo.reverse()
+          dolarizarArray(dataEvolucionPasivo,respuesta)
+
+          tituloLabel = 'Evolución de Pasivo'
+
+          generarGraficoBarSimple(dataEvolucionPasivo,divId,labels,tituloLabel)
+
+          /******** */
+          divId = `deudaBancariaChart${campo}`
+
+          let dataDeudaBancaria = []
+
+          for (const key in respuesta) {
+              dataDeudaBancaria.push(Number(respuesta[key].graficos.deudaBancaria).toFixed(2))
+          }
+
+          dataDeudaBancaria.reverse()
+          dolarizarArray(dataDeudaBancaria,respuesta)
+
+          tituloLabel = 'Deuda Bancaria'
+
+          generarGraficoBarSimple(dataDeudaBancaria,divId,labels,tituloLabel)
+
+          divId = `interesesPagadosChart${campo}`
+
+          datainteresesPagados = getMonthData(respuesta,'interesesPagados',start)
+
+          datainteresesPagados.reverse()
+          // dolarizarArray(datainteresesPagados,respuesta)
+
+          tituloLabel = 'Intereses Pagados'
+
+          generarGraficoBarSimple(datainteresesPagados,divId,labels,tituloLabel)
+
+        // IMPOSITIVO
+
+                          
+          divId = `saldoIva${campo}`
+          
+          /** */
+
+          let dataSld = []
+
+          for (const key in respuesta) {
+            
+              dataSld.push(Number(respuesta[key].graficos.saldos.sld).toFixed(2))
+            
+          }
+
+          dataSld.reverse()
+          dolarizarArray(dataSld,respuesta)
+
+          /** */
+
+          let dataSaldoTecnico = []
+
+          for (const key in respuesta) {
+            
+              dataSaldoTecnico.push(Number(respuesta[key].graficos.saldos.saldoTecnico).toFixed(2))
+            
+          }
+
+          dataSaldoTecnico.reverse()
+          dolarizarArray(dataSaldoTecnico,respuesta)
+
+          registros = [{
+                            label: 'SLD',
+                            backgroundColor: 'rgba(255,0,100,.2)',
+                            borderColor: 'rgb(255,0,0)',
+                            borderWidth: 1, 
+                            data: dataSld
+                        },{
+                          label: 'Saldo Técnico',
+                          backgroundColor: 'rgba(50,0,255,.2)',
+                          borderColor: 'rgb(0,0,255)',
+                          borderWidth: 1, 
+                          data: dataSaldoTecnico
+          }]
+
+          generarGraficoMultiBar(divId,labels,registros)
+
+          generarGraficoMultiBar(`idGraficoSaldoIva${campo}`,labels,registros)
+
+          divId = `sueldos12Ventas${campo}`
+
+          let dataSueldos12 = getMonthData(respuesta,'sueldos12',start)
+
+          let denominadorVentas = getMonthData(respuesta,'denominadorVentas')
+
+          let dataSueldos12Ventas = dataSueldos12.map((registro,index)=>{
+
+            return Number(((registro / denominadorVentas[index]) * 100)).toFixed(2)
+            
+          })
+
+          dataSueldos12.reverse()
+          // dolarizarArray(dataSueldos12,respuesta)
+
+          dataSueldos12Ventas.reverse()
+
+          tituloLabel = 'Sueldos 1 + 2 / Ventas'
+
+          let configSueldos12VentasChart = {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  type: 'bar',
+                  label: 'Suedos 1 + 2',
+                  borderColor: window.chartColors.red,
+                  backgroundColor:'rgba(255,0,0,.2)',
+                  borderColor: 'rgb(255,0,0)',
+                  yAxisID: 'A',
+                  data: dataSueldos12
+                }
+                ,
+                {
+                  label: 'Sueldos 1 + 2 / Ventas.',
+                  type: 'line',
+                  borderColor: 'rgb(0,255,0)',
+                  yAxisID: 'B',
+                  fill:false,
+                  data: dataSueldos12Ventas,
+                  borderWidth: 2
+                }
+              ]
+            },
+            options: {
+              tooltips: {
+                callbacks: {
+                  label: function(tooltipItem, data) {
+
+                      if(tooltipItem.datasetIndex == 1){
+                        return `${tooltipItem.yLabel}%`
+                      }else{
+                        return `U$D ${tooltipItem.yLabel.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+                      }
+                    }
+                }
+              },
+              scaleShowValues: true,
+              scales: {
+                xAxes: [{
+                  display:true,
+                  ticks: {
+                    autoSkip: false,
+                  }
+                }],
+                yAxes: [{
+                  id: 'A',
+                  type: 'linear',
+                  position: 'left',
+                  ticks:{
+                    beginAtZero: true,
+                    callback: function(value, index, ticks) {
+                      return  format(value);
+                    }     
+                  }
+                }, {
+                  id: 'B',
+                  type: 'linear',
+                  position: 'right',
+                  ticks:{
+                    beginAtZero: true
+                  }
+                }]
+              },
+              plugins:{
+                labels:{                  
+                  render: (val)=>{ return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});},
+                }
+              },
+              legend:{
+                labels: {
+                      boxWidth: 5
+                }
+              }
+            }
+          }
+                
+          generarGraficoBar(divId,configSueldos12VentasChart,'noOption');
+          generarGraficoBar(`idGraficoSueldo12${campo}`,configSueldos12VentasChart,'noOption');
+          
+          divId = `sueldos12HonorariosVentas${campo}`
+
+          let dataSueldos12Honorarios = getMonthData(respuesta,'sueldos12Honorarios',start)
+
+          let dataSueldos12HonorariosVentas = dataSueldos12Honorarios.map((registro,index)=>{
+
+            return Number(((registro / denominadorVentas[index]) * 100)).toFixed(2)
+
+          })
+
+          dataSueldos12Honorarios.reverse()
+          // dolarizarArray(dataSueldos12Honorarios,respuesta)
+
+          dataSueldos12HonorariosVentas.reverse()
+          
+          tituloLabel = 'Sueldos 1 + 2 + Honorarios / Ventas' 
+
+          let configSueldos12HonorariosVentasChart = {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  type: 'bar',
+                  label: 'Suedos 1 + 2 + Honorarios',
+                  backgroundColor:'rgba(255,0,0,.2)',
+                  borderColor: 'rgb(255,0,0)',
+                  yAxisID: 'A',
+                  data: dataSueldos12Honorarios
+                }
+                ,
+                {
+                  label: 'Sueldos 1 + 2 + Honorarios / Ventas.',
+                  type: 'line',
+                  borderColor: 'rgb(0,255,0)',
+                  yAxisID: 'B',
+                  fill:false,
+                  data: dataSueldos12HonorariosVentas,
+                  borderWidth: 2
+                }
+              ]
+            },
+            options: {
+              tooltips: {
+                callbacks: {
+                  label: function(tooltipItem, data) {
+
+                      if(tooltipItem.datasetIndex == 1){
+                        return `${tooltipItem.yLabel}%`
+                      }else{
+                        return `U$D ${tooltipItem.yLabel.toLocaleString('de-DE')}`
+                      }
+                    }
+                }
+              },
+              scaleShowValues: true,
+              scales: {
+                xAxes: [{
+                  display:true,
+                  ticks: {
+                    autoSkip: false,
+                  }
+                }],
+                yAxes: [{
+                  id: 'A',
+                  type: 'linear',
+                  position: 'left',
+                  ticks:{
+                    beginAtZero: true,
+                    callback: function(value, index, ticks) {
+                      return  format(value);
+                    }     
+                  }
+                }, {
+                  id: 'B',
+                  type: 'linear',
+                  position: 'right',
+                  ticks:{
+                    beginAtZero: true,
+                    callback: function(value, index, ticks) {
+                      return  format(value);
+                    } 
+                  }
+                }]
+              },
+              plugins:{
+                labels:{                  
+                  render: (val)=>{ return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});},
+                }
+              },
+              legend:{
+                labels: {
+                      boxWidth: 5
+                }
+              }
+            }
+          }
+
+          generarGraficoBar(divId,configSueldos12HonorariosVentasChart,'noOption');
+
+          generarGraficoBar(`idGraficoSueldo12Honorario${campo}`,configSueldos12HonorariosVentasChart,'noOption');
+
+          if(campo != 'Paihuen'){
+
+            let dataCargasSociales = getMonthData(respuesta,'cargasSociales',start)
+
+            dataCargasSociales.reverse()
+            // dolarizarArray(dataCargasSociales,respuesta)
+
+            divId = `cargasSocialesGrafico${campo}`
+
+            tituloLabel = 'Cargas Sociales'
+  
+            generarGraficoBarSimple(dataCargasSociales,divId,labels,tituloLabel)
+            generarGraficoBarSimple(dataCargasSociales,`idGraficoCargasSociales${campo}`,labels,tituloLabel)
+
+          }
+        
+      const btnsZoomGrafico = document.querySelectorAll('.zoomGraficos')
+
+      btnsZoomGrafico.forEach(element => {
+
+        element.addEventListener('click',()=>{
+
+          switch (element.attributes['data-modal'].value) {
+            case `zGraficoVentas${campo}`:
+                $(`#graficoVentaModal${campo}`).modal('show')
+
+              break;
+            
+            case `zGraficoVentas2${campo}`:
+                $(`#graficoVenta2Modal${campo}`).modal('show')
+
+              break;
+
+              case `zGraficoMargenVentas${campo}`:
+                $(`#graficoMargenVentaModal${campo}`).modal('show')
+
+              break;
+
+              case `zGraficoGanaderia${campo}`:
+                $(`#graficoGanaderiaModal${campo}`).modal('show')
+
+              break;
+
+              case `zGraficoEndeudamiento${campo}`:
+                $(`#graficoDeudaBancariaModal${campo}`).modal('show')
+
+              break;
+
+              case `zGraficoSaldoIva${campo}`:
+                $(`#graficoSaldoIvaModal${campo}`).modal('show')
+                break;
+
+              case `zGraficoSueldos12${campo}`:
+                $(`#graficoSueldo12Modal${campo}`).modal('show')
+                break;
+
+              case `zGraficoSueldos12Honorarios${campo}`:
+                $(`#graficoSueldo12HonorarioModal${campo}`).modal('show')
+                break;
+
+              case `zGraficoBienesDeCambio${campo}`:
+                $(`#graficoBienesDeCambioModal${campo}`).modal('show')
+                break;
+
+              case `zGraficoBienesDeUso${campo}`:
+                $(`#graficoBienesDeUsoModal${campo}`).modal('show')
+                break;
+
+              case `zGraficoCargasSociales${campo}`:
+                $(`#graficoCargasSocialesModal${campo}`).modal('show')
+                break;
+          
+            default:
+              break;
+          }
+          
+        })
+
+      });
+    }
+
+    if(btnGenerarReporte != null){
+      btnGenerarReporte.addEventListener('click',function(){
+
+        let periodo = document.querySelector('.periodoContable').value
+
+        window.location = `index.php?ruta=contable/contable&periodo=${periodo}`
+
+      })
+    }
+    
+    let url = 'ajax/contable.ajax.php';
+
+    let periodo = getQueryVariable('periodo')
+
+    let periodoData = 'last'
+
+    if(periodo != '') periodoData = `${periodo}-01`
+    
+    let data = new FormData()
+    data.append('periodo',periodoData)
+    data.append('accion','mostrarData')
+
+    // fetch(url,{
+    //     method:'POST',
+    //     body:data
+    // }).then(resp=>resp.json())
+    // .then(respuesta=>{
+    $.ajax({
+      method:'post',
+      url,
+      data:{
+        'periodo':periodoData,
+        'accion':'mostrarData'
+      }
+    }).done(function(respuesta){
+   
+      respuesta = JSON.parse(respuesta)
+
+      if(!respuesta){
+
+        swal({
+          title: "No hay información para el mes seleccionado.",
+          text: ``,
+          type: "error",
+          confirmButtonText: "¡Cerrar!"
+        }).then(()=>{
+          window.location = `index.php?ruta=contable/contable`
+        });
+        return
+      }
+
+      if(respuesta.error){
+
+        let padre = document.querySelector('.content-wrapper .box .content')
+
+        padre.removeChild(padre.lastChild)
+
+        let alert = document.createElement('H1')
+        alert.innerHTML = 'Buscar informacion desde el boton de filtros.'
+        padre.appendChild(alert)
+
+        swal({
+            title: "Falta cargar una planillas.",
+            text: `Ultimas planillas cargadas:
+            PRINCIPAL - ${formatearFecha(respuesta.principal)} ||
+            CONSOLIDADO - ${formatearFecha(respuesta.consolidado)} ||
+            PAIHUEN - ${formatearFecha(respuesta.paihuen)}`,
+            type: "error",
+            confirmButtonText: "¡Cerrar!"
+          });
+    
+          return
+        
+      }
+
+      // PERIODO VISIBLE
+      document.getElementById('periodoVisible').innerHTML = respuesta['barlovento'][0].periodoVisible
+
+      cargarDatosCampo('Barlovento',respuesta['barlovento'])
+      // cargarDatosCampo('Paihuen',respuesta['paihuen'])
+
+    })
+    .catch(err=>console.log(err))
+
+
+
+/*=============================================
+ELIMINAR ARCHIVO
+=============================================*/
+$(".tablas").on("click", ".btnEliminarArchivoContable", function(){
+
+  var idArchivo = $(this).attr("idArchivo");
+  var tabla = $(this).attr("tablaDB");
+
+  swal({
+    title: '¿Está seguro de borrar los registros asociados a este Archivo?',
+    text: "¡Si no lo está puede cancelar la accíón!",
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Si, borrar!'
+  }).then(function(result){
+
+    if(result.value){
+
+      if(tabla != 'contable' && tabla != 'contablePaihuen'){ 
+        window.location = "indexdex.php?ruta=archivosCarga&nombreArchivo=" + idArchivo + "&tabla=" + tabla;
+      }else{
+        window.location = "index.php?ruta=contable/archivos&nombreArchivo=" + idArchivo + "&tabla=" + tabla;
+      }
+
+    }
+
+  })
+
+})

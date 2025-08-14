@@ -1,0 +1,26 @@
+<svg version="1.2" id="svgNaranja" xmlns="http://www.w3.org/2000/svg" width="222" height="661" style="background-repeat:no-repeat;">
+
+	<path id="6.7" cell="orange" class="lotesPath" d="m15 550h96v75h-96z"/>
+	<path id="3.6" cell="orange" class="lotesPath" d="m15 477h96v75h-96z"/>
+	<path id="3.5" cell="orange" class="lotesPath" d="m15 404h96v75h-96z"/>
+	<path id="3.4" cell="orange" class="lotesPath" d="m15 333h96v75h-96z"/>
+	<path id="3.3" cell="orange" class="lotesPath" d="m15 261h96v75h-96z"/>
+	<path id="3.2" cell="orange" class="lotesPath" d="m15 188h96v75h-96z"/>
+	<path id="4.8" cell="orange" class="lotesPath" d="m111 564h45v60h-45z"/>
+	<path id="4.16" cell="orange" class="lotesPath" d="m157 563h46l2 34.9-26 0.5v25.5l-22-0.9z"/>
+	<path id="3.1" cell="orange" class="lotesPath" d="m13.5 57.9l97.5 55.1v75h-96z"/>
+	<path id="4.7" cell="orange" class="lotesPath" d="m111 504h45v60h-45z"/>
+	<path id="4.6" cell="orange" class="lotesPath" d="m111 445h45v60h-45z"/>
+	<path id="4.14" cell="orange" class="lotesPath" d="m157 444h46v60h-46z"/>
+	<path id="4.15" cell="orange" class="lotesPath" d="m158 503h46v60h-46z"/>
+	<path id="4.3" cell="orange" class="lotesPath" d="m111 265h45v60h-45z"/>
+	<path id="4.4" cell="orange" class="lotesPath" d="m111 324h45v60h-45z"/>
+	<path id="4.5" cell="orange" class="lotesPath" d="m111 385h45v60h-45z"/>
+	<path id="4.13" cell="orange" class="lotesPath" d="m158 385h46v60h-46z"/>
+	<path id="4.12" cell="orange" class="lotesPath" d="m157 325h46v60h-46z"/>
+	<path id="4.11" cell="orange" class="lotesPath" d="m157 265h46v60h-46z"/>
+	<path id="4.2" cell="orange" class="lotesPath" d="m111 205h45v60h-45z"/>
+	<path id="4.1" cell="orange" class="lotesPath" d="m111 112.9l45.5 29-0.5 63.1h-45z"/>
+	<path id="4.9" cell="orange" class="lotesPath" d="m158 145l45.5 23.4 0.5 36.6h-46z"/>
+	<path id="4.10" cell="orange" class="lotesPath" d="m156 205h46v60h-46z"/>
+</svg>
