@@ -1,4 +1,5 @@
 
+
 $('#ejecucionTab').on('click',function(){
   
   let url = 'ajax/agro.ajax.php'
@@ -302,13 +303,14 @@ const cargarInfoEjecucion = (campania)=>{
   data.append('etapa',etapa)
   data.append('idPlanificacion',Number(idPlanificacion))
 
+  console.log('Datos de la variable data:', data);
 
   fetch(url,{
       method:'post',
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-
+ 
     if(respuesta.length == 0){
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
       document.getElementById(`hasInvEjecucionPichi`).innerText = '-'
@@ -376,8 +378,6 @@ const cargarInfoEjecucion = (campania)=>{
       }
     }
     
-    // console.log(respuesta)
-
     respuesta.forEach(lote => {
 
       if(data[lote['campo']][lote['lote']] == undefined){
@@ -449,9 +449,8 @@ const cargarInfoEjecucion = (campania)=>{
         }
 
       }
-      // console.log(info[lote['campo']]['hasFina'])
+    
     });
-
 
     ['pichi','bety'].forEach(campo => {
 
@@ -522,12 +521,11 @@ const cargarInfoEjecucion = (campania)=>{
 
     });
 
-    console.log(info)
+
     // HAS INFO
     document.getElementById(`totalHasEjecutadas`).innerText = Number(info.bety.hasFina) + Number(info.bety.hasGruesa) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasCobertura) 
     
     let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura)
-
     document.getElementById(`totalInversionEjecutada`).innerText = totalInversion.toLocaleString('de-DE')
 
     document.getElementById(`hasInvEjecucionBety`).innerText = info.bety.hasFina
@@ -554,10 +552,7 @@ const cargarInfoEjecucion = (campania)=>{
 
     document.getElementById(`totalCostoFinaEjecucionPichi`).innerText = info.pichi.costoFina.toLocaleString('de-DE')
     document.getElementById(`totalCostoFinaEjecucionBety`).innerText = info.bety.costoFina.toLocaleString('de-DE')
-    
-    console.log((Number(info.bety.costoFina) / Number(info.bety.hasFina)));
-    console.log((Number(info.bety.costoFina) / Number(info.bety.hasFina)).toLocaleString('de-DE'))
-    
+
     document.getElementById(`costoFinaEjecucionHasPichi`).innerText = (Number(info.pichi.hasFina) > 0) ? (Number(info.pichi.costoFina) / Number(info.pichi.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
     document.getElementById(`costoFinaEjecucionHasBety`).innerText = (Number(info.bety.hasFina) > 0) ? (Number(info.bety.costoFina) / Number(info.bety.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
 

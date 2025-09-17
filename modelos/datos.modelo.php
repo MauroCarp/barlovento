@@ -13,7 +13,7 @@ class ModeloDatos{
 		if($item != null){
 
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item ORDER BY $orden DESC");
-
+			return $stmt;
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 
 			$stmt -> execute();
@@ -23,6 +23,7 @@ class ModeloDatos{
 		}else{
 			
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla ORDER BY $orden DESC");
+			return $stmt;
 
 			$stmt -> execute();
 
@@ -92,8 +93,8 @@ class ModeloDatos{
 			$stmt = Conexion::conectar()->prepare("SELECT $campo FROM $tabla WHERE ($item2 BETWEEN '$kg1' AND '$kg2') AND ($item3 BETWEEN '$fecha1' AND '$fecha2')");
 			
 			$stmt -> execute();
-			var_dump($stmt ->errorInfo());
-			var_dump($stmt);
+			// var_dump($stmt ->errorInfo());
+			// var_dump($stmt);
 
 			return $stmt -> fetchAll();
 
@@ -354,7 +355,7 @@ class ModeloDatos{
 
 			
 			$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) as totalAnimales FROM $tabla WHERE $item = '$valor' AND $item2 BETWEEN '$fecha1' AND '$fecha2'");
-			
+			// return $stmt;
 			$stmt -> execute();
 
 			

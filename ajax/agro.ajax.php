@@ -29,11 +29,11 @@ class AjaxAgro{
 		$campania = $this->campania;
 
 		$idPlanificacion = ControladorAgro::ctrGetCampaignId($campania,$cargaPlanificacion);
-
+		
 		$cultivos = ControladorAgro::ctrMostrarDataCultivosPlanificacion($idPlanificacion);
 
 		$dataCostos = ControladorAgro::ctrMostrarCostos('planificaciones',$campania,$idPlanificacion);
-		
+
 		$lotes = ControladorAgro::ctrGetLotes($campania);
 
 		$data = array('idPlanificacion'=>$idPlanificacion,'cultivos'=>$cultivos,'costos'=>$dataCostos,'lotes'=>$lotes);
@@ -50,6 +50,7 @@ class AjaxAgro{
 		$etapa = $this->etapa;
 
 		$data = ControladorAgro::ctrMostrarDataEjecucion($tabla,'campania',$campania,'etapa',$etapa);
+
 		$idPlanificacion = $this->idPlanificacion;
 		
 		$costos = ControladorAgro::ctrMostrarCostos('planificaciones',$campania,$idPlanificacion);

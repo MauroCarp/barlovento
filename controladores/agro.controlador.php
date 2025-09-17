@@ -280,7 +280,7 @@ class ControladorAgro{
                     if(in_array($file["type"],$allowedFileType))
                         
                         $ruta = "carga/" . $file['name'];
-                        var_dump($file['name']);
+                        
                         move_uploaded_file($file['tmp_name'], $ruta);
                                                                 
                         $rowNumber = 0;

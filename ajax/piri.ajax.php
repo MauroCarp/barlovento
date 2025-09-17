@@ -36,6 +36,8 @@ foreach( $html->find('dl[class="remate"]') as $element){
 	$fecha = $element->find('dt',0);
 	$fecha = $fecha->plaintext;
 	$fecha = explode('-',$fecha);
+	echo $fecha;
+	die;
 	$detalle = $fecha[0];
 	$piri = $element->find('span',0);
 	$piri = $piri->plaintext;
@@ -96,6 +98,6 @@ foreach( $html->find('dl[class="remate"]') as $element){
 	
 	$huboActualizacion = (in_array(TRUE, $huboActualizacion));
 
-	print_r($huboActualizacion);
+	// print_r($huboActualizacion);
 
 ?>

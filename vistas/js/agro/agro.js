@@ -13,7 +13,7 @@ const btnsMenusCarga = document.querySelectorAll('.menusCarga')
 for (const menu of btnsMenusCarga) {
     
     menu.addEventListener('click',()=>{
-
+        console.log('hola')
         let menuCarga = menu.getAttribute('data-carga')
 
         document.getElementById('tituloCarga').innerText = `Cargar ${menuCarga}`

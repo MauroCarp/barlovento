@@ -44,7 +44,7 @@
 
   $totalAdpvCC = $sumaADPV[0][0];
 
-  $promedioAdpvCC = number_format(($totalAdpvCC / $totalAnimales),2);
+  $promedioAdpvCC = ($totalAnimales > 0) ? number_format(($totalAdpvCC / $totalAnimales),2) : 0;
 
                                 
   /*********

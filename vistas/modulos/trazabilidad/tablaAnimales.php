@@ -84,165 +84,33 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                       </tr>
                     </thead>
                     <tbody id="tablaAnimalesBody">
-                      <?php
-                      $animales = ControladorTrazabilidad::ctrMostrarAnimalesFaenas($ids);
-                    
-                      if (!empty($animales) && is_array($animales)) {
-
-                        $registrosAgrupados = '';
-                        $sinRegistros = '';
-
-                        foreach ($animales as $rfid => $registros) {
-                         
-                          if(sizeof($registros) === 3) {
-                            
-                            // Primera fila: combinar datos de [0] y [1] si existen
-                            $row0 = isset($registros[0]) ? $registros[0] : [];
-                            $row1 = isset($registros[1]) ? $registros[1] : [];
-
-                            // Mezclar datos de [0] y [1] (row1 sobrescribe row0 en caso de conflicto)
-                            $primeraFila = array_merge($row0, $row1);
-                            $registrosAgrupados .= '<tr style="background-color:rgba(255, 246, 121, 0.38);">
-                                                      <td>' . htmlspecialchars($rfid) . '</td>
-                                                      <td>' . (isset($primeraFila["correlacion"]) ? htmlspecialchars($primeraFila["correlacion"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["garron"]) ? htmlspecialchars($primeraFila["garron"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["diferencia"]) ? htmlspecialchars($primeraFila["diferencia"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kilos_teoricos"]) ? htmlspecialchars($primeraFila["kilos_teoricos"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kilos"]) ? htmlspecialchars($primeraFila["kilos"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["gordo"]) ? htmlspecialchars($primeraFila["gordo"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["denominacion"]) ? htmlspecialchars($primeraFila["denominacion"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["caravana"]) ? htmlspecialchars($primeraFila["caravana"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["categoria"]) ? htmlspecialchars($primeraFila["categoria"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["raza"]) ? htmlspecialchars($primeraFila["raza"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["tropa"]) ? htmlspecialchars($primeraFila["tropa"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["clienteDestinoVenta"]) ? htmlspecialchars($primeraFila["clienteDestinoVenta"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["actividad"]) ? htmlspecialchars($primeraFila["actividad"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kgIngreso"]) ? htmlspecialchars($primeraFila["kgIngreso"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kgEgreso"]) ? htmlspecialchars($primeraFila["kgEgreso"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kgProducido"]) ? htmlspecialchars($primeraFila["kgProducido"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["dias"]) ? htmlspecialchars($primeraFila["dias"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["adpv"]) ? htmlspecialchars($primeraFila["adpv"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kilosTC"]) ? htmlspecialchars($primeraFila["kilosTC"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["kilosMS"]) ? htmlspecialchars($primeraFila["kilosMS"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["convTC"]) ? htmlspecialchars($primeraFila["convTC"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["convMS"]) ? htmlspecialchars($primeraFila["convMS"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["costo"]) ? htmlspecialchars($primeraFila["costo"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["consignatario"]) ? htmlspecialchars($primeraFila["consignatario"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["proveedor"]) ? htmlspecialchars($primeraFila["proveedor"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["localidad"]) ? htmlspecialchars($primeraFila["localidad"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["provincia"]) ? htmlspecialchars($primeraFila["provincia"]) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["ingreso"]) ? htmlspecialchars(date('d-m-Y', strtotime($primeraFila["ingreso"]))) : '') . '</td>
-                                                      <td>' . (isset($primeraFila["salida"]) ? htmlspecialchars(date('d-m-Y', strtotime($primeraFila["salida"]))) : '') . '</td>
-                                                      <td>' . (isset($primeraFila['transaccionWC']) ? htmlspecialchars($primeraFila['transaccionWC']) : '') . '</td>
-                                                      <td>' . (isset($primeraFila['corral']) ? htmlspecialchars($primeraFila['corral']) : '') . '</td>
-                                                    </tr>';
-
-                            // Segunda fila: si existe el índice 2, mostrar sólo los campos que correspondan
-                            if (isset($registros[2]) && is_array($registros[2])) {
-                              $row2 = $registros[2];
-
-                              $registrosAgrupados .= 
-                              '<tr style="background-color:rgba(44, 187, 212, 0.38);">
-                                <td></td>
-                                <td>' . (isset($row2["correlacion"]) ? htmlspecialchars($row2["correlacion"]) : '') . '</td>
-                                <td>' . (isset($row2["garron"]) ? htmlspecialchars($row2["garron"]) : '') . '</td>
-                                <td>' . (isset($row2["diferencia"]) ? htmlspecialchars($row2["diferencia"]) : '') . '</td>
-                                <td>' . (isset($row2["kilos_teoricos"]) ? htmlspecialchars($row2["kilos_teoricos"]) : '') . '</td>
-                                <td>' . (isset($row2["kilos"]) ? htmlspecialchars($row2["kilos"]) : '') . '</td>
-                                <td>' . (isset($row2["gordo"]) ? htmlspecialchars($row2["gordo"]) : '') . '</td>
-                                <td>' . (isset($row2["denominacion"]) ? htmlspecialchars($row2["denominacion"]) : '') . '</td>
-                                <td>' . (isset($row2["caravana"]) ? htmlspecialchars($row2["caravana"]) : '') . '</td>
-                                <td>' . (isset($row2["categoria"]) ? htmlspecialchars($row2["categoria"]) : '') . '</td>
-                                <td>' . (isset($row2["raza"]) ? htmlspecialchars($row2["raza"]) : '') . '</td>
-                                <td>' . (isset($row2["tropa"]) ? htmlspecialchars($row2["tropa"]) : '') . '</td>
-                                <td>' . (isset($row2["clienteDestinoVenta"]) ? htmlspecialchars($row2["clienteDestinoVenta"]) : '') . '</td>
-                                <td>' . (isset($row2["actividad"]) ? htmlspecialchars($row2["actividad"]) : '') . '</td>
-                                <td>' . (isset($row2["kgIngreso"]) ? htmlspecialchars($row2["kgIngreso"]) : '') . '</td>
-                                <td>' . (isset($row2["kgEgreso"]) ? htmlspecialchars($row2["kgEgreso"]) : '') . '</td>
-                                <td>' . (isset($row2["kgProducido"]) ? htmlspecialchars($row2["kgProducido"]) : '') . '</td>
-                                <td>' . (isset($row2["dias"]) ? htmlspecialchars($row2["dias"]) : '') . '</td>
-                                <td>' . (isset($row2["adpv"]) ? htmlspecialchars($row2["adpv"]) : '') . '</td>
-                                <td>' . (isset($row2["kilosTC"]) ? htmlspecialchars($row2["kilosTC"]) : '') . '</td>
-                                <td>' . (isset($row2["kilosMS"]) ? htmlspecialchars($row2["kilosMS"]) : '') . '</td>
-                                <td>' . (isset($row2["convTC"]) ? htmlspecialchars($row2["convTC"]) : '') . '</td>
-                                <td>' . (isset($row2["convMS"]) ? htmlspecialchars($row2["convMS"]) : '') . '</td>
-                                <td>' . (isset($row2["costo"]) ? htmlspecialchars($row2["costo"]) : '') . '</td>
-                                <td>' . (isset($row2["consignatario"]) ? htmlspecialchars($row2["consignatario"]) : '') . '</td>
-                                <td>' . (isset($row2["proveedor"]) ? htmlspecialchars($row2["proveedor"]) : '') . '</td>
-                                <td>' . (isset($row2["localidad"]) ? htmlspecialchars($row2["localidad"]) : '') . '</td>
-                                <td>' . (isset($row2["provincia"]) ? htmlspecialchars($row2["provincia"]) : '') . '</td>
-                                <td>' . (isset($row2["ingreso"]) ? htmlspecialchars(date('d-m-Y', strtotime($row2["ingreso"]))) : '') . '</td>
-                                <td>' . (isset($row2["salida"]) ? htmlspecialchars(date('d-m-Y', strtotime($row2["salida"]))) : '') . '</td>
-                                <td>' . (isset($row2['transaccionWC']) ? htmlspecialchars($row2['transaccionWC']) : '') . '</td>
-                                <td>' . (isset($row2['corral']) ? htmlspecialchars($row2['corral']) : '') . '</td>
-                              </tr>';
-                            }
-                          } else {
-
-                            // Si hay más de 3 arrays internos, puedes agregar lógica similar para los índices 3, 4, etc.
-                              for ($i = 3; $i < count($registros); $i++) {
-                                $rowX = $registros[$i];
-                                if (is_array($rowX)) {
-                                  $sinRegistros .= '<tr style="background-color:rgba(116, 25, 25, 0.38);"> 
-                                                    <td> Sin registro </td>
-                                                    <td>' . (isset($rowX["correlacion"]) ? htmlspecialchars($rowX["correlacion"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["garron"]) ? htmlspecialchars($rowX["garron"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["diferencia"]) ? htmlspecialchars($rowX["diferencia"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kilos_teoricos"]) ? htmlspecialchars($rowX["kilos_teoricos"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kilos"]) ? htmlspecialchars($rowX["kilos"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["gordo"]) ? htmlspecialchars($rowX["gordo"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["denominacion"]) ? htmlspecialchars($rowX["denominacion"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["caravana"]) ? htmlspecialchars($rowX["caravana"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["categoria"]) ? htmlspecialchars($rowX["categoria"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["raza"]) ? htmlspecialchars($rowX["raza"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["tropa"]) ? htmlspecialchars($rowX["tropa"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["clienteDestinoVenta"]) ? htmlspecialchars($rowX["clienteDestinoVenta"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["actividad"]) ? htmlspecialchars($rowX["actividad"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kgIngreso"]) ? htmlspecialchars($rowX["kgIngreso"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kgEgreso"]) ? htmlspecialchars($rowX["kgEgreso"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kgProducido"]) ? htmlspecialchars($rowX["kgProducido"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["dias"]) ? htmlspecialchars($rowX["dias"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["adpv"]) ? htmlspecialchars($rowX["adpv"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kilosTC"]) ? htmlspecialchars($rowX["kilosTC"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["kilosMS"]) ? htmlspecialchars($rowX["kilosMS"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["convTC"]) ? htmlspecialchars($rowX["convTC"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["convMS"]) ? htmlspecialchars($rowX["convMS"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["costo"]) ? htmlspecialchars($rowX["costo"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["consignatario"]) ? htmlspecialchars($rowX["consignatario"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["proveedor"]) ? htmlspecialchars($rowX["proveedor"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["localidad"]) ? htmlspecialchars($rowX["localidad"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["provincia"]) ? htmlspecialchars($rowX["provincia"]) : '') . '</td>
-                                                    <td>' . (isset($rowX["ingreso"]) ? htmlspecialchars(date('d-m-Y', strtotime($rowX["ingreso"]))) : '') . '</td>
-                                                    <td>' . (isset($rowX["salida"]) ? htmlspecialchars(date('d-m-Y', strtotime($rowX["salida"]))) : '') . '</td>
-                                                    <td>' . (isset($rowX['transaccionWC']) ? htmlspecialchars($rowX['transaccionWC']) : '') . '</td>
-                                                    <td>' . (isset($rowX['corral']) ? htmlspecialchars($rowX['corral']) : '') . '</td>
-                                                  </tr>';
-                                }
-                              
-                            }
-
-                          }
-                 
-                        }
-                         
-                        if (!empty($registrosAgrupados)) {
-                          echo $registrosAgrupados;
-                          echo $sinRegistros;
-                        } else {
-                          echo '<tr><td colspan="32" class="text-center">No se encontraron registros.</td></tr>';
-                        }
-                      }
-                      ?>
+                      <!-- Los datos se cargarán vía AJAX -->
                     </tbody>
                     <script>
                       $(document).ready(function() {
-
-                        // Inicializa DataTable sin ordenamiento
-                            var table = $('.tablaFaenas').DataTable({
+                        const inicio = performance.now();
+                        console.log("Inicio de procesamiento: " + inicio + " ms");
+                        
+                        // Obtener los IDs de la URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const ids = urlParams.get('ids') || '<?php echo $ids; ?>';
+                        
+                        // Inicializa DataTable con procesamiento del lado del servidor
+                        var table = $('.tablaFaenas').DataTable({
+                            processing: true,
+                            serverSide: true,
+                            ajax: {
+                                url: 'ajax/trazabilidad-animals.ajax.php',
+                                type: 'POST',
+                                data: function(d) {
+                                    d.action = 'mostrarAnimalesPaginados';
+                                    d.ids = ids;
+                                }
+                            },
                             ordering: false,
                             dom: 'Bfrtip',
                             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
-                            pageLength: 25,
+                            pageLength: 26,
                             buttons: [
                             {
                                 extend: 'colvis',
@@ -270,17 +138,38 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                 colvis: 'Mostrar/Ocultar columnas',
                                 excel: 'Exportar a Excel',
                                 pdf: 'Exportar a PDF'
+                              },
+                              processing: "Procesando...",
+                              lengthMenu: "Mostrar _MENU_ registros",
+                              zeroRecords: "No se encontraron resultados",
+                              emptyTable: "Ningún dato disponible en esta tabla",
+                              info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                              infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
+                              infoFiltered: "(filtrado de un total de _MAX_ registros)",
+                              search: "Buscar:",
+                              paginate: {
+                                first: "Primero",
+                                last: "Último",
+                                next: "Siguiente",
+                                previous: "Anterior"
                               }
                             },
-                            // scrollX: true // Habilita scroll horizontal en DataTables
+                            rowCallback: function(row, data, index) {
+                              // Aplicar estilos según el tipo de registro
+                              const tipoRegistro = data[32]; // Índice del marcador de estilo
+                              if (tipoRegistro === 'segunda') {
+                                // Segunda fila (RFID vacío)
+                                $(row).css('background-color', 'rgba(44, 187, 212, 0.38)');
+                              } else if (tipoRegistro === 'primera') {
+                                // Primera fila
+                                $(row).css('background-color', 'rgba(255, 246, 121, 0.38)');
+                              } else if (tipoRegistro === 'otros') {
+                                // Registros sin agrupación completa
+                                $(row).css('background-color', 'rgba(116, 25, 25, 0.38)');
+                              }
+                            }
                           });
-
-                          // if (typeof sinRegistros !== 'undefined' && Array.isArray(sinRegistros)) {
-                          //   sinRegistros.forEach(function(trHtml) {
-                          //     $('#tablaAnimalesBody').append(trHtml);
-                          //   });
-                          //   table.rows.add($('#tablaAnimalesBody tr')).draw();
-                          // }
+                          
                           // Personaliza el menú desplegable de ColVis con CSS
                           $('<style>')
                             .prop('type', 'text/css')
@@ -307,8 +196,12 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             `)
                             .appendTo('head');
                         
+                            const fin = performance.now();
+                            console.log("Fin de procesamiento: " + fin + " ms");
+                            console.log("Tiempo total de procesamiento: " + (fin - inicio) + " ms");
 
                       });
+
                     </script>
                     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>
                     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>

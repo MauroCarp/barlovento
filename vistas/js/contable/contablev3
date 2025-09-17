@@ -1,33 +1,9 @@
  
     const generarColores = (cantidad,tipo)=>{
 
-        let coloresBg = [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 64, 64, 0.2)',
-          'rgba(0, 76, 162, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(245, 255, 64, 0.2)',
-          'rgba(220, 64, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(100, 255, 64, 0.2)'];
+        let coloresBg = ['rgba(255, 99, 132, 0.2)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)','rgba(100, 255, 64, 0.2)'];
 
-        let coloresBr = [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 64, 64, 1)',
-          'rgba(0, 76, 162, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(245, 255, 64, 1)',
-          'rgba(220, 64, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(100, 255, 64, 1)'];
+        let coloresBr = ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)','rgba(100, 255, 64, 1)'];
 
         let colores = [];
 
@@ -143,8 +119,7 @@
                                             // render: 'value'
                                             render: (val)=>{ 
                                               // return format(val.value);
-                                              return ''
-                                              // val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+                                              return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
                                             },
 
                                           },
@@ -252,11 +227,11 @@
                                           labels: {
 
                                             render: (val)=>{ 
-                                              // if(divId == 'saldoIvaBarlovento' || divId == 'saldoIvaPaihuen'){
-                                              //   return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
-                                              // }else{
+                                              if(divId == 'saldoIvaBarlovento' || divId == 'saldoIvaPaihuen'){
+                                                return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+                                              }else{
                                                 return '';
-                                              // }
+                                              }
                                             },
                                             // render: 'value',
                                           },
@@ -311,11 +286,11 @@
                                       plugins: {
                                         labels: {
                                           render: (val)=>{ 
-                                            // if(divId == 'sueldos12VentasBarlovento' || divId == 'sueldos12VentasPaihuen' || divId == 'sueldos12HonorariosVentasBarlovento' || divId == 'sueldos12HonorariosVentasPaihuen'){
-                                            //   return format(val.value);
-                                            // }else{
+                                            if(divId == 'sueldos12VentasBarlovento' || divId == 'sueldos12VentasPaihuen' || divId == 'sueldos12HonorariosVentasBarlovento' || divId == 'sueldos12HonorariosVentasPaihuen'){
+                                              return format(val.value);
+                                            }else{
                                               return '';
-                                            // }
+                                            }
                                           }
                                           // render: 'value',
                                         },
@@ -946,7 +921,8 @@
 
             for (let index = 0; index < labelsLength; index++) {
 
-              baaiAccum.push(dolarizar(respuesta[index]['graficos']['resultadoNeto'],respuesta[index]['dolar'],2).replace('.','').replace(',','.'))
+              baaiAccum.push(respuesta[index]['graficos']['resultadoNeto'].toFixed(1))
+
               
             }
 
@@ -1046,14 +1022,13 @@
 
             for (const key in resultadoNeto) {
 
-              let rtdoNetoActivo =  Number(resultadoNeto[key]) / Number(dolarizar(respuesta[key].graficos.activos,respuesta[key].dolar,2).replace(/\./g,'').replace(',','.')) * 100
-              let rtdoNetoPatrimonioNeto = Number(resultadoNeto[key]) / Number(dolarizar(respuesta[key].graficos.patrimonioNeto,respuesta[key].dolar,2).replace(/\./g,'').replace(',','.')) * 100
+              let rtdoNetoActivo =  Number(resultadoNeto[key]) / Number(respuesta[key].graficos.activos) * 100
+              let rtdoNetoPatrimonioNeto = Number(resultadoNeto[key]) / Number(respuesta[key].graficos.patrimonioNeto) * 100
 
               registrosRtdoNetoActivo.push(rtdoNetoActivo.toFixed(2))
               registrosRtdoNetoPatrimonioNeto.push(rtdoNetoPatrimonioNeto.toFixed(2))
               
             }
-
             registrosRtdoNetoActivo.reverse()
             registrosRtdoNetoPatrimonioNeto.reverse()
 
@@ -1112,36 +1087,32 @@
             let dataABG = []
 
             for (const key in respuesta) {
-              
-               dataABG.push(Number(respuesta[key].graficos.bienesDeCambio.activosBiologicosGan) / Number(respuesta[key].dolar))
+              if(key < 6){
 
+                dataABG.push(Number(respuesta[key].graficos.bienesDeCambio.activosBiologicosGan) / Number(respuesta[key].dolar))
+
+              }
             }
-
-            dataABG = dataABG.slice(0, labelsLength);
-
             dataABG.reverse()
-
 
             let dataPA = []
 
             for (const key in respuesta) {
-               dataPA.push(Number(respuesta[key].graficos.bienesDeCambio.productosAgropecuarios) / Number(respuesta[key].dolar))
+              if(key < 6){
+
+                dataPA.push(Number(respuesta[key].graficos.bienesDeCambio.productosAgropecuarios) / Number(respuesta[key].dolar))
+              }
             }
-
-            dataPA = dataPA.slice(0, labelsLength);
-
             dataPA.reverse()
 
             let dataBUPP = []
 
             for (const key in respuesta) {
-              
-               dataBUPP.push(Number(respuesta[key].graficos.bienesDeCambio.bienesUPP) / Number(respuesta[key].dolar)) 
-              
+              if(key < 6){
+
+                dataBUPP.push(Number(respuesta[key].graficos.bienesDeCambio.bienesUPP) / Number(respuesta[key].dolar)) 
+              }
             }
-
-            dataBUPP = dataBUPP.slice(0, labelsLength);
-
             dataBUPP.reverse()
 
             registros = [{
@@ -1174,61 +1145,46 @@
             let dataBUE = []
 
             for (const key in respuesta) {
-              
+              if(key < 6){
                 dataBUE.push(Number(respuesta[key].graficos.bienesDeUso.buEstructura) / Number(respuesta[key].dolar))
-              
+              }
             }
-
-            dataBUE = dataBUE.slice(0, labelsLength);
-
             dataBUE.reverse()
 
             let dataBUM = []
 
             for (const key in respuesta) {
-              
+              if(key < 6){
                 dataBUM.push(Number(respuesta[key].graficos.bienesDeUso.buMoviles) / Number(respuesta[key].dolar))
-              
+              }
             }
-
-            dataBUM = dataBUM.slice(0, labelsLength);
-
             dataBUM.reverse()
 
             let dataBUR = []
 
             for (const key in respuesta) {
-              
+              if(key < 6){
                 dataBUR.push(Number(respuesta[key].graficos.bienesDeUso.buReproductores) / Number(respuesta[key].dolar))
-              
+              }
             }
-
-            dataBUR = dataBUR.slice(0, labelsLength);
-
             dataBUR.reverse()
 
             let dataBUD = []
 
             for (const key in respuesta) {
-              
+              if(key < 6){
                 dataBUD.push(Number(respuesta[key].graficos.bienesDeUso.buDiversos) / Number(respuesta[key].dolar))
-              
+              }
             }
-
-            dataBUD = dataBUD.slice(0, labelsLength);
-
             dataBUD.reverse()
 
             let dataBUGE = []
 
             for (const key in respuesta) {
-              
+              if(key < 6){
                 dataBUGE.push(Number(respuesta[key].graficos.bienesDeUso.buGastosEstructura) / Number(respuesta[key].dolar))
-              
+              }
             }
-
-            dataBUGE = dataBUGE.slice(0, labelsLength);
-            
             dataBUGE.reverse()
 
             registros = [{
@@ -1281,9 +1237,9 @@
           let dataPrestamos = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataPrestamos.push(Number(respuesta[key].graficos.endeudamiento.prestamos).toFixed(2))
-            
+            }
           }
 
           dataPrestamos.reverse()
@@ -1293,9 +1249,9 @@
           let dataTarjetas = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataTarjetas.push(Number(respuesta[key].graficos.endeudamiento.tarjetas).toFixed(2))
-            
+            }
           }
 
           dataTarjetas.reverse()
@@ -1306,9 +1262,9 @@
           let dataProveedores = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataProveedores.push(Number(respuesta[key].graficos.endeudamiento.proveedores).toFixed(2))
-            
+            }
           }
 
           dataProveedores.reverse()
@@ -1319,9 +1275,9 @@
           let dataSgr = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataSgr.push(Number(respuesta[key].graficos.endeudamiento.sgr).toFixed(2))
-            
+            }
           }
 
           dataSgr.reverse()
@@ -1332,9 +1288,9 @@
           let dataMutuales = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataMutuales.push(Number(respuesta[key].graficos.endeudamiento.mutuales).toFixed(2))
-            
+            }
           }
 
           dataMutuales.reverse()
@@ -1345,7 +1301,9 @@
           let dataCLP = []
 
           for (const key in respuesta) {
+            if(key < 6){
               dataCLP.push(Number(respuesta[key].graficos.endeudamiento.cerealPL).toFixed(2))
+            }
           }
 
           dataCLP.reverse()
@@ -1399,9 +1357,11 @@
           let dataEvolucionPasivo = []
 
           for (const key in respuesta) {
+            if(key < 6){
               dataEvolucionPasivo.push(Number(respuesta[key].cajas.pasivoTotal).toFixed(2))
+            }
           }
-          
+
           dataEvolucionPasivo.reverse()
           dolarizarArray(dataEvolucionPasivo,respuesta)
 
@@ -1415,7 +1375,9 @@
           let dataDeudaBancaria = []
 
           for (const key in respuesta) {
+            if(key < 6){
               dataDeudaBancaria.push(Number(respuesta[key].graficos.deudaBancaria).toFixed(2))
+            }
           }
 
           dataDeudaBancaria.reverse()
@@ -1446,9 +1408,9 @@
           let dataSld = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataSld.push(Number(respuesta[key].graficos.saldos.sld).toFixed(2))
-            
+            }
           }
 
           dataSld.reverse()
@@ -1459,9 +1421,9 @@
           let dataSaldoTecnico = []
 
           for (const key in respuesta) {
-            
+            if(key < 6){
               dataSaldoTecnico.push(Number(respuesta[key].graficos.saldos.saldoTecnico).toFixed(2))
-            
+            }
           }
 
           dataSaldoTecnico.reverse()
@@ -1572,8 +1534,7 @@
               },
               plugins:{
                 labels:{                  
-                  // render: (val)=>{ return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});},
-                  render: (val)=>{return ''}
+                  render: (val)=>{ return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});},
                 }
               },
               legend:{
@@ -1674,8 +1635,7 @@
               },
               plugins:{
                 labels:{                  
-                  // render: (val)=>{ return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});},
-                  render: (val)=>{ return ''},
+                  render: (val)=>{ return val.value.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});},
                 }
               },
               legend:{

@@ -95,7 +95,6 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       respuesta['cultivos'].forEach(cultivo => {
 
         let costo = (parseInt(cultivo.has) * parseInt(respuesta['costos'][cultivo.cultivo]))
-
         let has = parseInt(cultivo.has)
         data[cultivo.campo].hasTotal += has
 
@@ -151,7 +150,6 @@ const cargarInfoPlanificacion = (campania,carga)=>{
 
       data.pichi.costoTotal = data.pichi.fina.costo + data.pichi.cobertura.costo + data.pichi.gruesa.costo
       data.bety.costoTotal = data.bety.fina.costo + data.bety.cobertura.costo + data.bety.gruesa.costo              
-
 
       // PINTAR DATOS
       $('#totalHasPlanificadas').text(data.bety.hasTotal + data.pichi.hasTotal)

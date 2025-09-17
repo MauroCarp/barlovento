@@ -35,6 +35,8 @@ class ControladorTrazabilidad{
 				$tabla = 'faenas';
 				$idFaena = ModeloTrazabilidad::mdlNuevaFaena($tabla,$datosFaena);
 				
+				$frigorifico = $_POST['frigorificoFaena'];
+
 				if(!is_array($idFaena)){
 
 					if(isset($_FILES['excelWC']) && isset($_FILES['excelTrazabilidad'])){
@@ -210,27 +212,46 @@ class ControladorTrazabilidad{
 			
 								foreach ($Reader as $Row){
 
-									if (empty(array_filter($Row, function($value) { return $value !== null && $value !== ''; }))) {
-										$rowValida = false; // Si la fila está vacía, no la procesamos
-									}
-
 									if ($rowValida){			
 										
 
-										$ingreso = explode('-',$Row[30]);
-										$ingreso = '20' . $ingreso[2] . '-' . $ingreso[0] . '-' . $ingreso[1];
-										$salida = explode('-',$Row[31]);
-										$salida = '20' . $salida[2] . '-' . $salida[0] . '-' . $salida[1];
+										$separador = '-';
+										$year = '20';
+
+										if (strpos($Row[30], '/') !== false) {
+											$separador = '/';
+										}
+										
+										$ingreso = explode($separador,$Row[30]);
+
+										if(strlen($ingreso[2]) == 4)
+											$year = '';
+
+										$ingreso = $year . $ingreso[2] . '-' . $ingreso[0] . '-' . $ingreso[1];
+
+										$salida = explode($separador,$Row[31]);
+
+										$salida = $year . $salida[2] . '-' . $salida[0] . '-' . $salida[1];
+
+										$ingresoDate = date('Y-m-d', strtotime($ingreso));
+										$salidaDate = date('Y-m-d', strtotime($salida));
+
+										$rfid = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',(string)$Row[1]) : substr((string)$Row[1], -5);
+
+										if($frigorifico == 'bustosBeltran' && strlen($rfid) < 15)
+											$rfid = '0' . $rfid;
+
+										
 										$dataWC[] = array('tropa' 		=> $Row[4],
-															'rfid'		=> substr($Row[1], 9),
+															'rfid'		=> "'" . $rfid . "'",
 															'caravana'	=> $Row[59],
 															'categoria'	=> $Row[2],
 															'actividad'	=> $Row[7],
 															'estado'		=> $Row[39],
 															'consignatario'		=> $Row[22],
 															'raza'		=> $Row[3],
-															'ingreso' => $ingreso,
-															'salida' => $salida,
+															'ingreso' => $ingresoDate,
+															'salida' => $salidaDate,
 															'kgIngreso'	=> $Row[9],
 															'kgEgreso'	=> $Row[10],
 															'kgProducido' => $Row[11],
@@ -285,6 +306,7 @@ class ControladorTrazabilidad{
 								}
 									
 							}
+					
 						} else {
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
@@ -335,7 +357,7 @@ class ControladorTrazabilidad{
 
 									if ($rowIndex === 0) {
 										// Salteamos la fila de cabecera
-										if($Row[0] == 'Nº de Caravana'){
+										if($Row[0] == 'Nº de Caravana' || $Row[0] == 'RFID') {
 											$rowValida = true;
 										} else {
 
@@ -365,45 +387,63 @@ class ControladorTrazabilidad{
 									}
 
 									// Eliminamos espacios y chequeamos si la celda 0 está vacía
-									$cell0 = trim($Row[0] ?? '');
+
+									$cell0 = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',$Row[0]) : (string)substr(trim($Row[0] ?? ''), -5);
+
+									
 
 									if($cell0 != '') {
 										
-										// Si la longitud es menor a 6, agregamos ceros a la izquierda
-										if (strlen($cell0) < 6) {
-											$cell0 = str_pad($cell0, 6, '0', STR_PAD_LEFT);
+										// Si la longitud es menor a 5, agregamos ceros a la izquierda
+										if (strlen($cell0) < 5) {
+											$cell0 = str_pad($cell0, 5, '0', STR_PAD_LEFT);
 										}
 
 									}
-								
+
+									$denominacion =$Row[4];
+									$tipificacion =$Row[5];
+									$gordo =$Row[6];
+									$den =$Row[7];
+
+									if($frigorifico == 'bustosBeltran'){
+										$denominacion = $Row[5];
+										$tipificacion =$Row[7];
+										$gordo =$Row[8];
+										$den =$Row[6];
+									}
+
 									if (!empty($cell0)) {
 										// Es una nueva carcasa
 										$currentCarcasa = $cell0;
-										$dataTrazabilidad[] = ['rfid' => $currentCarcasa,
+
+										$dataTrazabilidad[] = ['rfid' => "'" . $currentCarcasa . "'",
 													   'correlacion' => $Row[1],
 													   'garron' => $Row[2],
 													   'kilos' => $Row[3],
-													   'denominacion' => $Row[4],
-													   'tipificacion' => $Row[5],
-													   'gordo' => $Row[6],
-													   'den' => $Row[7]];
+													   'denominacion' => $denominacion,
+													   'tipificacion' => $tipificacion,
+													   'gordo' => $gordo,
+													   'den' => $den];
 										
 									} elseif ($currentCarcasa !== null) {
 										// Es la segunda fila asociada a la carcasa actual
-										$dataTrazabilidad[] = ['rfid' => $currentCarcasa,
+
+										$dataTrazabilidad[] = ['rfid' => "'" . $currentCarcasa . "'",
 													   'correlacion' => $Row[1],
 													   'garron' => $Row[2],
 													   'kilos' => $Row[3],
-													   'denominacion' => $Row[4],
-													   'tipificacion' => $Row[5],
-													   'gordo' => $Row[6],
-													   'den' => $Row[7]];
+													   'denominacion' => $denominacion,
+													   'tipificacion' => $tipificacion,
+													   'gordo' => $gordo,
+													   'den' => $den];
 									}
 
 									$rowIndex++;
 								}
 									
 							}
+
 						} else {
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
@@ -426,10 +466,9 @@ class ControladorTrazabilidad{
 							</script>';
 							die();				
 						}
-
 						$tabla = 'wcanimales';
 						$cargaWC = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataWC);
-						
+
 						if($cargaWC != 'ok'){
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
@@ -481,7 +520,6 @@ class ControladorTrazabilidad{
 							</script>';						
 
 						}
-
 
 						echo'<script>
 
@@ -579,15 +617,15 @@ class ControladorTrazabilidad{
 
 			$tmp = array();
 
-			foreach ($value as $val) {
-				$tmp[] = (is_numeric($val)) ? $val : "'" . $val . "'";
-			}
+			foreach ($value as $key => $val) {
+				$tmp[] = (is_numeric($val) || $key == 'rfid') ? $val : "'" . $val . "'";
+		 }
 
 			$dataSql[] = "(" . $idFaena . "," . implode(',',$tmp) . ")";
 		}
 
 		$dataSql = implode(',',$dataSql);
-
+		// return $dataSql;
 		return ModeloTrazabilidad::mdlCargarExcel($tabla,$campos,$dataSql);
 
 	}
@@ -624,19 +662,45 @@ class ControladorTrazabilidad{
 		$tabla = "trazanimales";
 
 		$frigorigico = ModeloTrazabilidad::mdlMostrarAnimalesFaenas($tabla, $ids);
-	
+		
 		$respuesta = array();
-
+		
 		foreach ($wincampo as $key => $animal) {
 			$respuesta[$animal['rfid']][] = $animal;
 		}
 		foreach ($frigorigico as $key => $animal) {
 			$respuesta[$animal['rfid']][] = $animal;
 		}
-
 		
 		return $respuesta;	
 	}
+
+	static public function ctrMostrarAnimalesFaenasPaginados($ids, $start, $length){
+
+		$tabla = "wcanimales";
+		$wincampo = ModeloTrazabilidad::mdlMostrarAnimalesFaenasPaginados($tabla, $ids, $start, $length);
+
+		$tabla = "trazanimales";
+		$frigorigico = ModeloTrazabilidad::mdlMostrarAnimalesFaenasPaginados($tabla, $ids, $start, $length);
+		
+		// Obtener el total de registros para la paginación
+		$totalRecords = ModeloTrazabilidad::mdlContarAnimalesFaenas($ids);
+		
+		$respuesta = array();
+		
+		foreach ($wincampo as $key => $animal) {
+			$respuesta[$animal['rfid']][] = $animal;
+		}
+		foreach ($frigorigico as $key => $animal) {
+			$respuesta[$animal['rfid']][] = $animal;
+		}
+		
+		return array(
+			'data' => $respuesta,
+			'total' => $totalRecords
+		);	
+	}
+
 }
 	
 

@@ -9,7 +9,7 @@ class ModeloTrazabilidad{
 		if($item != null){
 
 			
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item ORDER BY created_at ASC");
+			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item ORDER BY fecha DESC");
 
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 
@@ -19,7 +19,7 @@ class ModeloTrazabilidad{
 			
 		}else{
 			
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla ORDER BY created_at ASC");
+			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla ORDER BY fecha DESC");
 			$stmt -> execute();
 			return $stmt -> fetchAll();
 
@@ -148,6 +148,48 @@ class ModeloTrazabilidad{
 		$stmt->execute();
 
 		return $stmt->fetchAll();
+	}
+
+	static public function mdlMostrarAnimalesFaenasPaginados($tabla, $ids, $start, $length) {
+
+		$conexion = Conexion::conectar();
+		
+		if($tabla == 'wcanimales'){
+			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN (:idFaena) ORDER BY ingreso DESC LIMIT :start, :length");
+		} else {
+			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN (:idFaena) ORDER BY rfid ASC LIMIT :start, :length");
+		}
+
+		$stmt->bindParam(":idFaena", $ids, PDO::PARAM_STR);
+		$stmt->bindParam(":start", $start, PDO::PARAM_INT);
+		$stmt->bindParam(":length", $length, PDO::PARAM_INT);
+
+		$stmt->execute();
+
+		return $stmt->fetchAll();
+	}
+
+	static public function mdlContarAnimalesFaenas($ids) {
+
+		$conexion = Conexion::conectar();
+		
+		// Contar registros únicos por RFID de ambas tablas
+		$stmt = $conexion->prepare("
+			SELECT COUNT(DISTINCT rfid) as total 
+			FROM (
+				SELECT rfid FROM wcanimales WHERE idFaena IN (:idFaena)
+				UNION 
+				SELECT rfid FROM trazanimales WHERE idFaena IN (:idFaena2)
+			) as combined
+		");
+
+		$stmt->bindParam(":idFaena", $ids, PDO::PARAM_STR);
+		$stmt->bindParam(":idFaena2", $ids, PDO::PARAM_STR);
+
+		$stmt->execute();
+
+		$result = $stmt->fetch();
+		return $result['total'];
 	}
 
 

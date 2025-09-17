@@ -202,7 +202,7 @@
 
                         var table = $('.tablaFaenas').DataTable({
                         responsive: true,
-                        order: [[3, 'asc']],
+                        ordering: false,
                         columnDefs: [
                           {
                           targets: 0, // Oculta la primera columna (#)

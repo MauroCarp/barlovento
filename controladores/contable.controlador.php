@@ -448,7 +448,8 @@ class ControladorContable{
     =============================================*/
     
     static public function ctrCalcularData($periodo){
-       
+        
+        
         function calcularData($consolidado,$principal,$ultimoMes){
 
             $labelMeses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -481,10 +482,6 @@ class ControladorContable{
 
                     // UTILIDADADES
                         $utilidadBruta = floatVal($consolidado['directas']) - floatVal($consolidado['perdidasDirectas']);
-                        // var_dump(floatVal($consolidado['directas']));
-                        // var_dump($consolidado['directas']);
-                        // var_dump($consolidado['perdidasDirectas']);
-                        // var_dump(floatVal($consolidado['perdidasDirectas']));
                         $utilidadNeta = floatVal($consolidado['ganancias']) - floatVal($consolidado['perdidas']);
                         $utilidadOperativa = floatVal($consolidado['directas']) - floatVal($consolidado['perdidas']);
 
@@ -495,15 +492,7 @@ class ControladorContable{
                         $ingresosTotales = floatVal($consolidado['ganancias']);
 
                     // MARGEN DE UTILIDAD BRUTA
-                    // var_dump($utilidadBruta);
-                    // var_dump($ingresosTotales);
                         $margenUtilidadBruta = ($utilidadBruta / $ingresosTotales) * 100;
-                        // var_dump($margenUtilidadBruta);
-                        // die;
-                        // print_r($utilidadBruta);
-                        // echo "<script>console.log('".$utilidadBruta."')</script>";
-                        // print_r($ingresosTotales);
-                        // print_r($margenUtilidadBruta);
 
                     // MARGEN DE UTILIDAD NETA
                         $margenUtilidadNeta = ($utilidadNeta / $ingresosTotales) * 100;
@@ -878,9 +867,6 @@ class ControladorContable{
         if(!$principal)
             return false;
             
-         
-            // print_r($principal);
-            // die;
         $valor = 'Consolidado';
         $consolidado = ControladorContable::ctrMostrarDatos($item,$valor,$item2,$periodo);
 

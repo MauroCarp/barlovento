@@ -364,7 +364,6 @@ class ModeloAgro{
 	static public function mdlMostrarDataEjecucion($tabla, $item,$valor,$item2,$valor2){
 
 		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2");
-
 		$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 		$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
 

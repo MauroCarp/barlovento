@@ -1,4 +1,4 @@
-console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+
 
 $('#ejecucionTab').on('click',function(){
   

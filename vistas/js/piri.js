@@ -23,6 +23,7 @@
                 });
             },
             success: function(respuesta) {
+                console.log(respuesta)
                 if(respuesta){
                     swal({
 

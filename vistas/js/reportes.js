@@ -2,7 +2,6 @@
 /*=============================================
 AGREGAR FILTROS
 =============================================*/
-
 function agregarFiltro(contador,URLactual,tabla,item,comparar){
 
   var contenido = '';
@@ -289,6 +288,7 @@ function generarGraficos(chart,data,titulo,label,canvas){
   });
 
 }
+
 function generarGraficoBar(idDiv,configuracion,opcion){
 
   let barChart = document.getElementById(idDiv).getContext('2d');      
