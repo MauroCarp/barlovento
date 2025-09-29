@@ -74,6 +74,12 @@
 
         include 'infoEjecucion.php';
 
+        $campo = 'El Anthony';
+
+        $campoId = 'Anthony';
+
+        include 'infoEjecucion.php';
+
         ?>
     
     </div>

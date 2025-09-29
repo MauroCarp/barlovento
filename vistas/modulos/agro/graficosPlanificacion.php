@@ -4,7 +4,8 @@
 
         <li class='tabs active' id='betyTab'><a href='#tab_1Planificacion' data-toggle='tab' id="btnBety"><b>La Bety</b></a></li>
         <li class='tabs' id='pichiTab'><a href='#tab_2Planificacion' data-toggle='tab' id="btnPichi"><b>El Pichi</b></a></li>
-
+        <li class='tabs' id='anthonyTab'><a href='#tab_3Planificacion' data-toggle='tab' id="btnAnthony"><b>El Anthony</b></a></li>
+        
     </ul>
 
     <div class="tab-content">
@@ -29,6 +30,18 @@
             $idGraficoPlanificacion = 'graficoPlanificacionPichi';
 
             include 'graficos/planificacion.php';
+            
+        ?>
+
+        </div>
+    
+        <div class='tab-pane' id='tab_2Planificacion'>
+
+        <?php 
+        
+            $idGraficoPlanificacion = 'graficoPlanificacionAnthony';
+            echo 'Anthony';
+            // include 'graficos/planificacion.php';
             
         ?>
 
