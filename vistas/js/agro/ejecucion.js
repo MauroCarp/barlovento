@@ -54,6 +54,7 @@ const nombreCultivos = {
   'triticale espinillo': 'Triticale Espinillo',
   'carinata': 'Carinata',
 }
+
 const generarInputFile = (lotes) => {
 
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
@@ -502,7 +503,15 @@ const cargarInfoEjecucion = (campania)=>{
             </td>
   
             <td>
-              ${totalEjecucion.toLocaleString('de-DE')}
+               ${totalEjecucion.toLocaleString('de-DE')}
+            </td>
+            
+            <td>
+              u$s por coscha
+            </td>
+            
+            <td>
+              rinde
             </td>
             
             <td>
@@ -511,6 +520,10 @@ const cargarInfoEjecucion = (campania)=>{
 
             <td>
               ${diferencia.toFixed(2)} %
+            </td>
+            
+            <td>
+              ${diferencia.toFixed(2)}
             </td>
   
           <tr>

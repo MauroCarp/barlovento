@@ -22,8 +22,11 @@
                         <th>u$s Labores</th>
                         <th>u$s Fertilizaci&oacute;n</th>
                         <th>u$s Total</th>
+                        <th>u$s Cosecha</th>
+                        <th>Rinde</th>
                         <th>u$s Planificaci&oacute;n</th>
                         <th>% Dif.</th>
+                        <th>u$s Dif.</th>
                     </thead>
                     <tbody>
 
