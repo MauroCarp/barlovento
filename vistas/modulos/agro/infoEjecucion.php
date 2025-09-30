@@ -4,16 +4,16 @@
     <!-- Acordeón para Anthony -->
     <div class="panel-group" id="accordionAnthonyEjecucion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingAnthonyEjecucion">
-                <h4 class="panel-title" style="font-size:1.5em;display:flex;justify-content:space-between;align-items:center;">
+            <div class="panel-heading" role="tab" id="headingAnthonyEjecucion" style="display:flex;justify-content:space-between;align-items:center;">
+                <h4 class="panel-title" style="font-size:1.5em;">
                     <a role="button" data-toggle="collapse" data-parent="#accordionAnthonyEjecucion" href="#collapseAnthonyEjecucion" aria-expanded="false" aria-controls="collapseAnthonyEjecucion">
                         <i class="fa fa-chevron-down"></i><b> <?php echo $campoId; ?></b>     
                     </a>
+                </h4>
                     <form action="" method="post" id="formAnthonyEjecucion" style="display:flex;align-items:center;">
                         <input type="file" name="archivoAnthonyEjecucion" id="archivoAnthonyEjecucion">
                         <input type="button" class="btn btn-primary" id="btnCargarAnthonyEjecucion" value="Cargar">
                     </form>
-                </h4>
             </div>
             <div id="collapseAnthonyEjecucion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingAnthonyEjecucion">
                 <div class="panel-body">
