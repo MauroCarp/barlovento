@@ -265,7 +265,7 @@ $(document).ready(function() {
             const colorPorcentaje = diffPorcentaje >= 0 ? 'text-green' : 'text-red';
             
             $(`#has${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorHas}">${diffHas > 0 ? '+' : ''}${diffHas}</span>`);
-            $(`#dolare${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorDolares}">$${diffDolares > 0 ? '+' : ''}${diffDolares.toLocaleString()}</span>`);
+            $(`#dolare${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorDolares}">$${diffDolares.toLocaleString()}</span>`);
             $(`#porcentaje${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorPorcentaje}">${diffPorcentaje > 0 ? '+' : ''}${diffPorcentaje}%</span>`);
         });
         
@@ -292,7 +292,7 @@ $(document).ready(function() {
         const colorTotalDolares = diffTotalDolares >= 0 ? 'text-green' : 'text-red';
         
         $('#hasTotalDiferencia').html(`<span class="${colorTotalHas}"><strong>${diffTotalHas > 0 ? '+' : ''}${diffTotalHas}</strong></span>`);
-        $('#dolareTotalDiferencia').html(`<span class="${colorTotalDolares}"><strong>$${diffTotalDolares > 0 ? '+' : ''}${diffTotalDolares.toLocaleString()}</strong></span>`);
+        $('#dolareTotalDiferencia').html(`<span class="${colorTotalDolares}"><strong>$${diffTotalDolares.toLocaleString()}</strong></span>`);
         $('#porcentajeTotalDiferencia').html(`<span class="${colorTotalDolares}"><strong>${diffTotalPorcentaje > 0 ? '+' : ''}${diffTotalPorcentaje}%</strong></span>`);
     }
     
@@ -315,7 +315,7 @@ $(document).ready(function() {
                     <td class="text-right"><span class="text-primary">$${cultivo.planificacion.dolares.toLocaleString()}</span> | <span class="text-info">$${cultivo.ejecucion.dolares.toLocaleString()}</span></td>
                     <td class="text-right"><span class="text-primary">${cultivo.planificacion.porcentaje}%</span> | <span class="text-info">${cultivo.ejecucion.porcentaje}%</span></td>
                     <td class="text-right"><span class="${colorHas}">${diffHas > 0 ? '+' : ''}${diffHas}</span></td>
-                    <td class="text-right"><span class="${colorDolares}">$${diffDolares > 0 ? '+' : ''}${diffDolares.toLocaleString()}</span></td>
+                    <td class="text-right"><span class="${colorDolares}">$${diffDolares.toLocaleString()}</span></td>
                 </tr>
             `;
         });
