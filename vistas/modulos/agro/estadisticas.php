@@ -1,13 +1,34 @@
 <div class="row">
     <div class="col-lg-12">
-        <div class="box box-primary">
+        <div class="box box-primary" style="box-shadow:none;">
             <div class="box-header with-border">
                 <h3 class="box-title">
                     <i class="fa fa-bar-chart"></i> Comparativo Planificación vs Ejecución
                 </h3>
             </div>
             <div class="box-body">
-                
+                <!-- Resumen Visual -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-green"><i class="fa fa-check"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Hectáreas Totales</span>
+                                <span class="info-box-number" id="eficienciaHectareas">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-yellow"><i class="fa fa-dollar"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Inversion Total</span>
+                                <span class="info-box-number" id="variacionInversion">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Dos tablas lado a lado -->
                 <div class="row">
                     
@@ -122,29 +143,6 @@
                     
                 </div>
                 
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Resumen Visual -->
-<div class="row">
-    <div class="col-lg-6">
-        <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="fa fa-check"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Eficiencia en Hectáreas</span>
-                <span class="info-box-number" id="eficienciaHectareas">-</span>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-6">
-        <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="fa fa-dollar"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Variación en Inversión</span>
-                <span class="info-box-number" id="variacionInversion">-</span>
             </div>
         </div>
     </div>
@@ -331,28 +329,13 @@ $(document).ready(function() {
         const totalDolaresPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + item.dolares, 0);
         const totalDolaresEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + item.dolares, 0);
         
-        const eficienciaHas = ((totalHasEjec / totalHasPlan) * 100).toFixed(1);
-        const variacionInversion = (((totalDolaresEjec - totalDolaresPlan) / totalDolaresPlan) * 100).toFixed(1);
-        
-        $('#eficienciaHectareas').text(eficienciaHas + '%');
-        $('#variacionInversion').text(variacionInversion + '%');
-        
-        // Cambiar color según el resultado
-        if (eficienciaHas >= 95) {
-            $('#eficienciaHectareas').parent().parent().find('.info-box-icon').removeClass('bg-green bg-yellow bg-red').addClass('bg-green');
-        } else if (eficienciaHas >= 80) {
-            $('#eficienciaHectareas').parent().parent().find('.info-box-icon').removeClass('bg-green bg-yellow bg-red').addClass('bg-yellow');
-        } else {
-            $('#eficienciaHectareas').parent().parent().find('.info-box-icon').removeClass('bg-green bg-yellow bg-red').addClass('bg-red');
-        }
-        
-        if (Math.abs(variacionInversion) <= 5) {
-            $('#variacionInversion').parent().parent().find('.info-box-icon').removeClass('bg-green bg-yellow bg-red').addClass('bg-green');
-        } else if (Math.abs(variacionInversion) <= 15) {
-            $('#variacionInversion').parent().parent().find('.info-box-icon').removeClass('bg-green bg-yellow bg-red').addClass('bg-yellow');
-        } else {
-            $('#variacionInversion').parent().parent().find('.info-box-icon').removeClass('bg-green bg-yellow bg-red').addClass('bg-red');
-        }
+        const eficienciaHas = '1071 | 729';
+        const variacionInversion = 'U$S ' + totalDolaresPlan.toLocaleString('DE-de') + '  |  U$S ' + totalDolaresEjec.toLocaleString('DE-de');
+
+        $('#eficienciaHectareas').text(eficienciaHas);
+        $('#variacionInversion').text(variacionInversion);
+                
+
     }
     
     function capitalizarPrimeraLetra(string) {
