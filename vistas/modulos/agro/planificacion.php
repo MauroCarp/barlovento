@@ -95,9 +95,9 @@
 
         include 'infoPlanificacion.php';
         
-        $campo = 'El Anthony';
+        $campo = 'El Antony';
         
-        $campoId = 'Anthony';
+        $campoId = 'Antony';
 
         include 'infoPlanificacion.php';
 

@@ -1,21 +1,21 @@
 
 
-<?php if ($campoId == 'Anthony'){ ?>
-    <!-- Acordeón para Anthony -->
-    <div class="panel-group" id="accordionAnthonyEjecucion" role="tablist" aria-multiselectable="true">
+<?php if ($campoId == 'Antony'){ ?>
+    <!-- Acordeón para Antony -->
+    <div class="panel-group" id="accordionAntonyEjecucion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingAnthonyEjecucion" style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="panel-heading" role="tab" id="headingAntonyEjecucion" style="display:flex;justify-content:space-between;align-items:center;">
                 <h4 class="panel-title" style="font-size:1.5em;">
-                    <a role="button" data-toggle="collapse" data-parent="#accordionAnthonyEjecucion" href="#collapseAnthonyEjecucion" aria-expanded="false" aria-controls="collapseAnthonyEjecucion">
+                    <a role="button" data-toggle="collapse" data-parent="#accordionAntonyEjecucion" href="#collapseAntonyEjecucion" aria-expanded="false" aria-controls="collapseAntonyEjecucion">
                         <i class="fa fa-chevron-down"></i><b> <?php echo $campoId; ?></b>     
                     </a>
                 </h4>
-                    <form action="" method="post" id="formAnthonyEjecucion" style="display:flex;align-items:center;">
-                        <input type="file" name="archivoAnthonyEjecucion" id="archivoAnthonyEjecucion">
-                        <input type="button" class="btn btn-primary" id="btnCargarAnthonyEjecucion" value="Cargar">
+                    <form action="" method="post" id="formAntonyEjecucion" style="display:flex;align-items:center;">
+                        <input type="file" name="archivoAntonyEjecucion" id="archivoAntonyEjecucion">
+                        <input type="button" class="btn btn-primary" id="btnCargarAntonyEjecucion" value="Cargar">
                     </form>
             </div>
-            <div id="collapseAnthonyEjecucion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingAnthonyEjecucion">
+            <div id="collapseAntonyEjecucion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingAntonyEjecucion">
                 <div class="panel-body">
 <?php } ?>
 
@@ -137,7 +137,7 @@
         
         </div>
 
-<?php if ($campoId == 'Anthony'){ ?>
+<?php if ($campoId == 'Antony'){ ?>
             </div>
         </div>
     </div>

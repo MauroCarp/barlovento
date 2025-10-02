@@ -74,9 +74,9 @@
 
         include 'infoEjecucion.php';
 
-        $campo = 'El Anthony';
+        $campo = 'Antony';
 
-        $campoId = 'Anthony';
+        $campoId = 'Antony';
 
         include 'infoEjecucion.php';
 
