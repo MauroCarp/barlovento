@@ -10,8 +10,38 @@
 // });
 
 
+console.log("Iniciando configuración del DataTable de compras");
+
 $('.tablaCompras').DataTable( {
-    "ajax": "ajax/datatable-compras.ajax.php",
+    "ajax": {
+        "url": "ajax/datatable-compras.ajax.php",
+        "error": function (xhr, error, code) {
+            console.error("Error AJAX en DataTable:", {
+                "xhr": xhr,
+                "error": error,
+                "code": code,
+                "status": xhr.status,
+                "statusText": xhr.statusText,
+                "responseText": xhr.responseText
+            });
+            
+            // Mostrar alerta al usuario
+            if (typeof swal !== 'undefined') {
+                swal({
+                    type: "error",
+                    title: "Error al cargar los datos",
+                    text: "Error: " + error + " (Código: " + xhr.status + ")\nRevisa el archivo compras_debug.log para más detalles.",
+                    showConfirmButton: true,
+                    confirmButtonText: "Cerrar"
+                });
+            } else {
+                alert("Error al cargar los datos. Revisa la consola del navegador y el archivo compras_debug.log para más detalles.");
+            }
+        },
+        "success": function(data) {
+            console.log("Datos recibidos exitosamente:", data);
+        }
+    },
     "deferRender": true,
 	"retrieve": true,
 	"processing": true,
@@ -36,7 +66,13 @@ $('.tablaCompras').DataTable( {
 			"sPrevious": "Anterior"
 			}
 
-	}
+	},
+	"initComplete": function(settings, json) {
+        console.log("DataTable inicializado correctamente:", json);
+    },
+    "drawCallback": function(settings) {
+        console.log("Tabla redibujada, registros mostrados:", settings.fnRecordsDisplay());
+    }
 
 } );
 
