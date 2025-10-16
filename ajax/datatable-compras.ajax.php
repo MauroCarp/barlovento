@@ -1,8 +1,4 @@
 <?php
-
-// Establecer content-type para JSON y deshabilitar output buffering automático
-header('Content-Type: application/json; charset=utf-8');
-
 // Función para logging
 function logError($message, $data = null) {
     $timestamp = date('Y-m-d H:i:s');

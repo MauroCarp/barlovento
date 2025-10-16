@@ -95,13 +95,6 @@
 
         include 'infoPlanificacion.php';
         
-        $campo = 'El Antony';
-        
-        $campoId = 'Antony';
-
-        include 'infoPlanificacion.php';
-
-        
         ?>
 
     </div>

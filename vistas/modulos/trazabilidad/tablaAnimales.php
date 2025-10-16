@@ -55,8 +55,10 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                         <th>% Diferencia T vs R</th>
                         <th>Kilos teoricos</th>
                         <th>Kilos</th>
-                        <th>Clasif.</th>
+                        <th>Gord.</th>
                         <th>Denominacion</th>
+                        <th>Dent.</th>
+                        <th>Tipif.</th>
                         <th>Caravana Visual</th>
                         <th>Categoria</th>
                         <th>Raza</th>
@@ -121,11 +123,119 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                 }
                               },
                               {
-                                extend: 'excelHtml5',
-                                text: 'Exportar a Excel',
-                                className: 'btn btn-success',
-                                exportOptions: {
-                                  columns: ':visible'
+                                text: 'Exportar a Excel (Todos los datos)',
+                                className: 'btn btn-success btn-exportar-todos',
+                                action: function (e, dt, button, config) {
+                                  // Encontrar el botón y cambiar su estado
+                                  const $btn = $('.btn-exportar-todos');
+                                  const originalText = $btn.text();
+                                  $btn.text('Exportando...').prop('disabled', true);
+                                  
+                                  // Obtener todos los datos del servidor
+                                  $.ajax({
+                                    url: 'ajax/trazabilidad-animals.ajax.php',
+                                    type: 'POST',
+                                    data: {
+                                      action: 'exportarTodos',
+                                      ids: ids
+                                    },
+                                    success: function(response) {
+                                      try {
+                                        const data = JSON.parse(response);
+                                        
+                                        // Crear workbook de Excel
+                                        const wb = XLSX.utils.book_new();
+                                        
+                                        // Crear headers para Excel (solo columnas visibles, excluyendo la columna de estilo)
+                                        const headers = [];
+                                        table.columns(':visible').every(function(index) {
+                                          if (index !== 32) { // Excluir la columna del marcador de estilo
+                                            const header = $(this.header()).text();
+                                            if (header.trim() !== '') {
+                                              headers.push(header);
+                                            }
+                                          }
+                                        });
+                                        
+                                        // Preparar datos para Excel (filtrar solo columnas visibles)
+                                        const excelData = [headers];
+                                        
+                                        data.forEach(function(row) {
+                                          const filteredRow = [];
+                                          let visibleColumnIndex = 0;
+                                          
+                                          table.columns(':visible').every(function(index) {
+                                            if (index !== 32 && row[index] !== undefined) { // Excluir columna de estilo
+                                              let cellValue = row[index];
+                                              
+                                              // Identificar columnas que pueden tener números largos (RFID, Correlación, Garrón, etc.)
+                                              const columnHeader = $(this.header()).text().toLowerCase();
+                                              const isNumericColumn = columnHeader.includes('rfid') || 
+                                                                    visibleColumnIndex === 0; // Primera columna visible (RFID)
+                                              
+                                              // Convertir números largos a texto para evitar notación científica
+                                              if (isNumericColumn && cellValue != '') {
+                                                cellValue = "'" + cellValue + "'";
+                                              }
+                                              
+                                              filteredRow.push(cellValue);
+                                              visibleColumnIndex++;
+                                            }
+                                          });
+                                          excelData.push(filteredRow);
+                                        });
+                                        // Array de índices de columnas numéricas (ajusta según tus columnas)
+                                        const columnasNumericas = [5, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+
+                                        // Aplicar formato numérico a las celdas correspondientes
+                                        const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+                                        // Recorrer las filas y columnas para aplicar formato numérico
+                                        for (let r = 1; r < excelData.length; r++) { // Empieza en 1 para saltar el header
+                                          let visibleColumnIndex = 0;
+                                          table.columns(':visible').every(function(index) {
+                                          if (index !== 32 && excelData[r][visibleColumnIndex] !== undefined) {
+                                            if (columnasNumericas.includes(index)) {
+                                            const cellAddress = XLSX.utils.encode_cell({c: visibleColumnIndex, r: r});
+                                            const cell = ws[cellAddress];
+                                            if (cell && typeof cell.v === 'string') {
+                                              // Elimina comillas si las hay y convierte a número
+                                              const valorNumerico = Number(cell.v.replace(/'/g, ''));
+                                              if (!isNaN(valorNumerico)) {
+                                              cell.v = valorNumerico;
+                                              cell.t = 'n';
+                                              }
+                                            }
+                                            }
+                                            visibleColumnIndex++;
+                                          }
+                                          });
+                                        }
+                                        // Crear worksheet
+                                        // const ws = XLSX.utils.aoa_to_sheet(excelData);
+                                        
+                                        // Agregar worksheet al workbook
+                                        XLSX.utils.book_append_sheet(wb, ws, 'Animales');
+                                        
+                                        // Generar archivo y descargarlo
+                                        const fileName = 'animales_trazabilidad_' + new Date().toISOString().slice(0,10) + '.xlsx';
+                                        XLSX.writeFile(wb, fileName);
+                                        
+                                      } catch (error) {
+                                        console.error('Error al procesar datos para Excel:', error);
+                                        alert('Error al generar el archivo Excel');
+                                      } finally {
+                                        // Restaurar texto original del botón
+                                        $btn.text(originalText).prop('disabled', false);
+                                      }
+                                    },
+                                    error: function(xhr, status, error) {
+                                      console.error('Error en la petición AJAX:', error);
+                                      alert('Error al obtener los datos del servidor');
+                                      // Restaurar texto original del botón
+                                      $btn.text(originalText).prop('disabled', false);
+                                    }
+                                  });
                                 }
                               },
                             ],
@@ -211,6 +321,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
                     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
                   </table>
 
                 </div>

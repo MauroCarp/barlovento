@@ -13,7 +13,7 @@ class ModeloDatos{
 		if($item != null){
 
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item ORDER BY $orden DESC");
-			return $stmt;
+
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 
 			$stmt -> execute();
@@ -23,7 +23,6 @@ class ModeloDatos{
 		}else{
 			
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla ORDER BY $orden DESC");
-			return $stmt;
 
 			$stmt -> execute();
 

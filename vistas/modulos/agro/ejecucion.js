@@ -357,7 +357,7 @@ const cargarInfoEjecucion = (campania)=>{
       document.getElementById(`hasEstEjecucionBety`).innerText = '-'
       document.getElementById(`hasEstEjecucionPichi`).innerText = '-'
   
-      document.getElementById(` `).innerText = '-'
+      document.getElementById(`hasTrigoEjecucionBety`).innerText = '-'
       document.getElementById(`hasTrigoEjecucionPichi`).innerText = '-'
   
       document.getElementById(`hasCoberturaEjecucionBety`).innerText = '-'
@@ -484,8 +484,6 @@ const cargarInfoEjecucion = (campania)=>{
       }
     
     });
-
-console.log('hafas')
 
     ['pichi','bety'].forEach(campo => {
 
