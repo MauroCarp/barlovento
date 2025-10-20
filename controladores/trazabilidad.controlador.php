@@ -236,14 +236,14 @@ class ControladorTrazabilidad{
 										$ingresoDate = date('Y-m-d', strtotime($ingreso));
 										$salidaDate = date('Y-m-d', strtotime($salida));
 
-										$rfid = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',(string)$Row[1]) : substr((string)$Row[1], -5);
-
+										$rfid = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',(string)$Row[1]) : substr((string)$Row[1], -7);
+									
 										if($frigorifico == 'bustosBeltran' && strlen($rfid) < 15)
 											$rfid = '0' . $rfid;
 
 										
 										$dataWC[] = array('tropa' 		=> $Row[4],
-															'rfid'		=> "'" . $rfid . "'",
+															'rfid'		=> $rfid,
 															'caravana'	=> $Row[59],
 															'categoria'	=> $Row[2],
 															'actividad'	=> $Row[7],
@@ -388,14 +388,14 @@ class ControladorTrazabilidad{
 
 									// Eliminamos espacios y chequeamos si la celda 0 está vacía
 
-									$cell0 = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',$Row[0]) : (string)substr(trim($Row[0] ?? ''), -5);
+									$cell0 = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',$Row[0]) : (string)substr(trim($Row[0] ?? ''), -7);
 
 									
 
 									if($cell0 != '') {
 										
 										// Si la longitud es menor a 5, agregamos ceros a la izquierda
-										if (strlen($cell0) < 5) {
+										if (strlen($cell0) <= 5) {
 											$cell0 = str_pad($cell0, 5, '0', STR_PAD_LEFT);
 										}
 
@@ -417,7 +417,7 @@ class ControladorTrazabilidad{
 										// Es una nueva carcasa
 										$currentCarcasa = $cell0;
 
-										$dataTrazabilidad[] = ['rfid' => "'" . $currentCarcasa . "'",
+										$dataTrazabilidad[] = ['rfid' =>(string)$currentCarcasa,
 													   'correlacion' => $Row[1],
 													   'garron' => $Row[2],
 													   'kilos' => $Row[3],
@@ -429,7 +429,7 @@ class ControladorTrazabilidad{
 									} elseif ($currentCarcasa !== null) {
 										// Es la segunda fila asociada a la carcasa actual
 
-										$dataTrazabilidad[] = ['rfid' => "'" . $currentCarcasa . "'",
+										$dataTrazabilidad[] = ['rfid' =>(string)$currentCarcasa,
 													   'correlacion' => $Row[1],
 													   'garron' => $Row[2],
 													   'kilos' => $Row[3],
@@ -468,7 +468,7 @@ class ControladorTrazabilidad{
 						}
 						$tabla = 'wcanimales';
 						$cargaWC = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataWC);
-
+						
 						if($cargaWC != 'ok'){
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
@@ -497,7 +497,8 @@ class ControladorTrazabilidad{
 
 						$cargaTrazabilidad = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataTrazabilidad);
 			
-						
+						var_dump($cargaTrazabilidad);
+						die;
 						if($cargaTrazabilidad != 'ok'){
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
@@ -618,8 +619,8 @@ class ControladorTrazabilidad{
 			$tmp = array();
 
 			foreach ($value as $key => $val) {
-				$tmp[] = (is_numeric($val) || $key == 'rfid') ? $val : "'" . $val . "'";
-		 }
+				$tmp[] = (is_numeric($val) && $key != 'rfid') ? $val : "'".$val."'";
+		 	}
 
 			$dataSql[] = "(" . $idFaena . "," . implode(',',$tmp) . ")";
 		}

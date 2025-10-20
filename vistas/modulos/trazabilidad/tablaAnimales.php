@@ -52,13 +52,14 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                         <th>RFID</th>
                         <th>Correl</th>
                         <th>Garron</th>
+                        <th>Kilos</th>
+                        <th>Clasificacion</th>
+                        <th>Denominacion</th>
+                        <th>Tipif.</th>
+                        <th>Gord.</th>
+                        <th>Dent.</th>
                         <th>% Diferencia T vs R</th>
                         <th>Kilos teoricos</th>
-                        <th>Kilos</th>
-                        <th>Gord.</th>
-                        <th>Denominacion</th>
-                        <th>Dent.</th>
-                        <th>Tipif.</th>
                         <th>Caravana Visual</th>
                         <th>Categoria</th>
                         <th>Raza</th>
@@ -241,7 +242,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             ],
                             responsive: true,
                             columnDefs: [
-                              { targets: [3,4,12,13,16,17,18,19,20,21,22,23,24,25,26,27,30], visible: false }
+                              { targets: [9,10,12,13,16,17,18,19,20,21,22,23,24,25,26,27,30], visible: false }
                             ],
                             language: {
                               buttons: {
@@ -267,7 +268,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             rowCallback: function(row, data, index) {
 
                               // Aplicar estilos según el tipo de registro
-                              const tipoRegistro = data[34]; // Índice del marcador de estilo
+                              const tipoRegistro = data[35]; // Índice del marcador de estilo
                               console.log(tipoRegistro)
                               if (tipoRegistro === 'segunda') {
                                 // Segunda fila (RFID vacío)

@@ -54,7 +54,7 @@ class ModeloTrazabilidad{
 
 		$conexion = Conexion::conectar(); 
 		$stmt = $conexion->prepare("INSERT INTO " . $tabla . "(idFaena, " . $campos . ") VALUES " . $datos );
-	
+		
 		if($stmt->execute()){ 
 
 			return 'ok';
