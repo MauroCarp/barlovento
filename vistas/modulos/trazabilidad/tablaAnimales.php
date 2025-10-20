@@ -186,7 +186,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                           excelData.push(filteredRow);
                                         });
                                         // Array de índices de columnas numéricas (ajusta según tus columnas)
-                                        const columnasNumericas = [5, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+                                        const columnasNumericas = [3,9,10, 17, 18, 19, 20, 21, 22, 23, 24,25,26];
 
                                         // Aplicar formato numérico a las celdas correspondientes
                                         const ws = XLSX.utils.aoa_to_sheet(excelData);
