@@ -265,8 +265,10 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                               }
                             },
                             rowCallback: function(row, data, index) {
+
                               // Aplicar estilos según el tipo de registro
-                              const tipoRegistro = data[32]; // Índice del marcador de estilo
+                              const tipoRegistro = data[34]; // Índice del marcador de estilo
+                              console.log(tipoRegistro)
                               if (tipoRegistro === 'segunda') {
                                 // Segunda fila (RFID vacío)
                                 $(row).css('background-color', 'rgba(44, 187, 212, 0.38)');
