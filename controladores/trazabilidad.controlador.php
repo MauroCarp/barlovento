@@ -237,7 +237,7 @@ class ControladorTrazabilidad{
 										$salidaDate = date('Y-m-d', strtotime($salida));
 
 										$rfid = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',(string)$Row[1]) : substr((string)$Row[1], -7);
-									
+
 										if($frigorifico == 'bustosBeltran' && strlen($rfid) < 15)
 											$rfid = '0' . $rfid;
 
@@ -389,14 +389,12 @@ class ControladorTrazabilidad{
 									// Eliminamos espacios y chequeamos si la celda 0 está vacía
 
 									$cell0 = ($frigorifico == 'bustosBeltran') ? str_replace(' ','',$Row[0]) : (string)substr(trim($Row[0] ?? ''), -7);
-
-									
-
 									if($cell0 != '') {
 										
 										// Si la longitud es menor a 5, agregamos ceros a la izquierda
-										if (strlen($cell0) <= 5) {
-											$cell0 = str_pad($cell0, 5, '0', STR_PAD_LEFT);
+										if (strlen($cell0) <= 5 || strlen($cell0) == 6) {
+
+											$cell0 = str_pad($cell0, 7, '0', STR_PAD_LEFT);
 										}
 
 									}
@@ -468,7 +466,7 @@ class ControladorTrazabilidad{
 						}
 						$tabla = 'wcanimales';
 						$cargaWC = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataWC);
-						
+
 						if($cargaWC != 'ok'){
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
@@ -497,8 +495,6 @@ class ControladorTrazabilidad{
 
 						$cargaTrazabilidad = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataTrazabilidad);
 			
-						var_dump($cargaTrazabilidad);
-						die;
 						if($cargaTrazabilidad != 'ok'){
 
 							ModeloTrazabilidad::mdlEliminarFaena($idFaena);
