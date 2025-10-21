@@ -186,7 +186,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                           excelData.push(filteredRow);
                                         });
                                         // Array de índices de columnas numéricas (ajusta según tus columnas)
-                                        const columnasNumericas = [3,9,10, 17, 18, 19, 20, 21, 22, 23, 24,25,26];
+                                        const columnasNumericas = [3,9,10, 17, 18, 19, 21, 22, 23, 24,25,26];
 
                                         // Aplicar formato numérico a las celdas correspondientes
                                         const ws = XLSX.utils.aoa_to_sheet(excelData);
@@ -199,12 +199,24 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                             if (columnasNumericas.includes(index)) {
                                             const cellAddress = XLSX.utils.encode_cell({c: visibleColumnIndex, r: r});
                                             const cell = ws[cellAddress];
-                                            if (cell && typeof cell.v === 'string') {
-                                              // Elimina comillas si las hay y convierte a número
-                                              const valorNumerico = Number(cell.v.replace(/'/g, ''));
-                                              if (!isNaN(valorNumerico)) {
-                                              cell.v = valorNumerico;
-                                              cell.t = 'n';
+                                            if (cell) {
+                                              let valorOriginal = cell.v;
+                                              
+                                              // Si es string, limpia y convierte
+                                              if (typeof valorOriginal === 'string') {
+                                                // Elimina comillas, espacios y comas (en caso de separador de miles)
+                                                valorOriginal = valorOriginal.replace(/['"',\s]/g, '').replace(',', '.');
+                                              }
+                                              
+                                              // Convierte a número
+                                              const valorNumerico = Number(valorOriginal);
+                                              
+                                              // Si la conversión es exitosa, actualiza la celda
+                                              if (!isNaN(valorNumerico) && valorOriginal !== '') {
+                                                cell.v = valorNumerico;
+                                                cell.t = 'n';
+                                                // Opcional: agregar formato de número con 2 decimales
+                                                cell.z = '0.00';
                                               }
                                             }
                                             }
