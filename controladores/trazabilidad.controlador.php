@@ -14,9 +14,9 @@ class ControladorTrazabilidad{
 
 	static function fechaExcel($date){
 
-		$fecha = explode('/',$date);
+		$fecha = explode('-',$date);
 
-		return $fecha[2] . '-' . $fecha[1] . '-' . $fecha[0];
+		return '20' . $fecha[2] . '-' . $fecha[1] . '-' . $fecha[0];
 
 	}
 
@@ -46,150 +46,140 @@ class ControladorTrazabilidad{
 						$dataTD = array();
 						$dataWC = array();
 						$dataTrazabilidad = array();
-						$rfidsTemp = array();
+						// $rfidsTemp = array();
 									
-						// if(isset($_FILES['excelTD'])){
+						if(isset($_FILES['excelTD'])){
 
-						// 	// TOMA DE DATOS CARGA EXCEL TD
-						// 	if(in_array($_FILES["excelTD"]["type"],$allowedFileType)){
+							// TOMA DE DATOS CARGA EXCEL TD
+							if(in_array($_FILES["excelTD"]["type"],$allowedFileType)){
 				
-						// 		$ruta = "carga/" . $_FILES['excelTD']['name'];
+								$ruta = "carga/" . $_FILES['excelTD']['name'];
 								
-						// 		move_uploaded_file($_FILES['excelTD']['tmp_name'], $ruta);
+								move_uploaded_file($_FILES['excelTD']['tmp_name'], $ruta);
 																			
-						// 		$rowNumber = 0;
+								$rowNumber = 0;
 								
-						// 		$rowValida = false;
+								$rowValida = false;
 									
-						// 		$Reader = new SpreadsheetReader($ruta);	
+								$Reader = new SpreadsheetReader($ruta);	
 								
-						// 		$sheetCount = count($Reader->sheets());
+								$sheetCount = count($Reader->sheets());
 																
-						// 		for ($i=0;$i<$sheetCount;$i++){
+								for ($i=0;$i<$sheetCount;$i++){
 				
-						// 			$Reader->ChangeSheet($i);
+									$Reader->ChangeSheet($i);
 				
-						// 			foreach ($Reader as $Row){
+									foreach ($Reader as $Row){
 	
-						// 				if($Row[0] == 'KG TOTAL' || ($rowNumber > 14 && $Row[0] == '')) $rowValida = false;
+										if($Row[0] == 'KG TOTAL' || ($rowNumber > 14 && $Row[0] == '')) $rowValida = false;
 	
-						// 				if ($rowValida){	
+										if ($rowValida){	
+											var_dump($Row[0]);
+											$dataTD[] = array(
+												'rfid'	 =>$Row[1],
+												'mmGrasa'=>$Row[2],
+												'peso'=>$Row[3],
+												'sexo'=>$Row[4],
+												'clasificacion'=>$Row[5],
+												'aob'	=>$Row[6],
+												'fecha'	=>ControladorTrazabilidad::fechaExcel($Row[0]),
+												'refEco'=>$Row[7]);										
+												
+										}
 	
-						// 					if(in_array($Row[1],$rfidsTemp)){
+										if ($rowNumber == 14){
 	
-						// 						// echo '<script>
-						// 						// 		alert("El RFID ' . $Row[1] . ' se repite en la planilla de Toma de Decisión. La carga de uno de ellos no sera realiazada")
-						// 						// 		</script>';
-						// 					}
+											if($Row[0] == 'Fecha'){
+												$rowValida = true;
+											} else {
 	
-						// 					$dataTD[] = array(
-						// 						'rfid'	 =>$Row[1],
-						// 						'mmGrasa'=>$Row[2],
-						// 						'peso'=>$Row[3],
-						// 						'sexo'=>$Row[4],
-						// 						'clasificacion'=>$Row[5],
-						// 						'aob'	=>$Row[6],
-						// 						'fecha'	=>ControladorTrazabilidad::fechaExcel($Row[0]),
-						// 						'refEco'=>$Row[7]);										
+												ModeloTrazabilidad::mdlEliminarFaena($idFaena);
 	
-						// 					$rfidsTemp[] = $Row[1];
+												echo '<script>
+	
+													swal({
+															type: "error",
+															title: "La planilla seleccionada no corresponde a una planilla de Toma de Decisión",
+															showConfirmButton: true,
+															confirmButtonText: "Cerrar"
+															}).then(function(result) {
+																	if (result.value) {
+	
+																		window.location = "index.php?ruta=trazabilidad/index"
+	
+																	}
+																})
+	
+													</script>';
+													die();
+	
+											}
+	
+										}
 											
-						// 				}
-	
-						// 				if ($rowNumber == 14){
-	
-						// 					if($Row[0] == 'Fecha'){
-						// 						$rowValida = true;
-						// 					} else {
-	
-						// 						ModeloTrazabilidad::mdlEliminarFaena($idFaena);
-	
-						// 						echo '<script>
-	
-						// 							swal({
-						// 									type: "error",
-						// 									title: "La planilla seleccionada no corresponde a una planilla de Toma de Decisión",
-						// 									showConfirmButton: true,
-						// 									confirmButtonText: "Cerrar"
-						// 									}).then(function(result) {
-						// 											if (result.value) {
-	
-						// 												window.location = "index.php?ruta=trazabilidad/index"
-	
-						// 											}
-						// 										})
-	
-						// 							</script>';
-						// 							die();
-	
-						// 					}
-	
-						// 				}
-											
-						// 				$rowNumber++;
+										$rowNumber++;
 				
-						// 			}
+									}
 										
-						// 		}
+								}
+												
+							} else {
 	
-						// 		$rfidsTemp = array();
-											
-						// 	} else {
+								ModeloTrazabilidad::mdlEliminarFaena($idFaena);
 	
-						// 		ModeloTrazabilidad::mdlEliminarFaena($idFaena);
+								echo'<script>
 	
-						// 		echo'<script>
+								swal({
+										type: "error",
+										title: "El formato de la planilla Toma de Decisión no es compatible con Excel",
+										showConfirmButton: true,
+										confirmButtonText: "Cerrar"
+										}).then(function(result) {
+												if (result.value) {
 	
-						// 		swal({
-						// 				type: "error",
-						// 				title: "El formato de la planilla Toma de Decisión no es compatible con Excel",
-						// 				showConfirmButton: true,
-						// 				confirmButtonText: "Cerrar"
-						// 				}).then(function(result) {
-						// 						if (result.value) {
+													window.location = "index.php?ruta=trazabilidad/index"
 	
-						// 							window.location = "index.php?ruta=trazabilidad/index"
+												}
+											})
 	
-						// 						}
-						// 					})
+								</script>';
 	
-						// 		</script>';
+								die();							
 	
-						// 		die();							
-	
-						// 	}
-
-						// 	// CARGA DE EXCEL
-						// 	$tabla = 'tdanimales';
+							}
+var_dump($dataTD);
+							die;
+							// CARGA DE EXCEL
+							$tabla = 'tdanimales';
 							
-						// 	$cargaTD = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataTD);
+							$cargaTD = ControladorTrazabilidad::ctrCargarExcel($tabla,$idFaena,$dataTD);
 						
-						// 	if($cargaTD != 'ok'){
+							if($cargaTD != 'ok'){
 
-						// 		ModeloTrazabilidad::mdlEliminarFaena($idFaena);
+								ModeloTrazabilidad::mdlEliminarFaena($idFaena);
 								
-						// 		echo'<script>
+								echo'<script>
 
-						// 				swal({
-						// 						type: "error",
-						// 						title: "Error al cargar Excel Toma de Decisión a la base de datos. Informar",
-						// 						showConfirmButton: true,
-						// 						confirmButtonText: "Cerrar"
-						// 						}).then(function(result) {
-						// 								if (result.value) {
+										swal({
+												type: "error",
+												title: "Error al cargar Excel Toma de Decisión a la base de datos. Informar",
+												showConfirmButton: true,
+												confirmButtonText: "Cerrar"
+												}).then(function(result) {
+														if (result.value) {
 
-						// 									window.location = "index.php?ruta=trazabilidad/index"
+															window.location = "index.php?ruta=trazabilidad/index"
 
-						// 								}
-						// 							})
+														}
+													})
 
-						// 		</script>';
+								</script>';
 
-						// 		die();	
+								die();	
 
-						// 	}
+							}
 
-						// }
+						}
 
 						// TOMA DE DATOS CARGA EXCEL WINCAMPO
 						if(in_array($_FILES["excelWC"]["type"],$allowedFileType)){

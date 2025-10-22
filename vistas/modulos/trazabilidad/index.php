@@ -1,3 +1,4 @@
+
 <div class="content-wrapper">
 
   <section class="content-header">
@@ -123,7 +124,7 @@
                       <div class="form-group">
 
                         <label for="excelTD">Excel Toma Decisión (Opcional)</label>
-                        <input type="file" name="excelTD" id="excelTD" disabled>
+                        <input type="file" name="excelTD" id="excelTD" <?=($_SESSION['usuario'] == 'tecnicoTrazabilidad') ? '' : 'disabled'?> >
 
                       </div>
 
