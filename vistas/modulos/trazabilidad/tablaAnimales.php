@@ -204,8 +204,29 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                               
                                               // Si es string, limpia y convierte
                                               if (typeof valorOriginal === 'string') {
-                                                // Elimina comillas, espacios y comas (en caso de separador de miles)
-                                                valorOriginal = valorOriginal.replace(/['"',\s]/g, '').replace(',', '.');
+                                                // Elimina comillas y espacios
+                                                valorOriginal = valorOriginal.replace(/['"'\s]/g, '');
+                                                
+                                                // Detectar si usa coma como separador decimal (formato europeo)
+                                                // Si tiene punto Y coma, el punto es separador de miles
+                                                // Si solo tiene coma, es separador decimal
+                                                if (valorOriginal.includes(',')) {
+                                                  if (valorOriginal.includes('.')) {
+                                                    // Tiene ambos: punto es miles, coma es decimal (ej: 1.234,56)
+                                                    valorOriginal = valorOriginal.replace(/\./g, '').replace(',', '.');
+                                                  } else {
+                                                    // Solo tiene coma: es decimal (ej: 1,03)
+                                                    valorOriginal = valorOriginal.replace(',', '.');
+                                                  }
+                                                } else if (valorOriginal.includes('.')) {
+                                                  // Solo tiene punto: podría ser decimal o miles
+                                                  // Si tiene más de un punto, son separadores de miles (ej: 1.234.567)
+                                                  const puntos = (valorOriginal.match(/\./g) || []).length;
+                                                  if (puntos > 1) {
+                                                    valorOriginal = valorOriginal.replace(/\./g, '');
+                                                  }
+                                                  // Si tiene un solo punto, se asume decimal (ej: 1.03)
+                                                }
                                               }
                                               
                                               // Convierte a número
