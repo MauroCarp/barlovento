@@ -1025,7 +1025,8 @@ class ControladorContable{
                 
                 // PRECIO DOLAR
          
-                $url = "https://mercados.ambito.com//dolarrava/cl/historico-general/$periodo/$hasta";
+                // $url = "https://mercados.ambito.com/dolarrava/cl/historico-general/$periodo/$hasta";
+                $url = "https://mercados.ambito.com/dolarrava/cl/grafico/$periodo/$hasta";
         
                 // Inicializar cURL
                 $ch = curl_init();
