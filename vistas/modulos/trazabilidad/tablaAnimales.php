@@ -58,6 +58,9 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                         <th>Tipif.</th>
                         <th>Gord.</th>
                         <th>Dent.</th>
+                        <th>mm Grasa</th>
+                        <th>Clasificacion TD</th>
+                        <th>AoB</th>
                         <th>% Diferencia T vs R</th>
                         <th>Kilos teoricos</th>
                         <th>Caravana Visual</th>
@@ -150,7 +153,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                         // Crear headers para Excel (solo columnas visibles, excluyendo la columna de estilo)
                                         const headers = [];
                                         table.columns(':visible').every(function(index) {
-                                          if (index !== 32) { // Excluir la columna del marcador de estilo
+                                          if (index !== 35) { // Excluir la columna del marcador de estilo
                                             const header = $(this.header()).text();
                                             if (header.trim() !== '') {
                                               headers.push(header);
@@ -166,7 +169,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                           let visibleColumnIndex = 0;
                                           
                                           table.columns(':visible').every(function(index) {
-                                            if (index !== 32 && row[index] !== undefined) { // Excluir columna de estilo
+                                            if (index !== 40 && row[index] !== undefined) { // Excluir columna de estilo
                                               let cellValue = row[index];
                                               
                                               // Identificar columnas que pueden tener números largos (RFID, Correlación, Garrón, etc.)
@@ -186,7 +189,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                           excelData.push(filteredRow);
                                         });
                                         // Array de índices de columnas numéricas (ajusta según tus columnas)
-                                        const columnasNumericas = [3,9,10, 17, 18, 19, 21, 22, 23, 24,25,26];
+                                        const columnasNumericas = [3,9,11,12,13, 20, 21, 22, 23, 24,25,26, 27, 28, 29];
 
                                         // Aplicar formato numérico a las celdas correspondientes
                                         const ws = XLSX.utils.aoa_to_sheet(excelData);
@@ -195,7 +198,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                         for (let r = 1; r < excelData.length; r++) { // Empieza en 1 para saltar el header
                                           let visibleColumnIndex = 0;
                                           table.columns(':visible').every(function(index) {
-                                          if (index !== 32 && excelData[r][visibleColumnIndex] !== undefined) {
+                                          if (index !== 40 && excelData[r][visibleColumnIndex] !== undefined) {
                                             if (columnasNumericas.includes(index)) {
                                             const cellAddress = XLSX.utils.encode_cell({c: visibleColumnIndex, r: r});
                                             const cell = ws[cellAddress];
@@ -301,7 +304,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             rowCallback: function(row, data, index) {
 
                               // Aplicar estilos según el tipo de registro
-                              const tipoRegistro = data[35]; // Índice del marcador de estilo
+                              const tipoRegistro = data[40]; // Índice del marcador de estilo
                               console.log(tipoRegistro)
                               if (tipoRegistro === 'segunda') {
                                 // Segunda fila (RFID vacío)

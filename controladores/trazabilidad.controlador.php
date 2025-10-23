@@ -74,7 +74,7 @@ class ControladorTrazabilidad{
 										if($Row[0] == 'KG TOTAL' || ($rowNumber > 14 && $Row[0] == '')) $rowValida = false;
 	
 										if ($rowValida){	
-											var_dump($Row[0]);
+
 											$dataTD[] = array(
 												'rfid'	 =>$Row[1],
 												'mmGrasa'=>$Row[2],
@@ -147,8 +147,7 @@ class ControladorTrazabilidad{
 								die();							
 	
 							}
-var_dump($dataTD);
-							die;
+
 							// CARGA DE EXCEL
 							$tabla = 'tdanimales';
 							
@@ -347,7 +346,7 @@ var_dump($dataTD);
 
 									if ($rowIndex === 0) {
 										// Salteamos la fila de cabecera
-										if($Row[0] == 'Nº de Caravana' || $Row[0] == 'RFID') {
+										if($Row[0] == 'Nº de Caravana' || $Row[0] == 'Caravana' || $Row[0] == 'RFID') {
 											$rowValida = true;
 										} else {
 
@@ -647,6 +646,10 @@ var_dump($dataTD);
 		$wincampo = ModeloTrazabilidad::mdlMostrarAnimalesFaenas($tabla, $ids);
 
 		$tabla = "trazanimales";
+
+		$frigorigico = ModeloTrazabilidad::mdlMostrarAnimalesFaenas($tabla, $ids);
+		
+		$tabla = "tdanimales";
 
 		$frigorigico = ModeloTrazabilidad::mdlMostrarAnimalesFaenas($tabla, $ids);
 		

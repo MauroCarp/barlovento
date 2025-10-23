@@ -134,7 +134,7 @@ class ModeloTrazabilidad{
 		$conexion = Conexion::conectar();
 		if($tabla == 'wcanimales'){
 
-			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN (:idFaena) ORDER BY ingreso DESC");
+			$stmt = $conexion->prepare("SELECT $tabla.*, tdanimales.mmGrasa,tdanimales.aob,tdanimales.clasificacion FROM $tabla LEFT JOIN tdanimales ON $tabla.rfid = tdanimales.rfid WHERE $tabla.idFaena IN (:idFaena) ORDER BY $tabla.ingreso DESC");
 
 		} else {
 			
