@@ -106,12 +106,13 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             processing: true,
                             serverSide: true,
                             ajax: {
-                                url: 'ajax/trazabilidad-animals.ajax.php',
-                                type: 'POST',
-                                data: function(d) {
-                                    d.action = 'mostrarAnimalesPaginados';
-                                    d.ids = ids;
-                                }
+                              url: 'ajax/trazabilidad-animals.ajax.php',
+                              type: 'POST',
+                              data: function(d) {
+                                d.action = 'mostrarAnimalesPaginados';
+                                d.ids = ids;
+                                return d;
+                              },
                             },
                             ordering: false,
                             dom: 'Bfrtip',
@@ -153,7 +154,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                         // Crear headers para Excel (solo columnas visibles, excluyendo la columna de estilo)
                                         const headers = [];
                                         table.columns(':visible').every(function(index) {
-                                          if (index !== 35) { // Excluir la columna del marcador de estilo
+                                          if (index !== 38) { // Excluir la columna del marcador de estilo
                                             const header = $(this.header()).text();
                                             if (header.trim() !== '') {
                                               headers.push(header);
@@ -169,13 +170,13 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                           let visibleColumnIndex = 0;
                                           
                                           table.columns(':visible').every(function(index) {
-                                            if (index !== 40 && row[index] !== undefined) { // Excluir columna de estilo
+                                            if (index !== 38 && row[index] !== undefined) { // Excluir columna de estilo
                                               let cellValue = row[index];
                                               
                                               // Identificar columnas que pueden tener números largos (RFID, Correlación, Garrón, etc.)
                                               const columnHeader = $(this.header()).text().toLowerCase();
                                               const isNumericColumn = columnHeader.includes('rfid') || 
-                                                                    visibleColumnIndex === 0; // Primera columna visible (RFID)
+                                              visibleColumnIndex === 0; // Primera columna visible (RFID)
                                               
                                               // Convertir números largos a texto para evitar notación científica
                                               if (isNumericColumn && cellValue != '') {
@@ -198,7 +199,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                                         for (let r = 1; r < excelData.length; r++) { // Empieza en 1 para saltar el header
                                           let visibleColumnIndex = 0;
                                           table.columns(':visible').every(function(index) {
-                                          if (index !== 40 && excelData[r][visibleColumnIndex] !== undefined) {
+                                          if (index !== 38 && excelData[r][visibleColumnIndex] !== undefined) {
                                             if (columnasNumericas.includes(index)) {
                                             const cellAddress = XLSX.utils.encode_cell({c: visibleColumnIndex, r: r});
                                             const cell = ws[cellAddress];
@@ -278,7 +279,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             ],
                             responsive: true,
                             columnDefs: [
-                              { targets: [9,10,12,13,16,17,18,19,20,21,22,23,24,25,26,27,30], visible: false }
+                              { targets: [9,10,11,12,13,15,16,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,37], visible: false }
                             ],
                             language: {
                               buttons: {
@@ -304,7 +305,7 @@ $ids = isset($_GET['ids']) ? $_GET['ids'] : '';
                             rowCallback: function(row, data, index) {
 
                               // Aplicar estilos según el tipo de registro
-                              const tipoRegistro = data[40]; // Índice del marcador de estilo
+                              const tipoRegistro = data[38]; // Índice del marcador de estilo
                               console.log(tipoRegistro)
                               if (tipoRegistro === 'segunda') {
                                 // Segunda fila (RFID vacío)
