@@ -343,6 +343,7 @@ class ControladorAgro{
                                     $rowValida = false;
 
                                 if($rowValida){
+
                                     if($Row[0] != 'Totales:' && trim($Row[0]) != ''){
 
                                         $arr = array('idEjecucion'=>$idEjecucion,
@@ -375,8 +376,7 @@ class ControladorAgro{
                             }
                                 
                         }
-                     
-                        
+                    
                         $tabla = 'ejecucionLabores';
 
                         $respuesta = ModeloAgro::mdlCargarLabores($tabla,implode(',',$data));

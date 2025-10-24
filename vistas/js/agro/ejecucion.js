@@ -303,14 +303,12 @@ const cargarInfoEjecucion = (campania)=>{
   data.append('etapa',etapa)
   data.append('idPlanificacion',Number(idPlanificacion))
 
-  console.log('Datos de la variable data:', data);
-
   fetch(url,{
       method:'post',
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
- 
+
     if(respuesta.length == 0){
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
       document.getElementById(`hasInvEjecucionPichi`).innerText = '-'
@@ -398,8 +396,6 @@ const cargarInfoEjecucion = (campania)=>{
         
         data[lote['campo']][lote['lote']].costoPlanificacion = lote['costoPlanificacion']
         
-        console.log(lote.cultivo)
-        console.log(tipoCultivo(lote.cultivo))
         if(lote.etapa == 'gruesa'){
 
           info[lote['campo']]['hasGruesa'] += Number(lote.has)
@@ -459,7 +455,7 @@ const cargarInfoEjecucion = (campania)=>{
       for (const key in data[campo]) {
         
         let tooltip = ''
-        
+
         for (const lote in labores[campo][key]) {
 
           if(tooltip.length > 0 )
