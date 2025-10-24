@@ -1,6 +1,28 @@
 <?php
 error_reporting(E_ERROR | E_PARSE);
 
+/**
+ * Limpia y normaliza strings para prevenir problemas de encoding en BD
+ * @param string $text - Texto a limpiar
+ * @return string - Texto limpio y normalizado
+ */
+function limpiarTexto($text) {
+    // Trim y convertir a minúsculas (UTF-8 safe)
+    $text = mb_strtolower(trim($text), 'UTF-8');
+    
+    // Remover espacios
+    $text = str_replace(' ', '', $text);
+    
+    // Remover caracteres especiales comunes que causan problemas
+    $caracteresProblematicos = ['°', '°', '˚', 'º', '®', '™', '©'];
+    $text = str_replace($caracteresProblematicos, '', $text);
+    
+    // Opcional: Normalizar caracteres acentuados si es necesario
+    // $text = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+    
+    return $text;
+}
+
 function tipoEstInv($cultivo){
 
     switch ($cultivo) {
@@ -156,7 +178,8 @@ class ControladorAgro{
 
                         // var_dump($Row[1]);
 
-                        $cultivo = strtolower(trim(str_replace(' ','',str_replace('°','',$Row[1]))));
+                        // Limpiar y normalizar el cultivo
+                        $cultivo = limpiarTexto($Row[1]);
 
                         if(trim($Row[1]) == 'EL PICHI') $campo = 'pichi';
                         
