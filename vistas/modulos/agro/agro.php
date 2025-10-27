@@ -1,4 +1,13 @@
 <?php         
+if(!isset($_GET['campania'])){
+
+  $campania = ControladorAgro::ctrMostrarCampanias(null,'*','distinct');
+  
+  echo '<script>
+          window.location = "index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '";
+        </script>';
+}
+
 
 if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 

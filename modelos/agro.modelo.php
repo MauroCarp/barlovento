@@ -291,6 +291,10 @@ class ModeloAgro{
 
 		if($full){
 
+			if($full == 'distinct'){
+				$stmt = Conexion::conectar()->prepare("SELECT DISTINCT(campania) FROM $tabla");
+			}
+
 		} else { 
 
 			$stmt = Conexion::conectar()->prepare("SELECT $campos FROM $tabla $where");
