@@ -54,6 +54,7 @@ const nombreCultivos = {
   'triticale espinillo': 'Triticale Espinillo',
   'carinata': 'Carinata',
 }
+
 const generarInputFile = (lotes) => {
 
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
@@ -303,12 +304,14 @@ const cargarInfoEjecucion = (campania)=>{
   data.append('etapa',etapa)
   data.append('idPlanificacion',Number(idPlanificacion))
 
+  console.log('Datos de la variable data:', data);
+
   fetch(url,{
       method:'post',
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-
+ 
     if(respuesta.length == 0){
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
       document.getElementById(`hasInvEjecucionPichi`).innerText = '-'
@@ -388,12 +391,14 @@ const cargarInfoEjecucion = (campania)=>{
         
         data[lote['campo']][lote['lote']].cultivo = lote['cultivo'] 
 
-        data[lote['campo']][lote['lote']].costoLabor =  Number(lote['costoLabor'])
+        data[lote['campo']][lote['lote']].costoLabor =  (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
 
         data[lote['campo']][lote['lote']].costoInsumo = (lote['labor'] != 'Fertilizacion') ? Number(lote['costoInsumo']) : 0
 
         data[lote['campo']][lote['lote']].costoFertilizacion = (lote['labor'] == 'Fertilizacion') ? Number(lote['costoInsumo']) : 0
-        
+
+        data[lote['campo']][lote['lote']].costoCosecha = (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
+
         data[lote['campo']][lote['lote']].costoPlanificacion = lote['costoPlanificacion']
         
         if(lote.etapa == 'gruesa'){
@@ -426,6 +431,8 @@ const cargarInfoEjecucion = (campania)=>{
 
         data[lote['campo']][lote['lote']].costoFertilizacion += (lote['labor'] == 'Fertilizacion') ? Number(lote['costoInsumo']) : 0
 
+        data[lote['campo']][lote['lote']].costoCosecha += (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
+
         if(lote.etapa == 'gruesa'){
 
           info[lote['campo']]['costoGruesa'] += (Number(lote['costoLabor']) + Number(lote['costoInsumo']))
@@ -455,7 +462,7 @@ const cargarInfoEjecucion = (campania)=>{
       for (const key in data[campo]) {
         
         let tooltip = ''
-
+        
         for (const lote in labores[campo][key]) {
 
           if(tooltip.length > 0 )
@@ -464,9 +471,10 @@ const cargarInfoEjecucion = (campania)=>{
           tooltip += 
             `Labor: ${lote} \n Costo Labor: $ ${labores[campo][key][lote]['costoLabor'].toLocaleString('de-DE')} \n Costo Insumo: $ ${labores[campo][key][lote]['costoInsumo'].toLocaleString('de-DE')} \n -------------------
           `;
+
         }
 
-        let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion))
+        let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion) + Number(data[campo][key].costoCosecha))
 
         let diferencia = ((totalEjecucion - data[campo][key].costoPlanificacion) * 100) / data[campo][key].costoPlanificacion
 
@@ -498,7 +506,15 @@ const cargarInfoEjecucion = (campania)=>{
             </td>
   
             <td>
-              ${totalEjecucion.toLocaleString('de-DE')}
+               ${totalEjecucion.toLocaleString('de-DE')}
+            </td>
+            
+            <td>
+              ${data[campo][key].costoCosecha.toLocaleString('de-DE')}
+            </td>
+            
+            <td>
+              rinde
             </td>
             
             <td>
@@ -507,6 +523,10 @@ const cargarInfoEjecucion = (campania)=>{
 
             <td>
               ${diferencia.toFixed(2)} %
+            </td>
+            
+            <td>
+              ${diferencia.toFixed(2)}
             </td>
   
           <tr>

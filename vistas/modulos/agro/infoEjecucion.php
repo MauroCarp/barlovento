@@ -1,4 +1,26 @@
 
+
+<?php if ($campoId == 'Antony'){ ?>
+    <!-- Acordeón para Antony -->
+    <div class="panel-group" id="accordionAntonyEjecucion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingAntonyEjecucion" style="display:flex;justify-content:space-between;align-items:center;">
+                <h4 class="panel-title" style="font-size:1.5em;">
+                    <a role="button" data-toggle="collapse" data-parent="#accordionAntonyEjecucion" href="#collapseAntonyEjecucion" aria-expanded="false" aria-controls="collapseAntonyEjecucion">
+                        <i class="fa fa-chevron-down"></i><b> <?php echo $campoId; ?></b>     
+                    </a>
+                </h4>
+                    <form action="" method="post" id="formAntonyEjecucion" style="display:flex;align-items:center;">
+                        <input type="file" name="archivoAntonyEjecucion" id="archivoAntonyEjecucion">
+                        <input type="button" class="btn btn-primary" id="btnCargarAntonyEjecucion" value="Cargar">
+                    </form>
+            </div>
+            <div id="collapseAntonyEjecucion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingAntonyEjecucion">
+                <div class="panel-body">
+<?php } ?>
+
+        
+        
         <div class="row">
             
             <div class="col-lg-12">
@@ -114,3 +136,10 @@
             </div>
         
         </div>
+
+<?php if ($campoId == 'Antony'){ ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
