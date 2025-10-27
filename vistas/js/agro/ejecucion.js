@@ -514,7 +514,7 @@ const cargarInfoEjecucion = (campania)=>{
             </td>
             
             <td>
-              rinde
+          
             </td>
             
             <td>

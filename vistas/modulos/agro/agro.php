@@ -50,6 +50,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
     }).then((result) => {
 
       if (result) {
+
         let data = {
           'idPlanificacion': <?=$idPlanificacion?>,
           'accion':'cargarCostos'
@@ -179,6 +180,8 @@ include 'vistas/modulos/modales/agro/selectCampania.modal.php';
 include 'vistas/modulos/modales/agro/costosPlanificacion.modal.php';
 
 include 'vistas/modulos/modales/agro/cargarEjecucion.modal.php';
+
+include 'vistas/modulos/modales/agro/cargarEjecucionRindes.modal.php';
 
 $eliminarArchivo = new ControladorAgro;
 

@@ -12,8 +12,9 @@
 
     </div>
 
-    <div class="col-lg-3">
+    <div class="col-lg-2">
         <button type="button" id="btnCargaLotes" class="btn btn-secondary" data-toggle="modal" data-target="#modalCargarEjecucion"><i class="fa fa-file" style="color:#3c8dbc;font-size:1.2em;"></i><b>&nbsp;&nbsp;Carga de Lotes</b></button>
+        <button type="button" id="btnCargaRindes" class="btn btn-secondary" data-toggle="modal" data-target="#modalCargarEjecucionRindes"><i class="fa fa-file" style="color:#3c8dbc;font-size:1.2em;"></i><b>&nbsp;&nbsp;Cargar Rindes</b></button>
     </div>
 
 </div>
