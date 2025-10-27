@@ -34,6 +34,30 @@ const cargarInfoPlanificacion = (campania,carga)=>{
 
       generarInputFile(respuesta.lotes)
 
+      cultivosActuales = Object.keys(respuesta.costos)
+      cultivosNoCobertura = [...new Set(cultivosActuales
+        .filter(cultivo => !cobertura.includes(cultivo.toLowerCase()))
+        .map(cultivo => cultivo.replace(/\d+$/, '')))]
+
+      cultivosNoCobertura.forEach(cultivo => {
+
+        $('#formEjecucionRindes').append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(cultivo)}</b></div><br>
+        <div class="form-group">
+
+            <label for="rinde${capitalizarPrimeraLetra(cultivo)}"</label>
+
+            <div class="input-group">
+
+              <div class="custom-file"><input type="file" class="custom-file-input" name="rindes_${cultivo}">
+
+              </div>
+              
+            </div>
+
+          </div>`))
+      });  
+
+
       let data = {
         'pichi':{
           'fina':{
