@@ -132,6 +132,10 @@ class ModeloTrazabilidad{
 	static public function mdlMostrarAnimalesFaenas($tabla, $ids) {
 
 		$conexion = Conexion::conectar();
+		$temp = explode(",",$ids);
+
+		$idsFaenas = (sizeof($temp) > 1) ? "'" . implode("','",$temp) . "'" : $temp[0];
+
 		if($tabla == 'wcanimales'){
 
 			$stmt = $conexion->prepare("SELECT $tabla.*, tdanimales.mmGrasa,tdanimales.aob,tdanimales.clasificacion FROM $tabla LEFT JOIN tdanimales ON $tabla.rfid = tdanimales.rfid WHERE $tabla.idFaena IN (:idFaena) ORDER BY $tabla.ingreso DESC");
