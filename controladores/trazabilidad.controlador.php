@@ -649,10 +649,6 @@ class ControladorTrazabilidad{
 
 		$frigorigico = ModeloTrazabilidad::mdlMostrarAnimalesFaenas($tabla, $ids);
 		
-		$tabla = "tdanimales";
-
-		$frigorigico = ModeloTrazabilidad::mdlMostrarAnimalesFaenas($tabla, $ids);
-		
 		$respuesta = array();
 		
 		foreach ($wincampo as $key => $animal) {

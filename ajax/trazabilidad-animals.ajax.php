@@ -6,10 +6,8 @@ require_once "../modelos/trazabilidad.modelo.php";
 class AjaxTrazabilidadAnimals {
 
     public function ajaxMostrarAnimalesPaginados() {
-        // Limpiar cualquier output previo
-        ob_clean();
         
-        $ids = isset($_POST['ids']) ? $_POST['ids'] : '';
+        $ids = $_POST['ids'];
         $draw = intval($_POST['draw']);
         $start = intval($_POST['start']);
         $length = intval($_POST['length']);
@@ -44,10 +42,7 @@ class AjaxTrazabilidadAnimals {
             "data" => $data
         );
         
-        // Asegurar que solo se envía JSON
-        header('Content-Type: application/json');
         echo json_encode($response);
-        exit;
     }
 
     private function processAnimalsData($animales) {
@@ -71,9 +66,9 @@ class AjaxTrazabilidadAnimals {
                         isset($primeraFila["tipificacion"]) ? htmlspecialchars($primeraFila["tipificacion"]) : '',
                         isset($primeraFila["gordo"]) ? htmlspecialchars($primeraFila["gordo"]) : '',
                         isset($primeraFila["den"]) ? htmlspecialchars($primeraFila["den"]) : '',
-                            isset($row2["mmGrasa"]) ? htmlspecialchars($row2["mmGrasa"]) : '',
-                            isset($row2["clasificacion"]) ? htmlspecialchars($row2["clasificacion"]) : '',
-                            isset($row2["aob"]) ? htmlspecialchars($row2["aob"]) : '',
+                        isset($primeraFila["mmGrasa"]) ? htmlspecialchars($primeraFila["mmGrasa"]) : '',
+                        isset($primeraFila["clasificacion"]) ? htmlspecialchars($primeraFila["clasificacion"]) : '',
+                        isset($primeraFila["aob"]) ? htmlspecialchars($primeraFila["aob"]) : '',
                         isset($primeraFila["diferencia"]) ? htmlspecialchars($primeraFila["diferencia"]) : '',
                         isset($primeraFila["kilos_teoricos"]) ? htmlspecialchars($primeraFila["kilos_teoricos"]) : '',
                         isset($primeraFila["caravana"]) ? htmlspecialchars($primeraFila["caravana"]) : '',
@@ -199,15 +194,11 @@ class AjaxTrazabilidadAnimals {
                 }
             }
         }
-        
         return $processedData;
     }
 
     public function ajaxExportarTodos() {
-        // Limpiar cualquier output previo
-        ob_clean();
-        
-        $ids = isset($_POST['ids']) ? $_POST['ids'] : '';
+        $ids = $_POST['ids'];
         
         // Obtener TODOS los datos sin paginación
         $animales = ControladorTrazabilidad::ctrMostrarAnimalesFaenas($ids);
@@ -215,20 +206,11 @@ class AjaxTrazabilidadAnimals {
         // Procesar todos los datos
         $allProcessedData = $this->processAnimalsData($animales);
         
-        // Asegurar que solo se envía JSON
-        header('Content-Type: application/json');
         echo json_encode($allProcessedData);
-        exit;
     }
 }
 
 if (isset($_POST['action'])) {
-    // Limpiar buffer de salida
-    if (ob_get_level()) {
-        ob_end_clean();
-    }
-    ob_start();
-    
     $ajax = new AjaxTrazabilidadAnimals();
     
     if ($_POST['action'] == 'mostrarAnimalesPaginados') {

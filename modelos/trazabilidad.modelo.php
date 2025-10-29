@@ -132,22 +132,27 @@ class ModeloTrazabilidad{
 	static public function mdlMostrarAnimalesFaenas($tabla, $ids) {
 
 		$conexion = Conexion::conectar();
-		$temp = explode(",",$ids);
-
-		$idsFaenas = (sizeof($temp) > 1) ? "'" . implode("','",$temp) . "'" : $temp[0];
-
+		
+		// Convertir el string de IDs separados por coma en un array
+		$idsArray = array_map('trim', explode(',', $ids));
+		
+		// Crear los placeholders para la consulta IN (?, ?, ?)
+		$placeholders = implode(',', array_fill(0, count($idsArray), '?'));
+		
 		if($tabla == 'wcanimales'){
 
-			$stmt = $conexion->prepare("SELECT $tabla.*, tdanimales.mmGrasa,tdanimales.aob,tdanimales.clasificacion FROM $tabla LEFT JOIN tdanimales ON $tabla.rfid = tdanimales.rfid WHERE $tabla.idFaena IN (:idFaena) ORDER BY $tabla.ingreso DESC");
+			$stmt = $conexion->prepare("SELECT $tabla.*, tdanimales.mmGrasa,tdanimales.aob,tdanimales.clasificacion FROM $tabla LEFT JOIN tdanimales ON $tabla.rfid = tdanimales.rfid WHERE $tabla.idFaena IN ($placeholders) ORDER BY $tabla.ingreso DESC");
 
 		} else {
 			
-			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN (:idFaena) ORDER BY rfid ASC");
+			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN ($placeholders) ORDER BY rfid ASC");
 
 		}
 
-		$stmt->bindParam(":idFaena", $ids, PDO::PARAM_STR);
-
+		// Bind de cada ID individualmente
+		foreach ($idsArray as $key => $id) {
+			$stmt->bindValue(($key + 1), $id, PDO::PARAM_INT);
+		}
 
 		$stmt->execute();
 
@@ -158,13 +163,23 @@ class ModeloTrazabilidad{
 
 		$conexion = Conexion::conectar();
 		
+		// Convertir el string de IDs separados por coma en un array
+		$idsArray = array_map('trim', explode(',', $ids));
+		
+		// Crear los placeholders para la consulta IN (?, ?, ?)
+		$placeholders = implode(',', array_fill(0, count($idsArray), '?'));
+		
 		if($tabla == 'wcanimales'){
-			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN (:idFaena) ORDER BY ingreso DESC LIMIT :start, :length");
+			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN ($placeholders) ORDER BY ingreso DESC LIMIT :start, :length");
 		} else {
-			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN (:idFaena) ORDER BY rfid ASC LIMIT :start, :length");
+			$stmt = $conexion->prepare("SELECT * FROM $tabla WHERE idFaena IN ($placeholders) ORDER BY rfid ASC LIMIT :start, :length");
 		}
 
-		$stmt->bindParam(":idFaena", $ids, PDO::PARAM_STR);
+		// Bind de cada ID individualmente
+		foreach ($idsArray as $key => $id) {
+			$stmt->bindValue(($key + 1), $id, PDO::PARAM_INT);
+		}
+		
 		$stmt->bindParam(":start", $start, PDO::PARAM_INT);
 		$stmt->bindParam(":length", $length, PDO::PARAM_INT);
 
@@ -177,18 +192,30 @@ class ModeloTrazabilidad{
 
 		$conexion = Conexion::conectar();
 		
+		// Convertir el string de IDs separados por coma en un array
+		$idsArray = array_map('trim', explode(',', $ids));
+		
+		// Crear los placeholders para la consulta IN (?, ?, ?)
+		$placeholders = implode(',', array_fill(0, count($idsArray), '?'));
+		
 		// Contar registros únicos por RFID de ambas tablas
 		$stmt = $conexion->prepare("
 			SELECT COUNT(DISTINCT rfid) as total 
 			FROM (
-				SELECT rfid FROM wcanimales WHERE idFaena IN (:idFaena)
+				SELECT rfid FROM wcanimales WHERE idFaena IN ($placeholders)
 				UNION 
-				SELECT rfid FROM trazanimales WHERE idFaena IN (:idFaena2)
+				SELECT rfid FROM trazanimales WHERE idFaena IN ($placeholders)
 			) as combined
 		");
 
-		$stmt->bindParam(":idFaena", $ids, PDO::PARAM_STR);
-		$stmt->bindParam(":idFaena2", $ids, PDO::PARAM_STR);
+		// Bind de cada ID individualmente (dos veces, una para cada IN)
+		$bindIndex = 1;
+		foreach ($idsArray as $id) {
+			$stmt->bindValue($bindIndex++, $id, PDO::PARAM_INT);
+		}
+		foreach ($idsArray as $id) {
+			$stmt->bindValue($bindIndex++, $id, PDO::PARAM_INT);
+		}
 
 		$stmt->execute();
 
