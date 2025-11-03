@@ -1051,17 +1051,18 @@ class ControladorContable{
                     $count = 0;
                     // Recorrer el array de resultados y sumar los valores
                     foreach ($data as $key => $result) {
-                        
                         if($key != 0){
-                            $total += floatval(str_replace(',', '.', $result[1]));
-                  
-                            $count++;
-
+                            $valor = floatval(str_replace(',', '.', $result[1]));
+                            // Solo contar días con valor mayor a 0
+                            if ($valor > 0) {
+                                $total += $valor;
+                                $count++;
+                            }
                         }
                     }
         
-                    // Calcular el promedio
-                    $dolarPromedio = $total / $count;
+                    // Calcular el promedio (solo si hay días válidos)
+                    $dolarPromedio = ($count > 0) ? $total / $count : 0;
                   
                 }
         
@@ -1069,7 +1070,60 @@ class ControladorContable{
                 curl_close($ch); 
 
                 return $dolarPromedio;
+    }
 
+    static public function ctrObtenerValoresDiariosDolar($periodo) {
+        $date = new DateTime($periodo);
+        
+        // Modificar la fecha al último día del mes
+        $date->modify('last day of this month');
+        
+        // Formatear la fecha para obtener solo el día
+        $hasta = $date->format('Y-m-d');
+        
+        // URL para obtener valores diarios
+        $url = "https://mercados.ambito.com/dolarrava/cl/grafico/$periodo/$hasta";
+
+        // Inicializar cURL
+        $ch = curl_init();
+
+        // Configurar opciones de cURL
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        // Ejecutar la solicitud
+        $response = curl_exec($ch);
+
+        $valoresDiarios = [];
+       
+        // Verificar si hubo errores
+        if ($response === false) {
+            throw new Exception(curl_error($ch));
+        } else {
+            // Decodificar la respuesta JSON
+            $data = json_decode($response, true);
+            
+            // Recorrer el array de resultados
+            foreach ($data as $key => $result) {
+                if($key != 0) { // Omitir el primer elemento que suele ser el encabezado
+                    $valor = floatval(str_replace(',', '.', $result[1]));
+                    // Solo incluir días con valor mayor a 0
+                    if ($valor > 0) {
+                        $valoresDiarios[] = [
+                            'fecha' => $result[0],
+                            'valor' => $valor
+                        ];
+                    }
+                }
+            }
+        }
+
+        // Cerrar cURL
+        curl_close($ch); 
+
+        return $valoresDiarios;
     }
 
     

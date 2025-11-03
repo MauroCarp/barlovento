@@ -5,7 +5,7 @@ $resultadoDolar = null;
 $error = null;
 
 // Procesar el formulario
-if(isset($_POST['calcularDolar'])){
+    if(isset($_POST['calcularDolar'])){
     $mes = $_POST['mes'];
     $anio = $_POST['anio'];
     
@@ -14,12 +14,12 @@ if(isset($_POST['calcularDolar'])){
     
     try {
         $resultadoDolar = ControladorContable::ctrCalcularDolar($periodo);
+        // Obtener los valores diarios
+        $valoresDiarios = ControladorContable::ctrObtenerValoresDiariosDolar($periodo);
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
-}
-
-?>
+}?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -182,6 +182,48 @@ if(isset($_POST['calcularDolar'])){
             font-size: 13px;
             color: #1565c0;
         }
+
+        .valores-diarios {
+            margin-top: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .valores-diarios h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .valores-diarios table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .valores-diarios th,
+        .valores-diarios td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .valores-diarios th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 500;
+        }
+
+        .valores-diarios tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .valores-diarios tr:hover {
+            background-color: #f1f3f9;
+        }
     </style>
 </head>
 <body>
@@ -246,6 +288,28 @@ if(isset($_POST['calcularDolar'])){
                     ?>
                 </div>
             </div>
+
+            <?php if(isset($valoresDiarios) && !empty($valoresDiarios)): ?>
+                <div class="valores-diarios">
+                    <h3>Valores Diarios del Mes</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($valoresDiarios as $valor): ?>
+                                <tr>
+                                    <td><?php echo date('d/m/Y', strtotime($valor['fecha'])); ?></td>
+                                    <td>$<?php echo number_format($valor['valor'], 2, ',', '.'); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
         
         <?php if($error !== null): ?>
