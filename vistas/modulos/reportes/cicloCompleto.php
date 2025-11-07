@@ -6,15 +6,20 @@
             POBLACION SEGUN SEXO
                                   ********/
   // MACHOS
-  $item = 'sexo';
+  $item = 'categoria';
 
-  $valor = 'M';
+  $valor = 'NT';
+  
+  $totalMachosNT = ControladorDatos::ctrContarAnimales($item,$valor,true);
 
-  $totalMachos = ControladorDatos::ctrContarAnimales($item,$valor,true);
+  $valor = 'TO';
+  $totalMachosTO = ControladorDatos::ctrContarAnimales($item,$valor,true);
+
+  $totalMachos = (int)$totalMachosNT[0] + (int)$totalMachosTO[0];
 
   // HEMBRAS
                                   
-  $valor = 'H';
+  $valor = 'VQ';
 
   $totalHembras = ControladorDatos::ctrContarAnimales($item,$valor,true);
 
@@ -260,7 +265,7 @@ function configuracionBar(label,data,label2){
 
 // POBLACION
 
-let data = [<?php echo $totalMachos[0].",".$totalHembras[0].",";?>];
+let data = [<?php echo $totalMachos.",".$totalHembras[0].",";?>];
 
 let label = ['Macho','Hembra'];
         

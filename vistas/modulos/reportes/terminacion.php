@@ -10,16 +10,23 @@
 
     $valor = '';
 
-    $item2 = 'sexo';
+    $item2 = 'categoria';
 
-    $valor2 = 'M';
+    $valor2 = 'NT';
 
     $operador = '!=';
-    $totalMachos = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
+
+    $totalMachosNT = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
+
+    $valor2 = 'TO';
+
+    $totalMachosTO = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
+
+    $totalMachos = (int)$totalMachosNT[0] + (int)$totalMachosTO[0];
 
     // HEMBRAS
                                     
-    $valor2 = 'H';
+    $valor2 = 'VQ';
 
     $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
 
@@ -211,7 +218,7 @@
 <script>
 // POBLACION
 
-data = [<?php echo $totalMachos[0].",".$totalHembras[0].",";?>];
+data = [<?php echo $totalMachos.",".$totalHembras[0].",";?>];
 
 label = ['Macho','Hembra'];
         
