@@ -437,6 +437,143 @@ class ControladorAgro{
 
 	}
 
+	static public function ctrCargarEjecucionRindes(){
+
+        require_once('extensiones/excel/php-excel-reader/excel_reader2.php');
+        require_once('extensiones/excel/SpreadsheetReader.php');
+
+        if(isset($_POST['btnCargarEjecucionRindes'])){
+
+            $error = false;
+            
+            $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+
+            $etapa = $_POST['etapaEjecucion'];
+
+            
+            // CARGA Ejecucion
+            $arrLotesCargados = array();
+
+            $campania = $_POST['campania'];
+
+            foreach ($_FILES as $key => $file) {
+                
+                var_dump($_FILES);
+                die;
+                if($file['size'] > 0){
+
+                    if(in_array($file["type"],$allowedFileType)){
+                        
+                        $ruta = "carga/" . $file['name'];
+                        
+                        move_uploaded_file($file['tmp_name'], $ruta);
+                                                                
+                        $rowNumber = 0;
+
+                        $data = array();
+                        
+                        $Reader = new SpreadsheetReader($ruta);	
+                        
+                        $sheetCount = count($Reader->sheets());
+                
+                        $tabla = 'ejecucionrindes';
+                     
+                        $data = array();
+                        
+                        $idEjecucion = $_POST['idEjecucionRindes'];
+
+                        $cultivo = str_replace('rindes_',$file['name']);
+
+                        for($i=0;$i<$sheetCount;$i++){
+                
+                            $Reader->ChangeSheet($i);
+
+                            foreach ($Reader as $Row){     
+                                
+                                if($Row[0] == 'Campo EL PICHI:' && $rowNumber == 6)
+                                    $campo = 'elpichi';
+                                
+                                if($Row[0] == 'Campo LA BETY:')
+                                    $campo = 'labety';
+
+                                if($rowNumber > 7 && $Row[2] != '')
+                                    $rowValida = true;
+
+                                    if($rowValida){
+
+                                        $arr = array('idEjecucion'=>$idEjecucion,
+                                                    'lote'=>"'" . $Row[2] . "'",
+                                                    'rinde'=> $Row[15],
+                                                    'cultivo'=>"'" . $cultivo . "'",
+                                                    'has'=>"'" . number_format(str_replace(',','',$Row[1]),0,'.','') . "'",
+                                                    'costoLabor'=>"'" . number_format(str_replace(',','',$Row[2]),2,'.','') . "'",
+                                                    'costoInsumo'=>"'" . number_format(str_replace(',','',$Row[4]),2,'.','') . "'",
+                                                    'campo'=>"'" . $_POST[$key.'campo'] . "'",
+                                                    'etapa'=>"'" . $etapa . "'"
+                                        );
+
+
+                                        $data[] = "(" . implode(',',$arr) . ")";
+
+                                    }
+
+                            }
+
+                            $rowNumber++;
+                                
+                        }
+                    
+                         $respuesta = ModeloAgro::mdlCargarLabores($tabla,implode(',',$data));
+                        
+                        if($respuesta != 'ok'){
+                           echo'<script>
+
+                            swal({
+                                    type: "error",
+                                    title: "Hubo un error al cargar los Lotes.Informar",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "Cerrar"
+                                    }).then(function(result) {
+                                            if (result.value) {
+                                                window.location = "index.php?ruta=agro/agro"
+
+                                            }
+                                        })
+
+                            </script>';
+                            die();
+                        }
+
+                    
+
+                    }
+
+                }
+
+                echo'<script>
+
+                swal({
+                    type: "success",
+                    title: "Lotes cargados correctamente",
+                    showConfirmButton: true,
+                    confirmButtonText: "Cerrar",
+                    closeOnConfirm: false
+                    }).then(function(result) {
+                            if (result.value) {
+
+                                window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"
+                            }
+                        })
+
+                </script>';
+                die; 
+            }
+            
+        }  
+
+    }
+
+
 
     /*=============================================
 	CARGAR COSTOS

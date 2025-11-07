@@ -25,6 +25,7 @@
         <div class="modal-body">
             
           <div class="box-body" id="formEjecucionRindes">
+            <input type="hidden" name="idEjecucionRindes" id="idEjecucionRindes">
           </div>
 
         </div>
@@ -51,8 +52,8 @@
 
 <?php
 
-// $nuevaCarga = new ControladorAgro();
-// $nuevaCarga->ctrCargarEjecucion();
+$nuevaCargaRindes = new ControladorAgro();
+$nuevaCargaRindes->ctrCargarEjecucionRindes();
 
 
 ?>

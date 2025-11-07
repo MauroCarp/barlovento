@@ -304,14 +304,17 @@ const cargarInfoEjecucion = (campania)=>{
   data.append('etapa',etapa)
   data.append('idPlanificacion',Number(idPlanificacion))
 
-  console.log('Datos de la variable data:', data);
 
   fetch(url,{
       method:'post',
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
- 
+
+    setTimeout(() => {
+      $('#idEjecucionRindes').val(respuesta[0].idEjecucion);
+    }, 600);
+
     if(respuesta.length == 0){
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
       document.getElementById(`hasInvEjecucionPichi`).innerText = '-'

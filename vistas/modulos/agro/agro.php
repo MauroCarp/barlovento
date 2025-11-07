@@ -36,6 +36,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
     
   $html .= '</div>';
 
+  
 ?>
 
   <script>
@@ -102,6 +103,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 <?php
   die;
 }
+
 ?>
 
 <div class="content-wrapper">
