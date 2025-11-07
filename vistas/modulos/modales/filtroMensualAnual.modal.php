@@ -86,7 +86,7 @@
 <script>
 $(function () {
   
-$('#periodoPC')[0].value = monthValue;
+$('#periodoPC')[0].value = monthValue || null;
 
 });
 

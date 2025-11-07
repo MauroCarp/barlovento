@@ -147,13 +147,20 @@ class ModeloDatos{
 	=============================================*/
 
 
-	static public function mdlContarDatos($tabla, $item, $valor,$item2,$valor2,$operador){
+	static public function mdlContarDatos($tabla, $item, $valor,$item2,$valor2,$operador,$last){
 
 		if ($item2 != null) {
 
-			
-			$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM $tabla WHERE $item $operador :$item AND $item2 = :$item2");
-			
+			if($last){
+
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM $tabla WHERE $item $operador :$item AND $item2 = :$item2 AND archivo = (SELECT archivo FROM $tabla ORDER BY id DESC LIMIT 1)");
+
+			}else{
+
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM $tabla WHERE $item $operador :$item AND $item2 = :$item2");
+
+			}
+
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 
 			$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
@@ -164,19 +171,20 @@ class ModeloDatos{
 			return $stmt -> fetch();
 
 		}else{
-			
+
+			$condition = ($last) ? " AND archivo = (SELECT archivo FROM $tabla ORDER BY id DESC LIMIT 1)" : '';
+
 			if($item != null){
-				$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM $tabla WHERE $item $operador :$item");
-	
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM $tabla WHERE $item $operador :$item $condition");
+
 				$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
-	
 				$stmt -> execute();
 				return $stmt -> fetch();
 	
 			}else{
 	
-				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla");
-	
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) FROM $tabla $condition");
+
 				$stmt -> execute();
 	
 				return $stmt -> fetchAll();
@@ -314,13 +322,19 @@ class ModeloDatos{
 	CONTAR ANIMALES 
 	=============================================*/
 
-	static public function mdlContarAnimales($tabla, $item, $valor){
+	static public function mdlContarAnimales($tabla, $item, $valor,$last){
 
 		if($item != null){
+			
+			if($last){
 
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) as totalAnimales FROM $tabla where $item = '$valor' AND archivo = (SELECT archivo FROM $tabla ORDER BY id DESC LIMIT 1)");
+
+			}else{
 			
-			$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) as totalAnimales FROM $tabla WHERE $item = '$valor'");
-			
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) as totalAnimales FROM $tabla WHERE $item = '$valor'");
+			}
+
 			$stmt -> execute();
 
 			// var_dump($stmt ->errorInfo());
@@ -329,8 +343,15 @@ class ModeloDatos{
 
 		}else{
 
-			$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) FROM $tabla");
+			if($last){
 
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) FROM $tabla where archivo = (SELECT archivo FROM $tabla ORDER BY id DESC LIMIT 1)");
+
+			}else{
+
+				$stmt = Conexion::conectar()->prepare("SELECT COUNT(tropa) FROM $tabla");
+
+			}	
 			$stmt -> execute();
 
 			return $stmt -> fetchAll();
@@ -422,7 +443,7 @@ class ModeloDatos{
 	SUMAR CAMPO 
 	=============================================*/
 
-	static public function mdlSumarCampo($tabla, $item, $valor,$campo){
+	static public function mdlSumarCampo($tabla, $item, $valor,$campo,$last){
 		
 		if($item != null){
 
@@ -437,7 +458,15 @@ class ModeloDatos{
 
 		}else{
 
-			$stmt = Conexion::conectar()->prepare("SELECT SUM($campo) FROM $tabla");
+			if($last){
+
+				$stmt = Conexion::conectar()->prepare("SELECT SUM($campo) FROM $tabla where archivo = (SELECT archivo FROM $tabla ORDER BY id DESC LIMIT 1)");
+
+			}else{
+				
+				$stmt = Conexion::conectar()->prepare("SELECT SUM($campo) FROM $tabla");
+
+			}
 
 			$stmt -> execute();
 

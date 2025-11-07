@@ -15,22 +15,22 @@
     $valor2 = 'M';
 
     $operador = '!=';
-    $totalMachos = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador);
+    $totalMachos = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
 
     // HEMBRAS
                                     
     $valor2 = 'H';
 
-    $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador);
+    $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
 
     /*********
                  % POBLACION
                                     ********/
-    $totalAnimalesRP = $totalMachos[0] + $totalHembras[0];
+    $totalAnimalesRP = ControladorDatos::ctrContarDatos($item,$valor,null,$valor2,$operador,true);
 
-    $restoAnimales = $totalAnimalesCC - $totalAnimalesRP;
+    $restoAnimales = $totalAnimales[0] - $totalAnimalesRP[0];
 
-                                    
+                   
     /*********
                      ADPV
                                     ********/
@@ -38,44 +38,42 @@
     $item = NULL;
     $valor = NULL;
     $campo = 'adpvRP';
-    $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $totalAdpvRP = $sumaADPV[0][0];
-    $promedioAdpvRP = number_format(($totalAdpvRP / $totalAnimalesRP),2);
-
-                                
+    $promedioAdpvRP = number_format(($totalAdpvRP / $totalAnimalesRP[0]),2);
     /*********
                      DIAS 
                                     ********/
     
     $campo = 'diasRP';
-    $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $totalDiasRP = $totalDias[0][0];
 
-    $promedioDiasRP = round(($totalDiasRP / $totalAnimalesRP));
+    $promedioDiasRP = round(($totalDiasRP / $totalAnimalesRP[0]));
             
     // /*********
     //                 KG INGRESO
     //                                 ********/
     
     // $campo = 'kgIngresoRP';
-    // $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    // $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     // $kilosIngRP = $kilosIng[0][0];
 
-    // $promedioKgIngRP = number_format(($kilosIngRP / $totalAnimalesRP),2);
+    // $promedioKgIngRP = number_format(($kilosIngRP / $totalAnimalesRP[0]),2);
 
     // /*********
     //                 KG SALIDA
     //                                 ********/
     
     // $campo = 'kgSalidaRP';
-    // $kilosEgrPR = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    // $kilosEgrPR = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     // $kilosEgrPR = $kilosEgrPR[0][0];
 
-    // $promedioKgEgrRP = number_format(($kilosEgrPR / $totalAnimalesRP),2);
+    // $promedioKgEgrRP = number_format(($kilosEgrPR / $totalAnimalesRP[0]),2);
 
                                     
     /*********
@@ -84,11 +82,11 @@
 
     
     $campo = 'kgProdRP';
-    $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $kilosProdRP = $kilosProd[0][0];
 
-    $promedioKgProdRP = number_format(($kilosProdRP / $totalAnimalesRP),2);
+    $promedioKgProdRP = number_format(($kilosProdRP / $totalAnimalesRP[0]),2);
 
 ?>
 <br>
@@ -135,7 +133,7 @@
         
             <div class="box-header with-border">
             
-            <h3 class="box-title">% Participaci&oacute;n / Total: <?php echo $totalAnimalesRP;?> Animales</h3>
+            <h3 class="box-title">% Participaci&oacute;n / Total: <?php echo $totalAnimalesRP[0];?> Animales</h3>
 
             </div>
             
@@ -205,7 +203,9 @@
       </div>
 
 </div>
-
+<?php 
+    // var_dump('ga');
+    ?>
 <script>
 
 // POBLACION
@@ -218,7 +218,7 @@ let configPSSRP = configuracionPie(data,label);
 
 // PARTICIPACION
 
-data = [<?php echo $totalAnimalesRP.",".$restoAnimales.",";?>];
+data = [<?php echo $totalAnimalesRP[0].",".$restoAnimales.",";?>];
 
 label = ['Población RP','Resto Población'];
 

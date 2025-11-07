@@ -59,12 +59,11 @@ class ControladorDatos{
 	CONTAR DATOS
 	=============================================*/
 
-	static public function ctrContarDatos($item, $valor,$item2, $valor2, $operador){
+	static public function ctrContarDatos($item, $valor,$item2, $valor2, $operador,$last = false){
 
 		$tabla = "animales";
 
-		$respuesta = ModeloDatos::mdlContarDatos($tabla, $item, $valor,$item2, $valor2, $operador);
-
+		$respuesta = ModeloDatos::mdlContarDatos($tabla, $item, $valor,$item2, $valor2, $operador,$last);
 		return $respuesta;
 	
 	}
@@ -116,11 +115,11 @@ class ControladorDatos{
 	=============================================*/
 
 
-	static public function ctrContarAnimales($item, $valor){
+	static public function ctrContarAnimales($item, $valor,$last = false){
 
 		$tabla = "animales";
 
-		$respuesta = ModeloDatos::mdlContarAnimales($tabla, $item, $valor);
+		$respuesta = ModeloDatos::mdlContarAnimales($tabla, $item, $valor,$last);
 		return $respuesta;
 	
 	}
@@ -161,11 +160,11 @@ class ControladorDatos{
 	SUMAR CAMPO
 	=============================================*/
 
-	static public function ctrSumarCampo($item, $valor,$campo){
+	static public function ctrSumarCampo($item, $valor,$campo,$last = false){
 
 		$tabla = "animales";
 
-		$respuesta = ModeloDatos::mdlSumarCampo($tabla, $item, $valor,$campo);
+		$respuesta = ModeloDatos::mdlSumarCampo($tabla, $item, $valor,$campo,$last);
 		return $respuesta;
 	
 	}

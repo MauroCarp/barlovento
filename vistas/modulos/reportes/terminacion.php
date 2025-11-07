@@ -15,22 +15,23 @@
     $valor2 = 'M';
 
     $operador = '!=';
-    $totalMachos = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador);
+    $totalMachos = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
 
     // HEMBRAS
                                     
     $valor2 = 'H';
 
-    $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador);
+    $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
 
     /*********
                  % POBLACION
                                     ********/
-    $totalAnimalesT = $totalMachos[0] + $totalHembras[0];
+    // $totalAnimalesT = $totalMachos[0] + $totalHembras[0];
 
-    $restoAnimales = $totalAnimalesCC - $totalAnimalesT;
+    $totalAnimalesT = ControladorDatos::ctrContarDatos($item,$valor,null,$valor2,$operador,true);
 
-                                    
+    $restoAnimales = $totalAnimales[0] - $totalAnimalesT[0];
+                  
     /*********
                      ADPV
                                     ********/
@@ -38,10 +39,10 @@
     $item = NULL;
     $valor = NULL;
     $campo = 'adpvT';
-    $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $totalAdpvT = $sumaADPV[0][0];
-    $promedioAdpvT = number_format(($totalAdpvT / $totalAnimalesT),2);
+    $promedioAdpvT = number_format(($totalAdpvT / $totalAnimalesT[0]),2);
 
                                 
     /*********
@@ -49,33 +50,33 @@
                                     ********/
     
     $campo = 'diasT';
-    $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $totalDiasT = $totalDias[0][0];
 
-    $promedioDiasT = round(($totalDiasT / $totalAnimalesT));
+    $promedioDiasT = round(($totalDiasT / $totalAnimalesT[0]));
             
     /*********
                     KG INGRESO
     //                                 ********/
     
     // $campo = 'kgIngresoT';
-    // $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    // $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     // $kilosIngRR = $kilosIng[0][0];
 
-    // $promedioKgIngT = number_format(($kilosIngRR / $totalAnimalesT),2);
+    // $promedioKgIngT = number_format(($kilosIngRR / $totalAnimalesT[0]),2);
 
     // /*********
     //                 KG SALIDA
     //                                 ********/
     
     // $campo = 'kgSalidaT';
-    // $kilosEgrPR = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    // $kilosEgrPR = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     // $kilosEgrPR = $kilosEgrPR[0][0];
 
-    // $promedioKgEgrT = number_format(($kilosEgrPR / $totalAnimalesT),2);
+    // $promedioKgEgrT = number_format(($kilosEgrPR / $totalAnimalesT[0]),2);
 
                                     
     /*********
@@ -84,11 +85,11 @@
 
     
     $campo = 'kgProdT';
-    $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $kilosProdT = $kilosProd[0][0];
 
-    $promedioKgProdT = number_format(($kilosProdT / $totalAnimalesT),2);
+    $promedioKgProdT = number_format(($kilosProdT / $totalAnimalesT[0]),2);
 
 ?>
 <br>
@@ -135,7 +136,7 @@
         
             <div class="box-header with-border">
             
-            <h3 class="box-title">% Participaci&oacute;n  / Total: <?php echo $totalAnimalesT;?> Animales</h3>
+            <h3 class="box-title">% Participaci&oacute;n  / Total: <?php echo $totalAnimalesT[0];?> Animales</h3>
 
             </div>
             
@@ -218,7 +219,7 @@ let configPSST = configuracionPie(data,label);
 
 // PARTICIPACION
 
-data = [<?php echo $totalAnimalesT.",".$restoAnimales.",";?>];
+data = [<?php echo $totalAnimalesT[0] . "," . $restoAnimales.",";?>];
 
 label = ['Población T','Resto Población'];
 
