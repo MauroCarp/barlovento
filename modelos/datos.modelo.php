@@ -235,7 +235,7 @@ class ModeloDatos{
 			}else{
 	
 				$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) FROM $tabla WHERE $item3 BETWEEN '$fecha1' AND '$fecha2'");
-
+				// return $stmt;	
 				$stmt -> execute();
 
 				return $stmt -> fetchAll();

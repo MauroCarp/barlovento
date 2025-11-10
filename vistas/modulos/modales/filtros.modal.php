@@ -141,13 +141,13 @@ function generarBodyModal($idCalendar,$tabla,$consignatarios,$proveedores,$tropa
           <button type="button" class="close" data-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Filtros de reportes</h4>
++        </div>
 
-        </div>
-
+        <form action="index.php?ruta=reportes/reportesFiltrados" id="formFiltros" method="post">
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
-
+          <input type="hidden" name="periodo" id="periodo" value="">
         <?php
 
         $item = null;
@@ -175,7 +175,7 @@ function generarBodyModal($idCalendar,$tabla,$consignatarios,$proveedores,$tropa
         generarBodyModal($idCalendar,$tabla,$consignatarios,$proveedores,$tropas,'',$seccion);
 
         ?>
-
+        </form>
         <!--=====================================
         PIE DEL MODAL
         ======================================-->

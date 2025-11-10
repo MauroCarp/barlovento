@@ -116,9 +116,7 @@ $(function () {
               array[index] = parseFloat(array[index]);
           }
         }
-
-        var cantidad = <?php echo $cantidad;?>;
-
+        
         var resultados = [<?php echo $label;?>];
   
         var datosGraficos = <?php echo $datosGraficos;?>;
@@ -128,7 +126,7 @@ $(function () {
         stringToNumber(adpvGeneral);
         stringToNumber(kgConsumidos);
         stringToNumber(kgConsumidos);
-
+        console
         generarGraficoAlimento('alimentoConsumidoGeneral',adpvGeneral,kgConsumidos,conversion);
         var contador = 1;
 

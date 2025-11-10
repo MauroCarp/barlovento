@@ -4,14 +4,13 @@ AGREGAR FILTROS
 =============================================*/
 function agregarFiltro(contador,URLactual,tabla,item,comparar){
 
-  var contenido = '';
-  contenido += '<hr>';
-  contenido +=      '<div class="row">';
-  contenido +=      '<div class="col-md-4">';
-  contenido +=        '<div class="form-group"><label>Consignatario</label>';
-  contenido +=          '<select class="form-control consignatarios' + comparar + '" id="consignatario' + contador + comparar + '" onchange="(generarProveedores(this.id,\''+ tabla +'\'))">';
-  contenido +=            '<option value="Consignatario">Consignatario</option>';
-
+  var contenido = `<hr>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group"><label>Consignatario</label>
+                            <select class="form-control consignatarios${comparar}" id="consignatario${contador}${comparar}" name="consignatario${contador}${comparar}" onchange="(generarProveedores(this.id,'${tabla}'))">
+                              <option value="Consignatario">Consignatario</option>`
+  
   var rango = localStorage.getItem('rango');
 
   if(URLactual.includes('muertes') || URLactual.includes('reportesFiltradosMuertes')){
@@ -36,12 +35,12 @@ function agregarFiltro(contador,URLactual,tabla,item,comparar){
   }
   
   
-  contenido +=          '</select>';
-  contenido +=        '</div></div>';  
-  contenido +=      '<div class="col-md-4">';
-  contenido +=        '<div class="form-group"><label>Proveedor</label>';
-  contenido +=          '<select class="form-control proveedores' + comparar + '" id="proveedor' + contador + comparar + '" onchange="(generarTropas(this.id,\''+ tabla +'\'))">';
-  contenido +=            '<option value="Proveedor">Proveedor</option>';
+  contenido +=          `</select>
+                      </div></div>  
+                      <div class="col-md-4">
+                        <div class="form-group"><label>Proveedor</label>
+                          <select class="form-control proveedores${comparar}" id="proveedor${contador}${comparar}" name="proveedor${contador}${comparar}" onchange="(generarTropas(this.id,'${tabla}'))">
+                            <option value="Proveedor">Proveedor</option>`
 
   campo = 'proveedor';
   if(rango != null){
@@ -57,12 +56,12 @@ function agregarFiltro(contador,URLactual,tabla,item,comparar){
 
   }
       
-  contenido +=          '</select>';
-  contenido +=        '</div></div>';  
-  contenido +=      '<div class="col-md-4">';
-  contenido +=        '<div class="form-group"><label>Tropa</label>';
-  contenido +=          '<select class="form-control tropas' + comparar + '" id="tropa' + contador + comparar + '" onchange="(bloquearProveedor(this.id))">';
-  contenido +=            '<option value="Tropa">Tropa</option>';
+  contenido +=          `</select>
+                      </div></div>  
+                    <div class="col-md-4">
+                      <div class="form-group"><label>Tropa</label>
+                        <select class="form-control tropas${comparar}" id="tropa${contador}${comparar}" name="tropa${contador}${comparar}" onchange="(bloquearProveedor(this.id))">
+                          <option value="Tropa">Tropa</option>`
 
   campo = 'tropa';
 
@@ -81,10 +80,10 @@ function agregarFiltro(contador,URLactual,tabla,item,comparar){
   }
   
   
-  contenido +=          '</select>';
-  contenido +=        '</div></div>';  
-  contenido +=      '</div>';
-  contenido +=     '</div>';
+  contenido +=          `</select>
+                        </div></div>  
+                      </div>
+                     </div>`
 
   return contenido;
 
@@ -154,9 +153,11 @@ $('#compararComp').click(function(){
 GENERAR REPORTE
 =============================================*/
 
-$('#generarReporte').click(()=>{
-  console.log('hoalslass')
-    var contador = 1;
+$('#generarReporte').click((e)=>{
+
+  e.preventDefault();
+
+  var contador = 1;
     var datosConsignatarios = "";
     var datosProveedores = "";
     var datosTropas = "";
@@ -207,13 +208,12 @@ $('#generarReporte').click(()=>{
     datosTropas = datosTropas.slice(0, -1);
     datosProveedores = datosProveedores.slice(0,-1);
     datosConsignatarios = datosConsignatarios.slice(0,-1);
-    console.log('asaas');
+
     
     var rango = (localStorage.getItem('rango') == null) ? '1970-01-01/2090-01-01' : localStorage.getItem('rango');
     rango = rango.replace('/','_');
-    var camposValidos = true;
-    console.log(arrayValidacion);
 
+    var camposValidos = true;
 
     for (let index = 0; index < arrayValidacion.length; index++) {
       
@@ -230,8 +230,7 @@ $('#generarReporte').click(()=>{
 
 
     }else{
-      
-      window.location = 'index.php?ruta=reportes/reportesFiltrados&' + datosConsignatarios + '&' + datosProveedores + '&' + datosTropas + '&rango=' + rango + '&cantidad=' + (contador - 1);
+        $('#formFiltros').submit();
 
     }
 
@@ -513,10 +512,10 @@ function bloquearProveedor(id){
   var valor = $('#tropa' + numeroId).val();
   if(valor == 'Tropa'){
 
-    $('#proveedor' + numeroId).removeAttr('disabled');
+    $('#proveedor' + numeroId).removeAttr('readonly');
     if($('#proveedor' + numeroId).val() == 'Proveedor'){
 
-      $('#consignatario' + numeroId).removeAttr('disabled');
+      $('#consignatario' + numeroId).removeAttr('readonly');
     
     }
 
@@ -525,8 +524,8 @@ function bloquearProveedor(id){
     
   if (valor != 'Tropa') {
 
-    $('#proveedor' + numeroId).attr('disabled','disabled');
-    $('#consignatario' + numeroId).attr('disabled','disabled');
+    $('#proveedor' + numeroId).attr('readonly','readonly');
+    $('#consignatario' + numeroId).attr('readonly','readonly');
 
   }
 
@@ -549,14 +548,14 @@ function generarTropas(id,tabla){
   
   if(proveedor == 'Proveedor'){
 
-    $('#consignatario' + numeroId).removeAttr('disabled');
+    $('#consignatario' + numeroId).removeAttr('readonly');
 
 
   }
 
     
   if (proveedor != 'Proveedor') {
-    $('#consignatario' + numeroId).attr('disabled','disabled');
+    $('#consignatario' + numeroId).attr('readonly','readonly');
 
   }
 
@@ -698,6 +697,8 @@ $('#daterange-btn').daterangepicker(
     cargarSelectSegunFecha('1',capturarRango,'animales','proveedor','fechaSalida');
     
     cargarSelectSegunFecha('1',capturarRango,'animales','tropa','fechaSalida');
+
+    $('#periodo').val(capturarRango); 
 
   }
 

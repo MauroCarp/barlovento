@@ -2,28 +2,26 @@
 
 $colores = array('red','blue','green','yellow','grey','orange','purple','brown');
 
-if(array_key_exists('consignatario1',$_GET)){
+if(array_key_exists('consignatario1',$_POST)){
     
-    $cantidad = $_GET['cantidad'];
-
-    $rango = $_GET['rango'];
-    $rango = explode('/',$rango);
-    $fechaInicial = $rango[0];
-    $fechaFinal = $rango[1];
-
+    $rango = explode('-',str_replace(' ','',$_POST['periodo']));
+    
+    $fechaInicial = formatearFecha(str_replace('/','-',$rango[0]));
+    $fechaFinal = formatearFecha(str_replace('/','-',$rango[1]));
 
     $datosGraficos = array();
     $datosGraficos[0] = array('nombre' => 'General');
-    
+
     $datos = array();
+    $ciclos = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
     $datos['labels'] = array('Consignatario'=>(''),'Proveedor'=>(''),'Tropa'=>(''));
-    $datos['cantidad'] = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
+    $datos['cantidad'] = $ciclos;
     $datos['poblacion'] = array('CC'=> array('Data'=>'','Color'=>''),'RP'=> array('Data'=>'','Color'=>''),'RC'=> array('Data'=>'','Color'=>''),'T'=> array('Data'=>'','Color'=>''));
-    $datos['dias']   = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
-    $datos['adpv']   = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
-    $datos['kgIng']  = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
-    $datos['kgEgr']  = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
-    $datos['kgProd'] = array('CC'=> (''),'RP'=> (''),'RC'=> (''),'T'=> (''));
+    $datos['dias']   = $ciclos;
+    $datos['adpv']   = $ciclos;
+    $datos['kgIng']  = $ciclos;
+    $datos['kgEgr']  = $ciclos;
+    $datos['kgProd'] = $ciclos;
 
     $label = '';
     $labelArray = array();
@@ -49,7 +47,7 @@ if(array_key_exists('consignatario1',$_GET)){
         
         $item = 'adpvT';
         $totalGT = ControladorDatos::ctrContarDatosRango($item,$valor,$item2,$valor2,$operador,$item3,$fechaInicial,$fechaFinal);
-        
+
         $totalAnimalesGCC = $totalGCC[0][0];
         $totalAnimalesGRP = $totalGRP[0];
         $totalAnimalesGRC = $totalGRC[0];
@@ -121,10 +119,6 @@ if(array_key_exists('consignatario1',$_GET)){
             $datos['adpv']['CC'] = $datos['adpv']['CC'].",".$dataSet;
             $datosGraficos[0]['adpv'] = $promedioAdpvCC; 
 
-
-
-
-
             //RP
             $campo = 'adpvRP';
             $sumaADPV = ControladorDatos::ctrSumarCampoRango($item,$valor,$campo,$item3,$fechaInicial,$fechaFinal);
@@ -173,8 +167,8 @@ if(array_key_exists('consignatario1',$_GET)){
             }";
             $datos['adpv']['T'] = $datos['adpv']['T'].",".$dataSet;
             $datosGraficos[0]['adpv'] = $datosGraficos[0]['adpv'].','.$promedioAdpvT;
-            
-    /*********  DIAS 
+
+            /*********  DIAS 
                     ********/
             //CC
             $campo = 'diasCC';
@@ -515,7 +509,14 @@ if(array_key_exists('consignatario1',$_GET)){
         $cantidadAnimalesRCGeneral = $totalAnimalesGRC;
         $cantidadAnimalesTGeneral = $totalAnimalesGT;
 
-        
+        $cantidad = 0;
+        foreach ($_POST as $key => $valor) {
+            if (strpos($key, 'consignatario') !== false) {
+                $cantidad++;
+            }
+        }
+
+
         for ($i=1; $i <= $cantidad ; $i++) { 
         
         $consignatarioIndex = 'consignatario'.$i; 
@@ -526,13 +527,13 @@ if(array_key_exists('consignatario1',$_GET)){
         
         
         $item = 'consignatario';
-        $valor = $_GET[$consignatarioIndex];
+        $valor = $_POST[$consignatarioIndex];
 
         $item2 = 'proveedor';
-        $valor2 = $_GET[$proveedorIndex];
+        $valor2 = $_POST[$proveedorIndex];
         
         $item3 = 'tropa';
-        $valor3 = $_GET[$tropaIndex];
+        $valor3 = $_POST[$tropaIndex];
 
         /*********  LABELS
                      ********/
