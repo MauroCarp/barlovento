@@ -25,7 +25,7 @@ function formatearFecha($fecha){
 
 $rango = $_GET['rango'];
 
-$fechas = explode('/',$rango);
+$fechas = explode('_',$rango);
 
 $fechaInicial = $fechas[0];
 

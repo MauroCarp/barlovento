@@ -155,7 +155,7 @@ GENERAR REPORTE
 =============================================*/
 
 $('#generarReporte').click(()=>{
-
+  console.log('hoalslass')
     var contador = 1;
     var datosConsignatarios = "";
     var datosProveedores = "";
@@ -168,8 +168,6 @@ $('#generarReporte').click(()=>{
       
       var numeroId = id.substr(-1);
       
-      
-      
       var tropa = $('#tropa' + numeroId).val();
       
       datosTropas += 'tropa' + contador + '=' + tropa + '&';
@@ -178,7 +176,6 @@ $('#generarReporte').click(()=>{
       
       datosProveedores += 'proveedor' + contador + '=' + proveedor + '&';
 
-      
       var consignatario = $(this).val();
   
       datosConsignatarios += 'consignatario' + contador + '=' + consignatario + '&';
@@ -190,23 +187,14 @@ $('#generarReporte').click(()=>{
       var tropaValido = false;
       var proveedorValido = false;
     
-      if(!consignatarioValido){
-        
+      if(!consignatarioValido)
         consignatarioValido = (consignatario != 'Consignatario') ? true : false;
         
-      } 
-        
-        if(!proveedorValido){
-          
-          proveedorValido = (proveedor != 'Proveedor') ? true : false; 
-          
-        } 
-        
-        if(!tropaValido){
-          
-          tropaValido = (tropa != 'Tropa' ) ? true : false; 
-          
-        } 
+      if(!proveedorValido)
+        proveedorValido = (proveedor != 'Proveedor') ? true : false; 
+      
+      if(!tropaValido)
+        tropaValido = (tropa != 'Tropa' ) ? true : false; 
 
       formularioValido = (consignatarioValido || proveedorValido || tropaValido) ? true : false;
 
@@ -219,11 +207,13 @@ $('#generarReporte').click(()=>{
     datosTropas = datosTropas.slice(0, -1);
     datosProveedores = datosProveedores.slice(0,-1);
     datosConsignatarios = datosConsignatarios.slice(0,-1);
+    console.log('asaas');
     
     var rango = (localStorage.getItem('rango') == null) ? '1970-01-01/2090-01-01' : localStorage.getItem('rango');
-
-    
+    rango = rango.replace('/','_');
     var camposValidos = true;
+    console.log(arrayValidacion);
+
 
     for (let index = 0; index < arrayValidacion.length; index++) {
       
@@ -234,7 +224,6 @@ $('#generarReporte').click(()=>{
 
     }
 
-    
     if (!camposValidos) {
 
       window.location = 'index.php?ruta=reportesRango&rango=' + rango;

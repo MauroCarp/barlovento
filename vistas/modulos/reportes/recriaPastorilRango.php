@@ -10,9 +10,9 @@
 
     $valor = '';
 
-    $item2 = 'sexo';
+    $item2 = 'categoria';
 
-    $valor2 = 'M';
+    $valor2 = 'NT';
 
     $operador = '!=';
 
@@ -22,22 +22,27 @@
 
     $fecha2 = $fechaFinal;
 
-    $totalMachos = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+    $totalMachosNT = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+    
+    $valor2 = 'TO';
+    
+    $totalMachosTO = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+
+    $totalMachosRP = ( (int)$totalMachosNT[0] + (int)$totalMachosTO[0]); 
 
     // HEMBRAS
                                     
-    $valor2 = 'H';
+    $valor2 = 'VQ';
 
     $totalHembras = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
 
     /*********
                  % POBLACION
                                     ********/
-    $totalAnimalesRP = $totalMachos[0] + $totalHembras[0];
+    $totalAnimalesRP = $totalMachosRP + $totalHembras[0];
 
     $restoAnimales = $totalAnimalesCC - $totalAnimalesRP;
 
-                                    
     /*********
                      ADPV
                                     ********/

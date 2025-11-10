@@ -6,9 +6,9 @@
             POBLACION SEGUN SEXO
                                   ********/
   // MACHOS
-  $item = 'sexo';
+  $item = 'categoria';
 
-  $valor = 'M';
+  $valor = 'NT';
 
   $item2 = 'fechaSalida';
 
@@ -16,15 +16,21 @@
 
   $fecha2 = $fechaFinal;
 
-  $totalMachos = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+  $totalMachosNT = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+
+  $valor = 'TO';
+
+  $totalMachosTO = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+
+  $totalMachos = ( (int)$totalMachosNT[0] + (int)$totalMachosTO[0]); 
 
   // HEMBRAS
                                   
-  $valor = 'H';
+  $valor = 'VQ';
 
   $totalHembras = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
 
-  $totalAnimalesCC = ($totalMachos[0] + $totalHembras[0]);
+  $totalAnimalesCC = ($totalMachos + (int)$totalHembras[0]);
 
   /*********
                 % POBLACION
@@ -40,13 +46,12 @@
   $valor = NULL;
   $campo = 'adpvCC';
   $sumaADPV = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
-  $totalAnimales = ($totalMachos[0] + $totalHembras[0]);
+  $totalAnimales = ($totalMachos + (int)$totalHembras[0]);
 
   $totalAdpvCC = $sumaADPV[0][0];
 
   $promedioAdpvCC = ($totalAnimales > 0) ? number_format(($totalAdpvCC / $totalAnimales),2) : 0;
 
-                                
   /*********
                     DIAS 
                                   ********/
@@ -139,7 +144,7 @@
       
           <div class="box-header with-border">
           
-          <h3 class="box-title">Población según Sexo / Total: <?php echo $totalAnimalesCC;?> Animales</h3>
+          <h3 class="box-title">Población según Sexo / Total: <?php echo $totalAnimales;?> Animales</h3>
 
 
           </div>
@@ -269,7 +274,7 @@ function configuracionBar(label,data,label2){
 
 // POBLACION
 
-let data = [<?php echo $totalMachos[0].",".$totalHembras[0].",";?>];
+let data = [<?php echo $totalMachos.",".$totalHembras[0].",";?>];
 
 let label = ['Macho','Hembra'];
         

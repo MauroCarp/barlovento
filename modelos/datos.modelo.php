@@ -210,7 +210,7 @@ class ModeloDatos{
 
 			
 			$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM $tabla WHERE $item $operador :$item AND $item2 = :$item2 AND $item3 BETWEEN '$fecha1' AND '$fecha2'");
-			
+			// return [$stmt,$valor,$valor2];
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 			
 			$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
