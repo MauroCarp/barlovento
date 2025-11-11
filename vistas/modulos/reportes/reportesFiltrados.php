@@ -126,7 +126,7 @@ $(function () {
         stringToNumber(adpvGeneral);
         stringToNumber(kgConsumidos);
         stringToNumber(kgConsumidos);
-        console
+        
         generarGraficoAlimento('alimentoConsumidoGeneral',adpvGeneral,kgConsumidos,conversion);
         var contador = 1;
 

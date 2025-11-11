@@ -6,9 +6,9 @@
             POBLACION SEGUN SEXO
                                   ********/
   // MACHOS
-  $item = 'sexo';
+  $item = 'categoria';
 
-  $valor = 'M';
+  $valor = 'NT';
 
   $item2 = 'fechaSalida';
 
@@ -16,13 +16,22 @@
 
   $fecha2 = $fechaFinal;
 
-  $totalMachos = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+  $totalMachosNT = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+
+  $valor = 'TO';
+
+  $totalMachosTO = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+
+  $totalMachos = ( (int)$totalMachosNT[0] + (int)$totalMachosTO[0]); 
 
   // HEMBRAS
                                   
-  $valor = 'H';
+  $valor = 'VQ';
 
   $totalHembras = ControladorDatos::ctrContarAnimalesRango($item, $valor,$item2,$fecha1,$fecha2);
+
+  $totalAnimalesCC = ($totalMachos + (int)$totalHembras[0]);
+
   /*********
                 % POBLACION
                                   ********/
@@ -36,20 +45,19 @@
   $item = NULL;
   $valor = NULL;
   $campo = 'adpvCC';
-  $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
-  $totalAnimales = ($totalMachos[0] + $totalHembras[0]);
+  $sumaADPV = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
+  $totalAnimales = ($totalMachos + (int)$totalHembras[0]);
 
   $totalAdpvCC = $sumaADPV[0][0];
 
-  $promedioAdpvCC = number_format(($totalAdpvCC / $totalAnimales),2);
+  $promedioAdpvCC = ($totalAnimales > 0) ? number_format(($totalAdpvCC / $totalAnimales),2) : 0;
 
-                                
   /*********
                     DIAS 
                                   ********/
 
   $campo = 'diasCC';
-  $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+  $totalDias = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
   $totalDiasCC = $totalDias[0][0];
 
@@ -60,7 +68,7 @@
                                   ********/
 
   $campo = 'kgIngresoCC';
-  $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+  $kilosIng = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
   $kilosIngCC = $kilosIng[0][0];
 
@@ -71,7 +79,7 @@
                                   ********/
 
   $campo = 'kgSalidaCC';
-  $kilosEgr = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+  $kilosEgr = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
   $kilosEgrCC = $kilosEgr[0][0];
 
@@ -84,7 +92,7 @@
 
 
   $campo = 'kgProdCC';
-  $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+  $kilosProd = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
   $kilosProdCC = $kilosProd[0][0];
 
@@ -136,7 +144,7 @@
       
           <div class="box-header with-border">
           
-          <h3 class="box-title">Población según Sexo / Total: <?php echo $totalAnimalesCC;?> Animales</h3>
+          <h3 class="box-title">Población según Sexo / Total: <?php echo $totalAnimales;?> Animales</h3>
 
 
           </div>
@@ -272,7 +280,7 @@ function configuracionBar(labels,data,labels2){
 
 }
 
-let data = [<?php echo $totalMachos[0].",".$totalHembras[0];?>];
+let data = [<?php echo $totalMachos.",".$totalHembras[0];?>];
 
 let colors = [window.chartColors.red,window.chartColors.orange];
 

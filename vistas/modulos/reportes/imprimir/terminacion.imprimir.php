@@ -10,27 +10,35 @@
 
     $valor = '';
 
-    $item2 = 'sexo';
+    $item2 = 'categoria';
 
-    $valor2 = 'M';
+    $valor2 = 'NT';
 
     $operador = '!=';
-    $totalMachos = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador);
+
+    $totalMachosNT = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
+
+    $valor2 = 'TO';
+
+    $totalMachosTO = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
+
+    $totalMachos = (int)$totalMachosNT[0] + (int)$totalMachosTO[0];
 
     // HEMBRAS
                                     
-    $valor2 = 'H';
+    $valor2 = 'VQ';
 
-    $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador);
+    $totalHembras = ControladorDatos::ctrContarDatos($item,$valor,$item2,$valor2,$operador,true);
 
     /*********
                  % POBLACION
                                     ********/
-    $totalAnimalesT = $totalMachos[0] + $totalHembras[0];
+    // $totalAnimalesT = $totalMachos[0] + $totalHembras[0];
 
-    $restoAnimales = $totalAnimalesCC - $totalAnimalesT;
+    $totalAnimalesT = ControladorDatos::ctrContarDatos($item,$valor,null,$valor2,$operador,true);
 
-                                    
+    $restoAnimales = $totalAnimales[0] - $totalAnimalesT[0];
+                  
     /*********
                      ADPV
                                     ********/
@@ -38,10 +46,10 @@
     $item = NULL;
     $valor = NULL;
     $campo = 'adpvT';
-    $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $sumaADPV = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $totalAdpvT = $sumaADPV[0][0];
-    $promedioAdpvT = number_format(($totalAdpvT / $totalAnimalesT),2);
+    $promedioAdpvT = number_format(($totalAdpvT / $totalAnimalesT[0]),2);
 
                                 
     /*********
@@ -49,33 +57,33 @@
                                     ********/
     
     $campo = 'diasT';
-    $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $totalDias = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $totalDiasT = $totalDias[0][0];
 
-    $promedioDiasT = round(($totalDiasT / $totalAnimalesT));
+    $promedioDiasT = round(($totalDiasT / $totalAnimalesT[0]));
             
     /*********
                     KG INGRESO
-                                    ********/
+    //                                 ********/
     
-    $campo = 'kgIngresoT';
-    $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    // $campo = 'kgIngresoT';
+    // $kilosIng = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
-    $kilosIngRR = $kilosIng[0][0];
+    // $kilosIngRR = $kilosIng[0][0];
 
-    $promedioKgIngT = number_format(($kilosIngRR / $totalAnimalesT),2);
+    // $promedioKgIngT = number_format(($kilosIngRR / $totalAnimalesT[0]),2);
 
-    /*********
-                    KG SALIDA
-                                    ********/
+    // /*********
+    //                 KG SALIDA
+    //                                 ********/
     
-    $campo = 'kgSalidaT';
-    $kilosEgrPR = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    // $campo = 'kgSalidaT';
+    // $kilosEgrPR = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
-    $kilosEgrPR = $kilosEgrPR[0][0];
+    // $kilosEgrPR = $kilosEgrPR[0][0];
 
-    $promedioKgEgrT = number_format(($kilosEgrPR / $totalAnimalesT),2);
+    // $promedioKgEgrT = number_format(($kilosEgrPR / $totalAnimalesT[0]),2);
 
                                     
     /*********
@@ -84,13 +92,14 @@
 
     
     $campo = 'kgProdT';
-    $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo);
+    $kilosProd = ControladorDatos::ctrSumarCampo($item,$valor,$campo,true);
 
     $kilosProdT = $kilosProd[0][0];
 
-    $promedioKgProdT = number_format(($kilosProdT / $totalAnimalesT),2);
+    $promedioKgProdT = number_format(($kilosProdT / $totalAnimalesT[0]),2);
 
 ?>
+<br>
 
 <h2>Terminaci&oacute;n</h2>
 
@@ -135,7 +144,7 @@
         
             <div class="box-header with-border">
             
-            <h3 class="box-title">% Población / Total: <?php echo $totalAnimalesT;?> Animales</h3>
+            <h3 class="box-title">% Participaci&oacute;n  / Total: <?php echo $totalAnimalesT[0];?> Animales</h3>
 
             </div>
             
@@ -178,7 +187,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart3T" style="height:230px"></canvas>
+              <!-- <canvas id="barChart3T" style="height:230px"></canvas> -->
             </div>
           </div>
 
@@ -266,7 +275,7 @@ function configuracionBar(labels,data,labels2){
 
 }
 
-data = [<?php $totalMachos[0].",".$totalHembras[0].",";?>];
+data = [<?php echo $totalMachos.",".$totalHembras[0].",";?>];
 
 colors = [window.chartColors.red,window.chartColors.orange];
 
@@ -275,7 +284,7 @@ labels = ['Macho','Hembra'];
 let configPSST = configuracionPie(data,colors,labels,'Sexo');
 
 
-data = [<?php echo $totalAnimalesT.",".$restoAnimales.",";?>];
+data = [<?php echo $totalAnimalesT[0].",".$restoAnimales.",";?>];
 
 labels = ['Población T','Resto Población'];
 

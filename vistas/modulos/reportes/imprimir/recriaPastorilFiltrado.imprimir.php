@@ -73,7 +73,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart2RPFiltrado" style="height:230px"></canvas>
+              <!-- <canvas id="barChart2RPFiltrado" style="height:230px"></canvas> -->
             </div>
           </div>
 
@@ -90,7 +90,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart3RPFiltrado" style="height:230px"></canvas>
+              <!-- <canvas id="barChart3RPFiltrado" style="height:230px"></canvas> -->
             </div>
           </div>
 

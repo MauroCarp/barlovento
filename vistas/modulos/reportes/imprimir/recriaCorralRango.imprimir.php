@@ -10,26 +10,32 @@
 
     $valor = '';
 
-    $item2 = 'sexo';
+    $item2 = 'categoria';
 
-    $valor2 = 'M';
+    $valor2 = 'NT';
 
     $operador = '!=';
-
+    
     $item3 = 'fechaSalida';
 
-    $totalMachos = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+    $totalMachosNT = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+    
+    $valor2 = 'TO';
+    
+    $totalMachosTO = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+
+    $totalMachosRC = ( (int)$totalMachosNT[0] + (int)$totalMachosTO[0]); 
 
     // HEMBRAS
                                     
-    $valor2 = 'H';
+    $valor2 = 'VQ';
 
     $totalHembras = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
 
     /*********
                  % POBLACION
                                     ********/
-    $totalAnimalesRC = $totalMachos[0] + $totalHembras[0];
+    $totalAnimalesRC = $totalMachosRC + $totalHembras[0];
 
     $restoAnimales = $totalAnimalesCC - $totalAnimalesRC;
 
@@ -42,9 +48,9 @@
     
     $valor = NULL;
     
-    $campo = 'adpvRC';
-
     $item2 = 'fechaSalida';
+
+    $campo = 'adpvRC';
 
     $sumaADPV = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
@@ -67,23 +73,23 @@
                     KG INGRESO
                                     ********/
     
-    $campo = 'kgIngresoRC';
-    $kilosIng = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
+    // $campo = 'kgIngresoRC';
+    // $kilosIng = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
-    $kilosIngRR = $kilosIng[0][0];
+    // $kilosIngRR = $kilosIng[0][0];
 
-    $promedioKgIngRC = number_format(($kilosIngRR / $totalAnimalesRC),2);
+    // $promedioKgIngRC = number_format(($kilosIngRR / $totalAnimalesRC),2);
 
-    /*********
-                    KG SALIDA
-                                    ********/
+    // /*********
+    //                 KG SALIDA
+    //                                 ********/
     
-    $campo = 'kgSalidaRC';
-    $kilosEgrPR = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
+    // $campo = 'kgSalidaRC';
+    // $kilosEgrPR = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
-    $kilosEgrPR = $kilosEgrPR[0][0];
+    // $kilosEgrPR = $kilosEgrPR[0][0];
 
-    $promedioKgEgrRC = number_format(($kilosEgrPR / $totalAnimalesRC),2);
+    // $promedioKgEgrRC = number_format(($kilosEgrPR / $totalAnimalesRC),2);
 
                                     
     /*********
@@ -272,7 +278,7 @@ function configuracionBar(labels,data,labels2){
 
 }
 
-let data = [<?php $totalMachos[0].",".$totalHembras[0].",";?>];
+let data = [<?php $totalMachos.",".$totalHembras[0].",";?>];
 
 let colors = [window.chartColors.red,window.chartColors.orange];
 

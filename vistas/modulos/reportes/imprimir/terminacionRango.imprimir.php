@@ -10,9 +10,9 @@
 
     $valor = '';
 
-    $item2 = 'sexo';
+    $item2 = 'categoria';
 
-    $valor2 = 'M';
+    $valor2 = 'NT';
 
     $operador = '!=';
 
@@ -22,7 +22,13 @@
 
     $fecha2 = $fechaFinal;
     
-    $totalMachos = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+    $totalMachosNT = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+    
+    $valor2 = 'TO';
+    
+    $totalMachosTO = ControladorDatos::ctrContarDatosRango($item, $valor,$item2, $valor2, $operador,$item3,$fecha1,$fecha2);
+
+    $totalMachosT = ( (int)$totalMachosNT[0] + (int)$totalMachosTO[0]); 
 
     // HEMBRAS
                                     
@@ -33,7 +39,7 @@
     /*********
                  % POBLACION
                                     ********/
-    $totalAnimalesT = $totalMachos[0] + $totalHembras[0];
+    $totalAnimalesT = $totalMachosT + $totalHembras[0];
 
     $restoAnimales = $totalAnimalesCC - $totalAnimalesT;
 
@@ -43,10 +49,12 @@
                                     ********/
 
     $item = NULL;
+
     $valor = NULL;
-    $campo = 'adpvT';
 
     $item2 = 'fechaSalida';
+    
+    $campo = 'adpvT';
 
     $sumaADPV = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
@@ -69,23 +77,23 @@
                     KG INGRESO
                                     ********/
     
-    $campo = 'kgIngresoT';
-    $kilosIng = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
+    // $campo = 'kgIngresoT';
+    // $kilosIng = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
-    $kilosIngRR = $kilosIng[0][0];
+    // $kilosIngRR = $kilosIng[0][0];
 
-    $promedioKgIngT = number_format(($kilosIngRR / $totalAnimalesT),2);
+    // $promedioKgIngT = number_format(($kilosIngRR / $totalAnimalesT),2);
 
-    /*********
-                    KG SALIDA
-                                    ********/
+    // /*********
+    //                 KG SALIDA
+    //                                 ********/
     
-    $campo = 'kgSalidaT';
-    $kilosEgrPR = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
+    // $campo = 'kgSalidaT';
+    // $kilosEgrPR = ControladorDatos::ctrSumarCampoRango($item, $valor,$campo,$item2,$fecha1,$fecha2);
 
-    $kilosEgrPR = $kilosEgrPR[0][0];
+    // $kilosEgrPR = $kilosEgrPR[0][0];
 
-    $promedioKgEgrT = number_format(($kilosEgrPR / $totalAnimalesT),2);
+    // $promedioKgEgrT = number_format(($kilosEgrPR / $totalAnimalesT),2);
 
                                     
     /*********
@@ -145,7 +153,7 @@
         
             <div class="box-header with-border">
             
-            <h3 class="box-title">% Población / Total: <?php echo $totalAnimalesT;?> Animales</h3>
+            <h3 class="box-title">% Participaci&oacute;n  / Total: <?php echo $totalAnimalesT;?> Animales</h3>
 
             </div>
             
@@ -171,7 +179,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart2T" style="height:230px"></canvas>
+              <!-- <canvas id="barChart2T" style="height:230px"></canvas> -->
             </div>
           </div>
 
@@ -188,7 +196,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart3T" style="height:230px"></canvas>
+              <!-- <canvas id="barChart3T" style="height:230px"></canvas> -->
             </div>
           </div>
 
@@ -275,7 +283,7 @@ function configuracionBar(labels,data,labels2){
 
 }
 
-let data = [<?php $totalMachos[0].",".$totalHembras[0].",";?>];
+let data = [<?php echo $totalMachosT.",".$totalHembras[0].",";?>];
 
 let colors = [window.chartColors.red,window.chartColors.orange];
 

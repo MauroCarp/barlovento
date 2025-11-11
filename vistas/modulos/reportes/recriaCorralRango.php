@@ -227,7 +227,7 @@
 
 // POBLACION
 
-data = [<?php echo $totalMachos[0].",".$totalHembras[0].",";?>];
+data = [<?php echo $totalMachosRC.",".$totalHembras[0].",";?>];
 
 label = ['Macho','Hembra'];
         

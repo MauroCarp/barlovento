@@ -43,7 +43,7 @@
         
             <div class="box-header with-border">
             
-            <h3 class="box-title">% Población</h3>
+            <h3 class="box-title">% Participaci&oacute;n</h3>
 
             </div>
             
@@ -72,7 +72,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart2TFiltrado" style="height:230px"></canvas>
+              <!-- <canvas id="barChart2TFiltrado" style="height:230px"></canvas> -->
             </div>
           </div>
 
@@ -89,7 +89,7 @@
           </div>
           <div class="box-body">
             <div class="chart">
-              <canvas id="barChart3TFiltrado" style="height:230px"></canvas>
+              <!-- <canvas id="barChart3TFiltrado" style="height:230px"></canvas> -->
             </div>
           </div>
 

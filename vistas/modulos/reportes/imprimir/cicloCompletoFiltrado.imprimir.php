@@ -41,7 +41,7 @@
         
             <div class="box-header with-border">
             
-              <h3 class="box-title">% Población</h3>
+              <h3 class="box-title">% Participaci&oacute;n</h3>
 
             </div>
             
