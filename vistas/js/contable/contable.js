@@ -417,13 +417,15 @@
 
     }
 
-    const dolarizarArray = (arr,respuesta) => {
+    const dolarizarArray = (arr,respuesta,debug = false) => {
         let arrLength = arr.length - 1
 
         for (const key in arr) {
-
+          let a = arr[key]
           let dolar = respuesta[arrLength].dolar
           arr[key] = arr[key] / dolar
+          if(debug)
+            console.log(a + ' / ' + respuesta[arrLength].dolar + ' = ' +arr[key])
 
           arrLength--
         }
@@ -1288,6 +1290,7 @@
 
           dataPrestamos.reverse()
           dolarizarArray(dataPrestamos,respuesta)
+          dataPrestamos = dataPrestamos.slice(-labelsLength);
           /** */
 
           let dataTarjetas = []
@@ -1300,6 +1303,7 @@
 
           dataTarjetas.reverse()
           dolarizarArray(dataTarjetas,respuesta)
+          dataTarjetas = dataTarjetas.slice(-labelsLength);
 
           /** */
 
@@ -1313,7 +1317,7 @@
 
           dataProveedores.reverse()
           dolarizarArray(dataProveedores,respuesta)
-
+          dataProveedores = dataProveedores.slice(-labelsLength);
           /** */
 
           let dataSgr = []
@@ -1326,7 +1330,7 @@
 
           dataSgr.reverse()
           dolarizarArray(dataSgr,respuesta)
-
+          dataSgr = dataSgr.slice(-labelsLength); 
           /** */
           
           let dataMutuales = []
@@ -1339,7 +1343,8 @@
 
           dataMutuales.reverse()
           dolarizarArray(dataMutuales,respuesta)
-          
+          dataMutuales = dataMutuales.slice(-labelsLength);
+
           /** */
 
           let dataCLP = []
@@ -1350,6 +1355,7 @@
 
           dataCLP.reverse()
           dolarizarArray(dataCLP,respuesta)
+          dataCLP = dataCLP.slice(-labelsLength);
 
           registros = [{
                             label: 'Prestamos',
@@ -1404,6 +1410,7 @@
           
           dataEvolucionPasivo.reverse()
           dolarizarArray(dataEvolucionPasivo,respuesta)
+          dataEvolucionPasivo = dataEvolucionPasivo.slice(-labelsLength);
 
           tituloLabel = 'Evolución de Pasivo'
 
@@ -1420,6 +1427,7 @@
 
           dataDeudaBancaria.reverse()
           dolarizarArray(dataDeudaBancaria,respuesta)
+          dataDeudaBancaria = dataDeudaBancaria.slice(-labelsLength);
 
           tituloLabel = 'Deuda Bancaria'
 
@@ -1446,27 +1454,29 @@
           let dataSld = []
 
           for (const key in respuesta) {
-            
+              // console.log(respuesta[key].graficos.saldos.sld)
               dataSld.push(Number(respuesta[key].graficos.saldos.sld).toFixed(2))
             
           }
 
           dataSld.reverse()
           dolarizarArray(dataSld,respuesta)
+          dataSld = dataSld.slice(-labelsLength);     
 
           /** */
 
           let dataSaldoTecnico = []
-
           for (const key in respuesta) {
             
               dataSaldoTecnico.push(Number(respuesta[key].graficos.saldos.saldoTecnico).toFixed(2))
             
           }
 
+        
           dataSaldoTecnico.reverse()
           dolarizarArray(dataSaldoTecnico,respuesta)
 
+          dataSaldoTecnico = dataSaldoTecnico.slice(-labelsLength);     
           registros = [{
                             label: 'SLD',
                             backgroundColor: 'rgba(255,0,100,.2)',
@@ -1804,9 +1814,59 @@
       data:{
         'periodo':periodoData,
         'accion':'mostrarData'
+      },
+      beforeSend: function() {
+        // Mostrar spinner de carga
+        $('body').append(`
+          <div id="loadingSpinner" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+          ">
+            <div style="
+              background: white;
+              padding: 20px;
+              border-radius: 10px;
+              text-align: center;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            ">
+              <div style="
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #3498db;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 15px;
+              "></div>
+              <p style="margin: 0; color: #333; font-weight: bold;">Cargando datos...</p>
+            </div>
+          </div>
+        `);
+        
+        // Agregar animación CSS si no existe
+        if (!document.getElementById('spinnerStyles')) {
+          $('head').append(`
+            <style id="spinnerStyles">
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            </style>
+          `);
+        }
       }
     }).done(function(respuesta){
-   
+      // Quitar spinner
+      $('#loadingSpinner').remove();
+      
       respuesta = JSON.parse(respuesta)
 
       if(!respuesta){
@@ -1853,7 +1913,11 @@
       // cargarDatosCampo('Paihuen',respuesta['paihuen'])
 
     })
-    .catch(err=>console.log(err))
+    .fail(function(err) {
+      // Quitar spinner en caso de error
+      $('#loadingSpinner').remove();
+      console.log(err);
+    })
 
 
 
