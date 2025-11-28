@@ -939,7 +939,9 @@
           tituloLabel = 'Rdo. Neto - Rdo. Acum.'
 
           dataResultExpl = getMonthData(respuesta,'resultadoNeto',start)
+
           dataResultExpl.reverse()
+
           // dolarizarArray(dataResultExpl,respuesta)
 
           if(campo != 'Paihuen'){
@@ -948,10 +950,9 @@
 
             for (let index = 0; index < labelsLength; index++) {
 
-              baaiAccum.push(dolarizar(respuesta[index]['graficos']['resultadoNeto'],respuesta[index]['dolar'],2).replace('.','').replace(',','.'))
+              baaiAccum.push(dolarizar(respuesta[index]['graficos']['resultadoNeto'],respuesta[index]['dolar'],2).replace(/\./g,'').replace(/,/g,'.'))
               
             }
-
             baaiAccum.reverse()
             // dolarizarArray(baaiAccum,respuesta)
         
@@ -1454,8 +1455,8 @@
           let dataSld = []
 
           for (const key in respuesta) {
-              // console.log(respuesta[key].graficos.saldos.sld)
-              dataSld.push(Number(respuesta[key].graficos.saldos.sld).toFixed(2))
+
+            dataSld.push(Number(respuesta[key].graficos.saldos.sld).toFixed(2))
             
           }
 
