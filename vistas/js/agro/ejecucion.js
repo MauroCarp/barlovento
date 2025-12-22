@@ -310,7 +310,7 @@ const cargarInfoEjecucion = (campania)=>{
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-
+-    
     setTimeout(() => {
       $('#idEjecucionRindes').val(respuesta[0].idEjecucion);
     }, 600);
@@ -381,7 +381,8 @@ const cargarInfoEjecucion = (campania)=>{
         'costoCobertura':0
       }
     }
-    
+    console.log(data)
+   
     respuesta.forEach(lote => {
 
       if(data[lote['campo']][lote['lote']] == undefined){
@@ -401,7 +402,7 @@ const cargarInfoEjecucion = (campania)=>{
         data[lote['campo']][lote['lote']].costoFertilizacion = (lote['labor'] == 'Fertilizacion') ? Number(lote['costoInsumo']) : 0
 
         data[lote['campo']][lote['lote']].costoCosecha = (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
-
+        
         data[lote['campo']][lote['lote']].costoPlanificacion = lote['costoPlanificacion']
         
         if(lote.etapa == 'gruesa'){
@@ -477,10 +478,10 @@ const cargarInfoEjecucion = (campania)=>{
 
         }
 
-        let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion) + Number(data[campo][key].costoCosecha))
+        let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion))
 
         let diferencia = ((totalEjecucion - data[campo][key].costoPlanificacion) * 100) / data[campo][key].costoPlanificacion
-
+        console.log(data[campo][key])
         $(`#tablaEjecucion${capitalizarPrimeraLetra(campo)} tbody`).append($(`
   
           <tr>
@@ -513,14 +514,6 @@ const cargarInfoEjecucion = (campania)=>{
             </td>
             
             <td>
-              ${data[campo][key].costoCosecha.toLocaleString('de-DE')}
-            </td>
-            
-            <td>
-          
-            </td>
-            
-            <td>
               ${data[campo][key].costoPlanificacion.toLocaleString('de-DE')}
             </td>
 
@@ -529,7 +522,7 @@ const cargarInfoEjecucion = (campania)=>{
             </td>
             
             <td>
-              ${diferencia.toFixed(2)}
+              ${(Number(totalEjecucion) - Number(data[campo][key].costoPlanificacion)).toLocaleString('de-DE')}
             </td>
   
           <tr>

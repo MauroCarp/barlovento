@@ -48,7 +48,7 @@ class ControladorTrazabilidad{
 						$dataTrazabilidad = array();
 						// $rfidsTemp = array();
 									
-						if(isset($_FILES['excelTD'])){
+						if(isset($_FILES['excelTD']) && $_FILES['excelTD']['name'] != ''){
 
 							// TOMA DE DATOS CARGA EXCEL TD
 							if(in_array($_FILES["excelTD"]["type"],$allowedFileType)){
