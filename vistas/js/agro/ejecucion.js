@@ -395,7 +395,7 @@ const cargarInfoEjecucion = (campania)=>{
         
         data[lote['campo']][lote['lote']].cultivo = lote['cultivo'] 
 
-        data[lote['campo']][lote['lote']].costoLabor =  (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
+        data[lote['campo']][lote['lote']].costoLabor =  (lote['labor'] != 'Cosecha') ? Number(lote['costoLabor']) : 0
 
         data[lote['campo']][lote['lote']].costoInsumo = (lote['labor'] != 'Fertilizacion') ? Number(lote['costoInsumo']) : 0
 
@@ -429,7 +429,7 @@ const cargarInfoEjecucion = (campania)=>{
 
         labores[lote['campo']][lote['lote']][lote['labor']] = lote  
 
-        data[lote['campo']][lote['lote']].costoLabor += Number(lote['costoLabor'])
+        data[lote['campo']][lote['lote']].costoLabor += (lote['labor'] != 'Cosecha') ? Number(lote['costoLabor']) : 0
 
         data[lote['campo']][lote['lote']].costoInsumo += (lote['labor'] != 'Fertilizacion') ? Number(lote['costoInsumo']) : 0
 
@@ -472,9 +472,13 @@ const cargarInfoEjecucion = (campania)=>{
           if(tooltip.length > 0 )
             tooltip += '\n';
 
-          tooltip += 
-            `Labor: ${lote} \n Costo Labor: $ ${labores[campo][key][lote]['costoLabor'].toLocaleString('de-DE')} \n Costo Insumo: $ ${labores[campo][key][lote]['costoInsumo'].toLocaleString('de-DE')} \n -------------------
-          `;
+          if(labores[campo][key][lote]['labor'] != 'Cosecha'){
+
+            tooltip += 
+              `Labor: ${lote} \n Costo Labor: $ ${labores[campo][key][lote]['costoLabor'].toLocaleString('de-DE')} \n Costo Insumo: $ ${labores[campo][key][lote]['costoInsumo'].toLocaleString('de-DE')} \n -------------------
+            `;
+
+          }
 
         }
 
