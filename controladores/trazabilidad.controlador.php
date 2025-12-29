@@ -233,6 +233,7 @@ class ControladorTrazabilidad{
 										
 										$dataWC[] = array('tropa' 		=> $Row[4],
 															'rfid'		=> $rfid,
+															'rfidOriginal' => (string)$Row[1],
 															'caravana'	=> $Row[59],
 															'categoria'	=> $Row[2],
 															'actividad'	=> $Row[7],

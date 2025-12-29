@@ -48,6 +48,7 @@ class AjaxTrazabilidadAnimals {
     private function processAnimalsData($animales) {
         $processedData = array();
         
+        $rfidOriginal = '';
         if (!empty($animales) && is_array($animales)) {
             foreach ($animales as $rfid => $registros) {
                 if (sizeof($registros) === 3) {
@@ -55,9 +56,10 @@ class AjaxTrazabilidadAnimals {
                     $row0 = isset($registros[0]) ? $registros[0] : [];
                     $row1 = isset($registros[1]) ? $registros[1] : [];
                     $primeraFila = array_merge($row0, $row1);
-                    
+                    $rfidOriginal = ($primeraFila["rfidOriginal"] != '') ? $primeraFila["rfidOriginal"] : $rfid;
+
                     $processedData[] = array(
-                        htmlspecialchars($rfid),
+                        htmlspecialchars($rfidOriginal),
                         isset($primeraFila["correlacion"]) ? htmlspecialchars($primeraFila["correlacion"]) : '',
                         isset($primeraFila["garron"]) ? htmlspecialchars($primeraFila["garron"]) : '',
                         isset($primeraFila["kilos"]) ? htmlspecialchars($primeraFila["kilos"]) : '',
@@ -149,7 +151,7 @@ class AjaxTrazabilidadAnimals {
                         $rowX = $registros[$i];
                         if (is_array($rowX)) {
                             $processedData[] = array(
-                                $rfid,
+                                $rfidOriginal,
                                 isset($rowX["correlacion"]) ? htmlspecialchars($rowX["correlacion"]) : '',
                                 isset($rowX["garron"]) ? htmlspecialchars($rowX["garron"]) : '',
                                 isset($rowX["kilos"]) ? htmlspecialchars($rowX["kilos"]) : '',
