@@ -151,7 +151,7 @@ class AjaxTrazabilidadAnimals {
                         $rowX = $registros[$i];
                         if (is_array($rowX)) {
                             $processedData[] = array(
-                                $rfidOriginal,
+                                isset($rowX["rfidOriginal"]) && $rowX["rfidOriginal"] != '' ? htmlspecialchars($rowX["rfidOriginal"]) : htmlspecialchars($rfid),
                                 isset($rowX["correlacion"]) ? htmlspecialchars($rowX["correlacion"]) : '',
                                 isset($rowX["garron"]) ? htmlspecialchars($rowX["garron"]) : '',
                                 isset($rowX["kilos"]) ? htmlspecialchars($rowX["kilos"]) : '',
