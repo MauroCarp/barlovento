@@ -548,6 +548,7 @@ const cargarInfoEjecucion = (campania)=>{
     document.getElementById(`totalHasEjecutadas`).innerText = Number(info.bety.hasFina) + Number(info.bety.hasGruesa) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasCobertura) 
     
     let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura)
+    console.log(totalInversion)
     document.getElementById(`totalInversionEjecutada`).innerText = totalInversion.toLocaleString('de-DE')
 
     document.getElementById(`hasInvEjecucionBety`).innerText = info.bety.hasFina

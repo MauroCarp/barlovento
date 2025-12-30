@@ -1,5 +1,42 @@
-<div class="row">
 
+<div class="row">
+            
+    <div class="col-lg-2">
+        
+        <div class="info-box">
+
+            <span class="info-box-icon bg-green"><i class="fa fa-map-o"></i></span>      
+
+            <div class="info-box-content">
+
+                <span class="info-box-text">Hectareas Totales Ejecutadas</span>
+                
+                <span class="info-box-number"><span id="hasTotalEjecutado"></span> Has.</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-2">
+        
+        <div class="info-box">
+
+            <span class="info-box-icon bg-green"><i class="fa fa-dollar"></i></span>
+            <div class="info-box-content">
+            <span class="info-box-text">Inversion <br> Total Ejecutada</span>
+            <span class="info-box-number">U$D <span id="costoTotalEjecutado"></span></span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<br>
+<div class="row">
+    
     <div class="col-lg-2">
         
         <div class="input-group" bis_skin_checked="1">

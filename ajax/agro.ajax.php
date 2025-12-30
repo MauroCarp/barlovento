@@ -61,7 +61,9 @@ class AjaxAgro{
 
 		}
 
-		echo json_encode($data);
+		$totales = ControladorAgro::ctrMostrarDataEjecucion($tabla,'campania',$campania,'etapa',false);
+
+		echo json_encode(array('data' => $data,'totales'=>$totales));
 
 	}
 
