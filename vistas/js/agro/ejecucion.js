@@ -315,10 +315,8 @@ const cargarInfoEjecucion = (campania)=>{
       $('#idEjecucionRindes').val(respuesta['data'][0].idEjecucion);
     }, 600);
 
-    console.log(respuesta['totales'])
     $('#hasTotalEjecutado').text(respuesta['totales'][0]['totalHas'])
-    $('#costoTotalEjecutado').text(respuesta['totales'][0]['totalCosto'].toLocaleString('de-DE'))
-    console.log('2')
+    $('#costoTotalEjecutado').text((respuesta['totales'][0]['totalCosto']).toLocaleString('de-DE'))
 
     if(respuesta['data'].length == 0){
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
