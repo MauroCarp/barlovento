@@ -1,0 +1,69 @@
+Seccion,Concepto,Formula (numeros de cuenta),Notas
+Endeudamiento,prestamos,"2.01.01.02.010 + 2.01.01.02.011 + 2.01.01.02.015 + 2.01.01.02.016 + 2.01.01.08.000",
+Endeudamiento,tarjetas,"2.01.01.02.012 + 2.01.01.02.013 + 2.01.01.02.014",
+Endeudamiento,mutuales,2.01.01.07.000,
+Endeudamiento,sgr,2.01.01.09.000,
+Endeudamiento,proveedores,2.01.01.01.000,
+Endeudamiento,cerealPL,2.01.01.06.002,No aplica a Paihuen
+Endeudamiento,deudaBancaria,2.01.01.02.000,
+Endeudamiento,deudaTotal,2.01.01.00.000,
+Endeudamiento,endeudamiento.total,"(2.01.01.02.010 + 2.01.01.02.011 + 2.01.01.02.015 + 2.01.01.02.016 + 2.01.01.08.000) + (2.01.01.02.012 + 2.01.01.02.013 + 2.01.01.02.014) + 2.01.01.07.000 + 2.01.01.09.000 + 2.01.01.01.000 + 2.01.01.06.002","Suma de componentes (cerealPL no aplica a Paihuen)"
+Cajas,deudaTotal,"2.01.01.07.000 + 2.01.01.09.000 + 2.01.01.02.000","Definición usada en 'cajas' (mutuales + sgr + deudaBancaria)"
+Ventas/agro,agricultura,4.01.01.00.000,
+Ventas/ganaderia,ganaderia,4.01.02.01.000,No aplica a Paihuen si no existe
+Ventas/ganaderia,exportacion,4.01.04.01.000,
+Ventas/ganaderia,produccionHacienda,4.01.02.01.012,
+Ventas/ganaderia,vaquillonasNovillos,"4.01.02.01.002 + 4.01.02.01.005 + 4.01.02.01.003","4.01.02.01.003 solo si no es Paihuen"
+Ventas/ganaderia,carneSubproductos,"4.01.02.01.010 + 4.01.02.01.011",
+Ventas,ventasSG,4.01.01.00.000,"Ventas sin ganadería: solo agricultura (C)"
+Ventas,denominadorVentas,"4.01.00.00.000 - 4.01.02.01.012","Directas - Producción Hacienda"
+Ventas,ventasTotales,"4.01.01.00.000 + (4.01.02.01.000 + 4.01.04.01.000 - 4.01.02.01.012)","Equivalente a la descomposición interna P/C"
+Resultados,resultadoBruto,"4.01.00.00.000 - 5.01.00.00.000",
+Resultados,resultadoNeto,"4.00.00.00.000 - 5.00.00.00.000",
+Resultados,resultadoOperativo,"4.01.00.00.000 - 5.00.00.00.000",
+Ratios,margenUtilidadBruta(%),"(4.01.00.00.000 - 5.01.00.00.000) / 4.00.00.00.000 * 100",
+Ratios,margenUtilidadNeta(%),"(4.00.00.00.000 - 5.00.00.00.000) / 4.00.00.00.000 * 100",
+Ratios,margenUtilidadOperativa(%),"(4.01.00.00.000 - 5.00.00.00.000) / 4.00.00.00.000 * 100",
+Ratios,ratioGastosOperativos(%),"5.01.00.00.000 / 4.00.00.00.000 * 100",
+Ratios,margenSobreVentas(%),"(4.00.00.00.000 - 5.01.00.00.000) / 4.00.00.00.000 * 100","En código se protege cuando 4.00.00.00.000 = 0"
+Ratios,rentabilidadEconomica(%),"(4.00.00.00.000 - 5.00.00.00.000) / 1.00.00.00.000 * 100","En código se protege cuando 1.00.00.00.000 = 0"
+Patrimonio/Activos,activos,1.00.00.00.000,
+Patrimonio/Activos,activoCorriente,1.01.00.00.000,
+Patrimonio/Activos,activoDisponibilidades,1.01.01.00.000,
+Patrimonio/Activos,cajaBancos,1.01.01.01.000,
+Patrimonio/Activos,activoInversiones,1.01.02.00.000,
+Patrimonio/Activos,activoMonedaExtranjera,1.01.02.03.000,
+Patrimonio/Activos,activoCreditos,1.01.03.00.000,
+Patrimonio/Activos,sld,1.01.03.03.008,
+Patrimonio/Activos,saldoTecnico,1.01.03.03.006,
+Patrimonio/Activos,bienesDeCambio,1.01.04.00.000,
+Patrimonio/Activos,activosBiologicosGan,1.01.04.01.000,
+Patrimonio/Activos,productosAgropecuarios,1.01.04.03.000,
+Patrimonio/Activos,bienesUPP,1.01.04.05.000,
+Patrimonio/Activos,activoNoCorriente,1.02.00.00.000,
+Patrimonio/Activos,activoNCBienesDeUso,1.02.01.00.000,
+Patrimonio/Activos,buEstructura,1.02.01.01.000,
+Patrimonio/Activos,buMoviles,1.02.01.02.000,
+Patrimonio/Activos,buDiversos,1.02.01.03.000,
+Patrimonio/Activos,buReproductores,1.02.01.04.000,
+Patrimonio/Activos,activoNCOtrosCreditos,1.02.02.00.000,
+Patrimonio/Activos,pasivoTotal,2.00.00.00.000,
+Patrimonio/Activos,pasivoCorriente,2.01.00.00.000,
+Patrimonio/Activos,patrimonioNeto,3.00.00.00.000,
+Patrimonio/Activos,patrimonioNetoCapital,3.01.01.01.000,
+Patrimonio/Activos,patrimonioNetoReservas,3.01.01.02.000,
+Patrimonio/Activos,patrimonioNetoResultadosAcumulados,3.01.01.03.000,
+Patrimonio/Activos,patrimonioNetoResultadosAcumulados2,3.01.01.03.001,
+Patrimonio/Activos,patrimonioNetoResultadoEjercicio,3.01.01.03.002,
+Patrimonio/Activos,patrimonioNeto(ajustado),"3.00.00.00.000 + (4.00.00.00.000 - 5.00.00.00.000)",Definición usada en panel
+Patrimonio/Activos,activoCirculante,1.01.01.01.000,Según implementación actual: igual a Caja y Bancos
+Impositivo,ingresoBrutoMensual,5.02.01.01.001,
+Impositivo,sueldos,5.02.01.05.001,
+Impositivo,cargasSocialesReales,5.02.01.05.002,
+Impositivo,honorarios,"5.02.01.06.006 + 5.02.01.06.007 + 5.02.01.06.008 + 5.02.01.06.009",
+Impositivo,seguros,"5.01.01.14.004 + 5.01.01.14.005 + 5.01.01.14.006 + 5.02.01.02.017 + 5.02.01.05.003 + 5.02.01.06.011",
+Impositivo,inmobiliario,5.02.01.06.005,
+Financiero,interesesPagados,5.03.01.01.004,
+Impositivo,sueldos+honorarios,"5.02.01.05.001 + (5.02.01.06.006 + 5.02.01.06.007 + 5.02.01.06.008 + 5.02.01.06.009)",
+Impositivo,sueldos12Ventas,"5.02.01.05.001 / [ventasTotales]","VentasTotales ver fila correspondiente"
+Impositivo,sueldos12HonorariosVentas,"[sueldos+honorarios] / [ventasTotales]","Usa filas 'sueldos+honorarios' y 'ventasTotales'"

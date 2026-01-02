@@ -21,6 +21,7 @@
                         <th>u$s Insumos</th>
                         <th>u$s Labores</th>
                         <th>u$s Fertilizaci&oacute;n</th>
+                        <th>u$s/Has</th>
                         <th>u$s Total</th>
                         <th>u$s Planificaci&oacute;n</th>
                         <th>% Dif.</th>

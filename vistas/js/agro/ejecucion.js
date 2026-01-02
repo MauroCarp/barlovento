@@ -406,6 +406,8 @@ const cargarInfoEjecucion = (campania)=>{
         data[lote['campo']][lote['lote']].costoCosecha = (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
         
         data[lote['campo']][lote['lote']].costoPlanificacion = lote['costoPlanificacion']
+
+        data[lote['campo']][lote['lote']].has = lote['has']
         
         if(lote.etapa == 'gruesa'){
 
@@ -487,7 +489,9 @@ const cargarInfoEjecucion = (campania)=>{
         let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion))
 
         let diferencia = ((totalEjecucion - data[campo][key].costoPlanificacion) * 100) / data[campo][key].costoPlanificacion
-        
+
+        console.log(data[campo][key])
+
         $(`#tablaEjecucion${capitalizarPrimeraLetra(campo)} tbody`).append($(`
   
           <tr>
@@ -515,6 +519,10 @@ const cargarInfoEjecucion = (campania)=>{
               ${data[campo][key].costoFertilizacion.toLocaleString('de-DE')}
             </td>
   
+            <td>
+               ${(totalEjecucion / Number(data[campo][key].has)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </td>
+
             <td>
                ${totalEjecucion.toLocaleString('de-DE')}
             </td>
