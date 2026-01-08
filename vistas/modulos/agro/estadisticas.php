@@ -95,16 +95,7 @@
                                                 <td class="text-right" id="dolareEstivalesDiferencia">-</td>
                                             </tr>
                                         </tbody>
-                                        <tfoot>
-                                            <tr class="bg-gray">
-                                                <td><strong>TOTAL</strong></td>
-                                                <td class="text-right" id="hasTotalCombinado"><strong>-</strong></td>
-                                                <td class="text-right" id="dolareTotalCombinado"><strong>-</strong></td>
-                                                <td class="text-right" id="porcentajeTotalCombinado"><strong>-</strong></td>
-                                                <td class="text-right" id="hasTotalDiferencia"><strong>-</strong></td>
-                                                <td class="text-right" id="dolareTotalDiferencia"><strong>-</strong></td>
-                                            </tr>
-                                        </tfoot>
+                                        
                                     </table>
                                 </div>
                             </div>
@@ -151,90 +142,38 @@
 <script>
 $(document).ready(function() {
     // Inicializar cuando se haga clic en la pestaña de estadísticas
-    $('#estadisticasTab').on('click', function() {
+    $('#btnEstadistica').on('click', function() {
         cargarEstadisticas();
     });
-    
-    // Cargar datos simulados al inicio para mostrar la estructura
-    setTimeout(function() {
-        cargarEstadisticas();
-    }, 1000);
-    
-    // Función para cargar estadísticas (simulada por ahora)
+
+    // Carga inmediata al abrir (si tab ya activo)
+    cargarEstadisticas();
+
+    // Función para cargar estadísticas reales desde backend
     function cargarEstadisticas() {
-        // Datos simulados más completos y realistas
-        const datosSimulados = {
-            planificacion: {
-                fina: { has: 285, dolares: 142500, porcentaje: 42 },
-                gruesa: { has: 320, dolares: 256000, porcentaje: 47 },
-                cobertura: { has: 75, dolares: 22500, porcentaje: 11 },
-                invernales: { has: 180, dolares: 72000, porcentaje: 26 },
-                estivales: { has: 500, dolares: 421000, porcentaje: 74 }
-            },
-            ejecucion: {
-                fina: { has: 275, dolares: 137500, porcentaje: 40 },
-                gruesa: { has: 340, dolares: 272000, porcentaje: 50 },
-                cobertura: { has: 68, dolares: 20400, porcentaje: 10 },
-                invernales: { has: 165, dolares: 66000, porcentaje: 24 },
-                estivales: { has: 518, dolares: 443400, porcentaje: 76 }
-            },
-            cultivos: [
-                { 
-                    nombre: 'Trigo',
-                    planificacion: { has: 120, dolares: 48000, porcentaje: 18 },
-                    ejecucion: { has: 115, dolares: 46000, porcentaje: 17 }
-                },
-                {
-                    nombre: 'Soja 1ra',
-                    planificacion: { has: 180, dolares: 108000, porcentaje: 26 },
-                    ejecucion: { has: 190, dolares: 114000, porcentaje: 28 }
-                },
-                {
-                    nombre: 'Soja 2da',
-                    planificacion: { has: 105, dolares: 34500, porcentaje: 15 },
-                    ejecucion: { has: 85, dolares: 23500, porcentaje: 12 }
-                },
-                {
-                    nombre: 'Maíz',
-                    planificacion: { has: 215, dolares: 172000, porcentaje: 32 },
-                    ejecucion: { has: 243, dolares: 194400, porcentaje: 35 }
-                },
-                {
-                    nombre: 'Carinata',
-                    planificacion: { has: 60, dolares: 24000, porcentaje: 9 },
-                    ejecucion: { has: 60, dolares: 24000, porcentaje: 9 }
-                },
-                {
-                    nombre: 'Vicia',
-                    planificacion: { has: 45, dolares: 13500, porcentaje: 7 },
-                    ejecucion: { has: 40, dolares: 12000, porcentaje: 6 }
-                },
-                {
-                    nombre: 'Avena Cobertura',
-                    planificacion: { has: 30, dolares: 9000, porcentaje: 4 },
-                    ejecucion: { has: 28, dolares: 8400, porcentaje: 4 }
-                },
-                {
-                    nombre: 'Triticale',
-                    planificacion: { has: 25, dolares: 7500, porcentaje: 4 },
-                    ejecucion: { has: 25, dolares: 7500, porcentaje: 4 }
-                },
-                {
-                    nombre: 'Cebada',
-                    planificacion: { has: 20, dolares: 8000, porcentaje: 3 },
-                    ejecucion: { has: 15, dolares: 6000, porcentaje: 2 }
+        const campania = $('#campania').text() || localStorage.getItem('campaniaAgro') || '';
+        if(!campania) return;
+
+        const url = 'ajax/agro.ajax.php';
+        $.ajax({
+            method: 'POST',
+            url,
+            data: { accion: 'estadisticas', campania },
+            success: function(resp) {
+                try {
+                    const datos = JSON.parse(resp);
+                    if(!datos || !datos.planificacion || !datos.ejecucion) return;
+                    // Llenar tabla por tipo
+                    llenarTablaPorTipo(datos);
+                    // Llenar tabla por cultivo
+                    llenarTablaPorCultivo(datos.cultivos || []);
+                    // Calcular resúmenes
+                    calcularResumenes(datos);
+                } catch(e) {
+                    console.error('Error parseando estadísticas', e);
                 }
-            ]
-        };
-        
-        // Llenar tabla por tipo
-        llenarTablaPorTipo(datosSimulados);
-        
-        // Llenar tabla por cultivo
-        llenarTablaPorCultivo(datosSimulados.cultivos);
-        
-        // Calcular resúmenes
-        calcularResumenes(datosSimulados);
+            }
+        });
     }
     
     function llenarTablaPorTipo(datos) {
@@ -268,32 +207,7 @@ $(document).ready(function() {
             $(`#dolare${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorDolares}">$${diffDolares.toLocaleString()}</span>`);
             $(`#porcentaje${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorPorcentaje}">${diffPorcentaje > 0 ? '+' : ''}${diffPorcentaje}%</span>`);
         });
-        
-        // Totales
-        const totalHasPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + item.has, 0);
-        const totalHasEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + item.has, 0);
-        const totalDolaresPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + item.dolares, 0);
-        const totalDolaresEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + item.dolares, 0);
-        
-        // Totales combinados
-        const hasTotalCombinado = `<span class="text-primary"><strong>${totalHasPlan.toLocaleString()}</strong></span> | <span class="text-info"><strong>${totalHasEjec.toLocaleString()}</strong></span>`;
-        const dolaresTotalCombinado = `<span class="text-primary"><strong>$${totalDolaresPlan.toLocaleString()}</strong></span> | <span class="text-info"><strong>$${totalDolaresEjec.toLocaleString()}</strong></span>`;
-        const porcentajeTotalCombinado = `<span class="text-primary"><strong>100%</strong></span> | <span class="text-info"><strong>100%</strong></span>`;
-        
-        $('#hasTotalCombinado').html(hasTotalCombinado);
-        $('#dolareTotalCombinado').html(dolaresTotalCombinado);
-        $('#porcentajeTotalCombinado').html(porcentajeTotalCombinado);
-        
-        const diffTotalHas = totalHasEjec - totalHasPlan;
-        const diffTotalDolares = totalDolaresEjec - totalDolaresPlan;
-        const diffTotalPorcentaje = ((totalDolaresEjec - totalDolaresPlan) / totalDolaresPlan * 100).toFixed(1);
-        
-        const colorTotalHas = diffTotalHas >= 0 ? 'text-green' : 'text-red';
-        const colorTotalDolares = diffTotalDolares >= 0 ? 'text-green' : 'text-red';
-        
-        $('#hasTotalDiferencia').html(`<span class="${colorTotalHas}"><strong>${diffTotalHas > 0 ? '+' : ''}${diffTotalHas}</strong></span>`);
-        $('#dolareTotalDiferencia').html(`<span class="${colorTotalDolares}"><strong>$${diffTotalDolares.toLocaleString()}</strong></span>`);
-        $('#porcentajeTotalDiferencia').html(`<span class="${colorTotalDolares}"><strong>${diffTotalPorcentaje > 0 ? '+' : ''}${diffTotalPorcentaje}%</strong></span>`);
+
     }
     
     function llenarTablaPorCultivo(cultivos) {
@@ -324,18 +238,16 @@ $(document).ready(function() {
     }
     
     function calcularResumenes(datos) {
-        const totalHasPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + item.has, 0);
-        const totalHasEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + item.has, 0);
-        const totalDolaresPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + item.dolares, 0);
-        const totalDolaresEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + item.dolares, 0);
-        
-        const eficienciaHas = '1071 | 729';
+        const totalHasPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + (item.has||0), 0);
+        const totalHasEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + (item.has||0), 0);
+        const totalDolaresPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + (item.dolares||0), 0);
+        const totalDolaresEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + (item.dolares||0), 0);
+
+        const eficienciaHas = `${totalHasPlan.toLocaleString()} | ${totalHasEjec.toLocaleString()}`;
         const variacionInversion = 'U$S ' + totalDolaresPlan.toLocaleString('DE-de') + '  |  U$S ' + totalDolaresEjec.toLocaleString('DE-de');
 
         $('#eficienciaHectareas').text(eficienciaHas);
         $('#variacionInversion').text(variacionInversion);
-                
-
     }
     
     function capitalizarPrimeraLetra(string) {

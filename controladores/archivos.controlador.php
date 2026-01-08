@@ -23,8 +23,11 @@ class ControladorArchivos{
 		if(isset($_GET["nombreArchivo"])){
 
 			$tabla = $_GET['tabla'];
-			$datos = $_GET["nombreArchivo"];
-
+			$datos[] = $_GET["nombreArchivo"];
+			
+			if($tabla == 'conversion')
+				$datos[] = $_GET["periodo"]."-01";
+			
 			$respuesta = ModeloArchivos ::mdlBorrarArchivo($tabla, $datos);
 			
 			if($respuesta == "ok"){

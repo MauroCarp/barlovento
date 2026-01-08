@@ -377,9 +377,10 @@ $meses = Array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
 
           
 
-                  if($_SESSION["perfil"] == "Master"){ 
+                  if($_SESSION["usuario"] == "tecnicoGanadero" || $_SESSION["usuario"] == "Gornela"){ 
                     
-                    echo '<button class="btn btn-danger btnEliminarArchivo btn-block" nombreArchivo="'.$value["archivo"].'" tablaDB="conversion"><i class="fa fa-times"></i></button>';
+                    echo '<button class="btn btn-danger btnEliminarArchivo btn-block" nombreArchivo="'.$value["archivo"].'" tablaDB="conversion" periodo="'.$periodo.'"><i class="fa fa-times"></i></button>';
+                    
                     
                   }
 

@@ -80,11 +80,20 @@ class ModeloArchivos{
 		if($tabla != 'contable' AND $tabla != 'contablePaihuen'){
 			$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE archivo = :nombreArchivo");
 			
-			$stmt -> bindParam(":nombreArchivo", $datos, PDO::PARAM_STR);
+			if($tabla == 'conversion'){
+				$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE archivo = :nombreArchivo AND periodoTime = :periodoTime");
+				$stmt -> bindParam(":periodoTime", $datos[1], PDO::PARAM_STR);
+			}
+
+			$stmt -> bindParam(":nombreArchivo", $datos[0], PDO::PARAM_STR);
 		}else{
+
 			$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id = :id");
-			$stmt -> bindParam(":id", $datos, PDO::PARAM_STR);
+
+
+			$stmt -> bindParam(":id", $datos[0], PDO::PARAM_STR);
 		}
+
 
 		if($stmt -> execute()){
 

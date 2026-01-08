@@ -19,6 +19,7 @@ $(".tablas").on("click", ".btnEliminarArchivo", function(){
 
   var nombreArchivo = $(this).attr("nombreArchivo");
   var tabla = $(this).attr("tablaDB");
+  var periodo = (tabla == 'conversion') ? $(this).attr("periodo") : '';
 
   swal({
     title: '¿Está seguro de borrar los registros asociados a este Archivo?',
@@ -33,7 +34,7 @@ $(".tablas").on("click", ".btnEliminarArchivo", function(){
 
     if(result.value){
 
-      window.location = "index.php?ruta=archivosCarga&nombreArchivo=" + nombreArchivo + "&tabla=" + tabla;
+      window.location = "index.php?ruta=archivosCarga&nombreArchivo=" + nombreArchivo + "&tabla=" + tabla + "&periodo=" + periodo;
 
     }
 

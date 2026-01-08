@@ -112,6 +112,13 @@ class AjaxAgro{
 	
 	}
 
+	public function ajaxObtenerEstadisticas(){
+		$campania = $this->campania;
+		$carga = $this->carga; // opcional
+		$data = ControladorAgro::ctrObtenerEstadisticas($campania, $carga);
+		echo json_encode($data);
+	}
+
 }
 
 
@@ -129,6 +136,7 @@ if(isset($_POST["accion"])){
         $mostrarData -> ajaxMostrarDataPlanificacion();
 
     }
+
 
 	if($accion == 'mostrarDataEjecucion'){
 		$mostrarData = new AjaxAgro();
@@ -159,6 +167,13 @@ if(isset($_POST["accion"])){
 		$ejecucionValido = new AjaxAgro;
 		$ejecucionValido->campania = $_POST['campania'];
 		$ejecucionValido-> ajaxEjecucionValido();
+	}
+
+	if($accion == 'estadisticas'){
+		$estadisticas = new AjaxAgro();
+		$estadisticas->campania = $_POST['campania'];
+		if(isset($_POST['carga'])) $estadisticas->carga = $_POST['carga'];
+		$estadisticas->ajaxObtenerEstadisticas();
 	}
 
 }

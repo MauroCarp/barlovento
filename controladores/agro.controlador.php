@@ -131,59 +131,31 @@ class ControladorAgro{
                 $rowNumber = 0;
 
                 $data = array();
-                
-                $Reader = new SpreadsheetReader($ruta);	
-                
+                $Reader = new SpreadsheetReader($ruta);
                 $sheetCount = count($Reader->sheets());
-        
+
                 $tabla = 'planificaciones';
                 $campania = $_POST['campania1'] . '/' . $_POST['campania2'];
                 $resultado = ModeloAgro::mdlUltimaCarga($tabla,$campania);
                 $lastUpload = (is_null($resultado['lastUpload'])) ? -1 : $resultado['lastUpload'];
 
                 $dataPlanificacion = array('tipo'=>$lastUpload + 1,'campania'=>$campania);
-
                 $cargaPlanificacion = ModeloAgro::mdlCargarPlanificacion($tabla,$dataPlanificacion);
 
                 $arrLotesEjecucion = array();
 
                 for($i=0;$i<$sheetCount;$i++){
-        
                     $Reader->ChangeSheet($i);
 
                     foreach ($Reader as $Row){
-                        // TODO RESOLVER DE QUE FORMA CONVERTIR ESA CELDA PARA PODER SER INTERPRETADA
-
-                        // if($rowNumber == 0 && str_replace(' ','',$Row[0]) != 'Utilizacion_Campo_Lote
-                        //     var_dump('entre');
-                        //     // echo'<script>
-
-                        //     //     swal({
-                        //     //             type: "error",
-                        //     //             title: "La planilla seleccionada no corresponde a una planilla de Planificación",
-                        //     //             showConfirmButton: true,
-                        //     //             confirmButtonText: "Cerrar"
-                        //     //             }).then(function(result) {
-                        //     //                     if (result.value) {
-
-                        //     //                         window.location = "index.php?ruta=agro/agro"
-
-                        //     //                     }
-                        //     //                 })
-
-                        //     //     </script>';
-                        //     die();
-
-                        // }
-
-                        // var_dump($Row[1]);
 
                         // Limpiar y normalizar el cultivo
                         $cultivo = limpiarTexto($Row[1]);
 
                         if(trim($Row[1]) == 'EL PICHI') $campo = 'pichi';
-                        
                         if(trim($Row[1]) == 'LA BETY') $campo = 'bety';
+
+                        if($rowNumber == 0) $rowValida = false;
 
                         if($rowValida && $cultivo != 'cerealesyoleaginosas' && $cultivo != 'elpichi' && $cultivo != 'labety' && $cultivo != ''){
 
@@ -785,6 +757,168 @@ class ControladorAgro{
 
         return $ejecucionValido[0];
     
+    }
+
+    /*=============================================
+	ESTADISTICAS (Planificación vs Ejecución)
+	=============================================*/
+    static public function ctrObtenerEstadisticas($campania, $cargaPlanificacion = null){
+
+        $tablaPlan = 'planificaciones';
+        if(is_null($cargaPlanificacion)){
+            $ultima = ModeloAgro::mdlUltimaCarga($tablaPlan,$campania);
+            $cargaPlanificacion = (is_null($ultima['lastUpload'])) ? 1 : $ultima['lastUpload'];
+        }
+
+        $idPlanificacion = ModeloAgro::mdlGetCampaignId($tablaPlan,$campania,$cargaPlanificacion)['id'];
+
+        $cultivosPlan = ModeloAgro::mdlMostrarDataCultivosPlanificacion('cultivosplanificacion',$idPlanificacion);
+        $costosRaw = ModeloAgro::mdlMostrarCostos($tablaPlan,$campania,$idPlanificacion);
+        $costos = array();
+        foreach ($costosRaw as $c) { $costos[$c['cultivo']] = floatval($c['costo']); }
+
+        $mapDisplay = function($cultivo){
+            switch ($cultivo) {
+                case 'soja1': return 'Soja 1ra';
+                case 'soja2': return 'Soja 2da';
+                case 'maiz1': return 'Maíz';
+                case 'maiz2': return 'Maíz 2da';
+                case 'avena': return 'Avena Cobertura';
+                case 'triticale-vicia':
+                case 'vicia-triticale': return 'Vicia-Triticale';
+                default: return ucfirst($cultivo);
+            }
+        };
+
+        $tipoPlural = function($tipo){
+            if($tipo === 'invernal') return 'invernales';
+            if($tipo === 'estival') return 'estivales';
+            return $tipo;
+        };
+
+        $planPorTipo = ['fina'=>['has'=>0,'dolares'=>0],'gruesa'=>['has'=>0,'dolares'=>0],'cobertura'=>['has'=>0,'dolares'=>0],'invernales'=>['has'=>0,'dolares'=>0],'estivales'=>['has'=>0,'dolares'=>0]];
+        $planPorCultivo = [];
+
+        foreach ($cultivosPlan as $row) {
+            $cultivo = $row['cultivo'];
+            $has = floatval($row['has']);
+            $costoUnit = isset($costos[$cultivo]) ? floatval($costos[$cultivo]) : 0;
+            $dolares = $has * $costoUnit;
+
+            $tipo = $row['tipo'];
+            $tipoEI = $tipoPlural(tipoEstInv($cultivo));
+
+            if(isset($planPorTipo[$tipo])){
+                $planPorTipo[$tipo]['has'] += $has;
+                $planPorTipo[$tipo]['dolares'] += $dolares;
+            }
+            if(isset($planPorTipo[$tipoEI])){
+                $planPorTipo[$tipoEI]['has'] += $has;
+                $planPorTipo[$tipoEI]['dolares'] += $dolares;
+            }
+            if(!isset($planPorCultivo[$cultivo])) $planPorCultivo[$cultivo] = ['has'=>0,'dolares'=>0];
+            $planPorCultivo[$cultivo]['has'] += $has;
+            $planPorCultivo[$cultivo]['dolares'] += $dolares;
+        }
+
+        $totalPlanHas = array_reduce($planPorTipo, function($s,$v){ return $s + $v['has']; }, 0);
+
+        $etapas = ['fina','gruesa','cobertura'];
+        $ejecPorTipo = ['fina'=>['has'=>0,'dolares'=>0],'gruesa'=>['has'=>0,'dolares'=>0],'cobertura'=>['has'=>0,'dolares'=>0],'invernales'=>['has'=>0,'dolares'=>0],'estivales'=>['has'=>0,'dolares'=>0]];
+        $ejecPorCultivoHasMax = [];
+        $ejecPorCultivoCostos = [];
+
+        foreach ($etapas as $etapa) {
+            $rows = ModeloAgro::mdlMostrarDataEjecucion('ejecucion','campania',$campania,'etapa',$etapa);
+            foreach ($rows as $r) {
+                $cultivo = $r['cultivo'];
+                $lote = trim($r['lote']);
+                $has = floatval($r['has']);
+                $cost = floatval($r['costoLabor']) + floatval($r['costoInsumo']);
+
+                if(isset($ejecPorTipo[$etapa])){
+                    $key = $lote.'|'.$cultivo;
+                    if(!isset($ejecPorCultivoHasMax[$key])) $ejecPorCultivoHasMax[$key] = 0;
+                    if($has > $ejecPorCultivoHasMax[$key]){
+                        $ejecPorTipo[$etapa]['has'] += ($has - $ejecPorCultivoHasMax[$key]);
+                        $ejecPorCultivoHasMax[$key] = $has;
+                    }
+                    $ejecPorTipo[$etapa]['dolares'] += $cost;
+                }
+
+                $tipoEI = $tipoPlural(tipoEstInv($cultivo));
+                if(isset($ejecPorTipo[$tipoEI])){
+                    $keyEI = $lote.'|'.$cultivo.'|'.$tipoEI;
+                    if(!isset($ejecPorCultivoHasMax[$keyEI])) $ejecPorCultivoHasMax[$keyEI] = 0;
+                    if($has > $ejecPorCultivoHasMax[$keyEI]){
+                        $ejecPorTipo[$tipoEI]['has'] += ($has - $ejecPorCultivoHasMax[$keyEI]);
+                        $ejecPorCultivoHasMax[$keyEI] = $has;
+                    }
+                    $ejecPorTipo[$tipoEI]['dolares'] += $cost;
+                }
+
+                $keyCultivo = $lote.'|'.$cultivo.'|cultivo';
+                if(!isset($ejecPorCultivoHasMax[$keyCultivo])) $ejecPorCultivoHasMax[$keyCultivo] = 0;
+                if($has > $ejecPorCultivoHasMax[$keyCultivo]){
+                    if(!isset($ejecPorCultivoHasMax[$cultivo])) $ejecPorCultivoHasMax[$cultivo] = 0;
+                    $ejecPorCultivoHasMax[$cultivo] += ($has - $ejecPorCultivoHasMax[$keyCultivo]);
+                    $ejecPorCultivoHasMax[$keyCultivo] = $has;
+                }
+                if(!isset($ejecPorCultivoCostos[$cultivo])) $ejecPorCultivoCostos[$cultivo] = 0;
+                $ejecPorCultivoCostos[$cultivo] += $cost;
+            }
+        }
+
+        $totalEjecHas = $ejecPorTipo['fina']['has'] + $ejecPorTipo['gruesa']['has'] + $ejecPorTipo['cobertura']['has'];
+
+        foreach ($planPorTipo as $k=>&$v) {
+            $v['porcentaje'] = ($totalPlanHas > 0) ? round(($v['has']/$totalPlanHas)*100) : 0;
+        }
+        foreach ($ejecPorTipo as $k=>&$v) {
+            $v['porcentaje'] = ($totalEjecHas > 0) ? round(($v['has']/$totalEjecHas)*100) : 0;
+        }
+
+        $cultivosOut = [];
+        $cultivosKeys = array_unique(array_merge(array_keys($planPorCultivo), array_keys($ejecPorCultivoHasMax)));
+        foreach ($cultivosKeys as $cultivo) {
+            if($cultivo === '' || (is_string($cultivo) && strpos($cultivo,'|') !== false)) continue;
+            $planHas = isset($planPorCultivo[$cultivo]) ? $planPorCultivo[$cultivo]['has'] : 0;
+            $planDol = isset($planPorCultivo[$cultivo]) ? $planPorCultivo[$cultivo]['dolares'] : 0;
+            $ejecHas = isset($ejecPorCultivoHasMax[$cultivo]) ? $ejecPorCultivoHasMax[$cultivo] : 0;
+            $ejecDol = isset($ejecPorCultivoCostos[$cultivo]) ? $ejecPorCultivoCostos[$cultivo] : 0;
+
+            $cultivosOut[] = [
+                'nombre' => $mapDisplay($cultivo),
+                'planificacion' => [
+                    'has' => $planHas,
+                    'dolares' => $planDol,
+                    'porcentaje' => ($totalPlanHas>0)? round(($planHas/$totalPlanHas)*100) : 0
+                ],
+                'ejecucion' => [
+                    'has' => $ejecHas,
+                    'dolares' => $ejecDol,
+                    'porcentaje' => ($totalEjecHas>0)? round(($ejecHas/$totalEjecHas)*100) : 0
+                ]
+            ];
+        }
+
+        return [
+            'planificacion' => [
+                'fina' => $planPorTipo['fina'],
+                'gruesa' => $planPorTipo['gruesa'],
+                'cobertura' => $planPorTipo['cobertura'],
+                'invernales' => $planPorTipo['invernales'],
+                'estivales' => $planPorTipo['estivales']
+            ],
+            'ejecucion' => [
+                'fina' => $ejecPorTipo['fina'],
+                'gruesa' => $ejecPorTipo['gruesa'],
+                'cobertura' => $ejecPorTipo['cobertura'],
+                'invernales' => $ejecPorTipo['invernales'],
+                'estivales' => $ejecPorTipo['estivales']
+            ],
+            'cultivos' => $cultivosOut
+        ];
     }
 
     
