@@ -238,10 +238,10 @@ $(document).ready(function() {
     }
     
     function calcularResumenes(datos) {
-        const totalHasPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + (item.has||0), 0);
-        const totalHasEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + (item.has||0), 0);
-        const totalDolaresPlan = Object.values(datos.planificacion).reduce((sum, item) => sum + (item.dolares||0), 0);
-        const totalDolaresEjec = Object.values(datos.ejecucion).reduce((sum, item) => sum + (item.dolares||0), 0);
+        const totalHasPlan = datos.planificacion.fina.has + datos.planificacion.gruesa.has
+        const totalHasEjec = datos.ejecucion.fina.has + datos.ejecucion.gruesa.has;
+        const totalDolaresPlan = datos.planificacion.fina.dolares + datos.planificacion.gruesa.dolares;
+        const totalDolaresEjec = datos.ejecucion.fina.dolares + datos.ejecucion.gruesa.dolares;
 
         const eficienciaHas = `${totalHasPlan.toLocaleString()} | ${totalHasEjec.toLocaleString()}`;
         const variacionInversion = 'U$S ' + totalDolaresPlan.toLocaleString('DE-de') + '  |  U$S ' + totalDolaresEjec.toLocaleString('DE-de');
