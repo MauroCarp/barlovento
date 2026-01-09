@@ -47,10 +47,10 @@
                                             <tr class="bg-primary">
                                                 <th class="text-center">Tipo</th>
                                                 <th class="text-center">Has<br><small>(Plan | Ejec)</small></th>
-                                                <th class="text-center">$<br><small>(Plan | Ejec)</small></th>
+                                                <th class="text-center">U$S<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">%<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">Dif Has</th>
-                                                <th class="text-center">Dif $</th>
+                                                <th class="text-center">Dif U$S</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -117,10 +117,10 @@
                                             <tr class="bg-primary">
                                                 <th class="text-center">Cultivo</th>
                                                 <th class="text-center">Has<br><small>(Plan | Ejec)</small></th>
-                                                <th class="text-center">$<br><small>(Plan | Ejec)</small></th>
+                                                <th class="text-center">U$S<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">%<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">Dif Has</th>
-                                                <th class="text-center">Dif $</th>
+                                                <th class="text-center">Dif U$S</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tablaEstadisticasCultivoBody">
@@ -190,7 +190,7 @@ $(document).ready(function() {
             
             // Datos combinados con colores
             const hasCombinado = `<span class="text-primary">${plan.has.toLocaleString()}</span> | <span class="text-info">${ejec.has.toLocaleString()}</span>`;
-            const dolaresCombinado = `<span class="text-primary">$${plan.dolares.toLocaleString()}</span> | <span class="text-info">$${ejec.dolares.toLocaleString()}</span>`;
+            const dolaresCombinado = `<span class="text-primary">U$S ${plan.dolares.toLocaleString()}</span> | <span class="text-info">U$S ${ejec.dolares.toLocaleString()}</span>`;
             const porcentajeCombinado = `<span class="text-primary">${plan.porcentaje}%</span> | <span class="text-info">${ejec.porcentaje}%</span>`;
             
             // Llenar datos combinados
@@ -204,7 +204,7 @@ $(document).ready(function() {
             const colorPorcentaje = diffPorcentaje >= 0 ? 'text-green' : 'text-red';
             
             $(`#has${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorHas}">${diffHas > 0 ? '+' : ''}${diffHas}</span>`);
-            $(`#dolare${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorDolares}">$${diffDolares.toLocaleString()}</span>`);
+            $(`#dolare${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorDolares}">U$S ${diffDolares.toLocaleString()}</span>`);
             $(`#porcentaje${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorPorcentaje}">${diffPorcentaje > 0 ? '+' : ''}${diffPorcentaje}%</span>`);
         });
 
@@ -226,10 +226,10 @@ $(document).ready(function() {
                 <tr>
                     <td><strong>${cultivo.nombre}</strong></td>
                     <td class="text-right"><span class="text-primary">${cultivo.planificacion.has.toLocaleString()}</span> | <span class="text-info">${cultivo.ejecucion.has.toLocaleString()}</span></td>
-                    <td class="text-right"><span class="text-primary">$${cultivo.planificacion.dolares.toLocaleString()}</span> | <span class="text-info">$${cultivo.ejecucion.dolares.toLocaleString()}</span></td>
+                    <td class="text-right"><span class="text-primary">U$S ${cultivo.planificacion.dolares.toLocaleString()}</span> | <span class="text-info">U$S ${cultivo.ejecucion.dolares.toLocaleString()}</span></td>
                     <td class="text-right"><span class="text-primary">${cultivo.planificacion.porcentaje}%</span> | <span class="text-info">${cultivo.ejecucion.porcentaje}%</span></td>
                     <td class="text-right"><span class="${colorHas}">${diffHas > 0 ? '+' : ''}${diffHas}</span></td>
-                    <td class="text-right"><span class="${colorDolares}">$${diffDolares.toLocaleString()}</span></td>
+                    <td class="text-right"><span class="${colorDolares}">U$S ${diffDolares.toLocaleString()}</span></td>
                 </tr>
             `;
         });
