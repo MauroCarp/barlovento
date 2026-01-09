@@ -35,6 +35,7 @@ function tipoEstInv($cultivo){
         case 'avena':
         case 'sevadilla':
         case 'camelina':
+        case 'pasturaconsociada':
             $tipo = 'invernal';
             break;
 
@@ -65,13 +66,17 @@ function tipoCultivo($cultivo){
         case 'soja1':
         case 'soja2':
         case 'sorgo':
+        case 'girasol':
             $tipo = 'gruesa';
             break;
 
         case 'triticale':
         case 'sevadilla':
         case 'vicia':
+        case 'vicia-triticale':
+        case 'triticale-vicia':
         case 'avena':
+        case 'pasturaconsociada':
             $tipo = 'cobertura';
             break;
     }
@@ -211,14 +216,13 @@ class ControladorAgro{
 
                 $tabla = 'ejecucionLotes';
                 $cargarLotesEjecucion = ModeloAgro::mdlCargarLotesEjecucion($tabla,$arrLotesEjecucion);
-                var_dump('PASO 1');
+
                 $tabla = 'cultivosplanificacion';
                 
                 $respuesta = ModeloAgro::mdlCargarArchivo($tabla,$campos,implode(',',$dataSql));
-                var_dump('PASO 2');
-
                 if($respuesta == 'ok'){
                     echo "<script> window.location = 'index.php?ruta=agro/agro&idPlanificacion=" . $cargaPlanificacion . "&accion=costosCultivos'</script>";
+                    die;
                 }else{
                     
                     echo'<script>
