@@ -321,12 +321,15 @@ const cargarInfoEjecucion = (campania)=>{
     if(respuesta['data'].length == 0){
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
       document.getElementById(`hasInvEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`hasInvEjecucionAntony`)) document.getElementById(`hasInvEjecucionAntony`).innerText = '-'
       
       document.getElementById(`hasCobEjecucionBety`).innerText = '-'
       document.getElementById(`hasCobEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`hasCobEjecucionAntony`)) document.getElementById(`hasCobEjecucionAntony`).innerText = '-'
       
       document.getElementById(`hasEstEjecucionBety`).innerText = '-'
       document.getElementById(`hasEstEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`hasEstEjecucionAntony`)) document.getElementById(`hasEstEjecucionAntony`).innerText = '-'
   
       // document.getElementById(`hasTrigoEjecucionBety`).innerText = '-'
       // document.getElementById(`hasTrigoEjecucionPichi`).innerText = '-'
@@ -345,6 +348,7 @@ const cargarInfoEjecucion = (campania)=>{
 
       document.getElementById(`totalCostoCoberturaEjecucionBety`).innerText = '-'
       document.getElementById(`totalCostoCoberturaEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`totalCostoCoberturaEjecucionAntony`)) document.getElementById(`totalCostoCoberturaEjecucionAntony`).innerText = '-'
       
       // document.getElementById(`totalCostoCarinataEjecucionBety`).innerText = '-'
       // document.getElementById(`totalCostoCarinataEjecucionPichi`).innerText = '-'
@@ -354,18 +358,21 @@ const cargarInfoEjecucion = (campania)=>{
       
       document.getElementById(`totalHasEjecucionBety`).innerText = '-'
       document.getElementById(`totalHasEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`totalHasEjecucionAntony`)) document.getElementById(`totalHasEjecucionAntony`).innerText = '-'
 
       document.getElementById(`totalInversionEjecucionBety`).innerText = '-'
       document.getElementById(`totalInversionEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`totalInversionEjecucionAntony`)) document.getElementById(`totalInversionEjecucionAntony`).innerText = '-'
 
       document.getElementById(`ratioEjecucionBety`).innerText = '-'
       document.getElementById(`ratioEjecucionPichi`).innerText = '-'
+      if (document.getElementById(`ratioEjecucionAntony`)) document.getElementById(`ratioEjecucionAntony`).innerText = '-'
 
       return
     }
     
-    let data = {'pichi':{},'bety':{}}
-    let labores = {'pichi':{},'bety':{}}
+    let data = {'pichi':{},'bety':{},'antony':{}}
+    let labores = {'pichi':{},'bety':{},'antony':{}}
     let info = {
       'bety':{
         'hasFina':0,
@@ -376,6 +383,14 @@ const cargarInfoEjecucion = (campania)=>{
         'costoCobertura':0
       },
       'pichi':{
+        'hasFina':0,
+        'hasCobertura':0,
+        'hasGruesa':0,
+        'costoFina':0,
+        'costoGruesa':0,
+        'costoCobertura':0
+      },
+      'antony':{
         'hasFina':0,
         'hasCobertura':0,
         'hasGruesa':0,
@@ -463,7 +478,9 @@ const cargarInfoEjecucion = (campania)=>{
     
     });
 
-    ['pichi','bety'].forEach(campo => {
+    ['pichi','bety','antony'].forEach(campo => {
+
+      if (!document.getElementById(`tablaEjecucion${capitalizarPrimeraLetra(campo)}`)) return
 
       $(`#tablaEjecucion${capitalizarPrimeraLetra(campo)} tbody`).html('')
 
@@ -489,8 +506,6 @@ const cargarInfoEjecucion = (campania)=>{
         let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion))
 
         let diferencia = ((totalEjecucion - data[campo][key].costoPlanificacion) * 100) / data[campo][key].costoPlanificacion
-
-        console.log(data[campo][key])
 
         $(`#tablaEjecucion${capitalizarPrimeraLetra(campo)} tbody`).append($(`
   
@@ -549,15 +564,16 @@ const cargarInfoEjecucion = (campania)=>{
 
 
     // HAS INFO
-    document.getElementById(`totalHasEjecutadas`).innerText = Number(info.bety.hasFina) + Number(info.bety.hasGruesa) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasCobertura) 
+    document.getElementById(`totalHasEjecutadas`).innerText = Number(info.bety.hasFina) + Number(info.bety.hasGruesa) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasCobertura) + Number(info.antony.hasFina) + Number(info.antony.hasGruesa) + Number(info.antony.hasCobertura)
     
-    let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura)
+    let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa) + Number(info.antony.costoCobertura)
     
 
     document.getElementById(`totalInversionEjecutada`).innerText = totalInversion.toLocaleString('de-DE')
 
     document.getElementById(`hasInvEjecucionBety`).innerText = info.bety.hasFina
     document.getElementById(`hasInvEjecucionPichi`).innerText = info.pichi.hasFina
+    if (document.getElementById(`hasInvEjecucionAntony`)) document.getElementById(`hasInvEjecucionAntony`).innerText = info.antony.hasFina
     
     document.getElementById(`hasCobEjecucionBety`).innerText = info.bety.hasCobertura
     document.getElementById(`hasCobEjecucionPichi`).innerText = info.pichi.hasCobertura
@@ -568,18 +584,30 @@ const cargarInfoEjecucion = (campania)=>{
 
     document.getElementById(`totalCostoGruesaEjecucionPichi`).innerText = info.pichi.costoGruesa.toLocaleString('de-DE')
     document.getElementById(`totalCostoGruesaEjecucionBety`).innerText = info.bety.costoGruesa.toLocaleString('de-DE')
+    if (document.getElementById(`totalCostoGruesaEjecucionAntony`)) {
+      document.getElementById(`totalCostoGruesaEjecucionAntony`).innerText = info.antony.costoGruesa.toLocaleString('de-DE')
+      document.getElementById(`costoGruesaEjecucionHasAntony`).innerText = (Number(info.antony.hasGruesa) > 0) ? (Number(info.antony.costoGruesa) / Number(info.antony.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
+    }
     
     document.getElementById(`costoGruesaEjecucionHasPichi`).innerText = (Number(info.pichi.hasGruesa) > 0) ? (Number(info.pichi.costoGruesa) / Number(info.pichi.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
     document.getElementById(`costoGruesaEjecucionHasBety`).innerText = (Number(info.bety.hasGruesa) > 0) ? (Number(info.bety.costoGruesa) / Number(info.bety.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
 
     document.getElementById(`totalCostoCoberturaEjecucionPichi`).innerText = info.pichi.costoCobertura.toLocaleString('de-DE')
     document.getElementById(`totalCostoCoberturaEjecucionBety`).innerText = info.bety.costoCobertura.toLocaleString('de-DE')
+    if (document.getElementById(`totalCostoCoberturaEjecucionAntony`)) {
+      document.getElementById(`totalCostoCoberturaEjecucionAntony`).innerText = info.antony.costoCobertura.toLocaleString('de-DE')
+      document.getElementById(`costoCoberturaEjecucionHasAntony`).innerText = (Number(info.antony.hasCobertura) > 0) ? (Number(info.antony.costoCobertura) / Number(info.antony.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
+    }
     
     document.getElementById(`costoCoberturaEjecucionHasPichi`).innerText = (Number(info.pichi.hasCobertura) > 0) ? (Number(info.pichi.costoCobertura) / Number(info.pichi.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
     document.getElementById(`costoCoberturaEjecucionHasBety`).innerText = (Number(info.bety.hasCobertura) > 0) ? (Number(info.bety.costoCobertura) / Number(info.bety.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
 
     document.getElementById(`totalCostoFinaEjecucionPichi`).innerText = info.pichi.costoFina.toLocaleString('de-DE')
     document.getElementById(`totalCostoFinaEjecucionBety`).innerText = info.bety.costoFina.toLocaleString('de-DE')
+    if (document.getElementById(`totalCostoFinaEjecucionAntony`)) {
+      document.getElementById(`totalCostoFinaEjecucionAntony`).innerText = info.antony.costoFina.toLocaleString('de-DE')
+      document.getElementById(`costoFinaEjecucionHasAntony`).innerText = (Number(info.antony.hasFina) > 0) ? (Number(info.antony.costoFina) / Number(info.antony.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
+    }
 
     document.getElementById(`costoFinaEjecucionHasPichi`).innerText = (Number(info.pichi.hasFina) > 0) ? (Number(info.pichi.costoFina) / Number(info.pichi.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
     document.getElementById(`costoFinaEjecucionHasBety`).innerText = (Number(info.bety.hasFina) > 0) ? (Number(info.bety.costoFina) / Number(info.bety.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
@@ -590,12 +618,15 @@ const cargarInfoEjecucion = (campania)=>{
 
     document.getElementById(`hasCoberturaEjecucionBety`).innerText = info.bety.hasCobertura
     document.getElementById(`hasCoberturaEjecucionPichi`).innerText = info.pichi.hasCobertura
+    if (document.getElementById(`hasCoberturaEjecucionAntony`)) document.getElementById(`hasCoberturaEjecucionAntony`).innerText = info.antony.hasCobertura
 
     document.getElementById(`hasFinaEjecucionBety`).innerText = info.bety.hasFina
     document.getElementById(`hasFinaEjecucionPichi`).innerText = info.pichi.hasFina
+    if (document.getElementById(`hasFinaEjecucionAntony`)) document.getElementById(`hasFinaEjecucionAntony`).innerText = info.antony.hasFina
 
     document.getElementById(`hasGruesaEjecucionBety`).innerText = info.bety.hasGruesa
     document.getElementById(`hasGruesaEjecucionPichi`).innerText = info.pichi.hasGruesa
+    if (document.getElementById(`hasGruesaEjecucionAntony`)) document.getElementById(`hasGruesaEjecucionAntony`).innerText = info.antony.hasGruesa
 
 
 
@@ -603,15 +634,19 @@ const cargarInfoEjecucion = (campania)=>{
 
     document.getElementById(`totalHasEjecucionBety`).innerText = (Number(info.bety.hasFina) + Number(info.bety.hasCobertura) + Number(info.bety.hasGruesa))
     document.getElementById(`totalHasEjecucionPichi`).innerText = (Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura) + Number(info.pichi.hasGruesa))
+    if (document.getElementById(`totalHasEjecucionAntony`)) document.getElementById(`totalHasEjecucionAntony`).innerText = (Number(info.antony.hasFina) + Number(info.antony.hasCobertura) + Number(info.antony.hasGruesa))
     
     document.getElementById(`totalInversionEjecucionBety`).innerText = (info.bety.costoCobertura + info.bety.costoFina + info.bety.costoGruesa).toLocaleString('de-DE') 
     document.getElementById(`totalInversionEjecucionPichi`).innerText = (info.pichi.costoCobertura + info.pichi.costoFina + info.pichi.costoGruesa).toLocaleString('de-DE') 
+    if (document.getElementById(`totalInversionEjecucionAntony`)) document.getElementById(`totalInversionEjecucionAntony`).innerText = (Number(info.antony.costoCobertura) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa)).toLocaleString('de-DE')
 
     let ratioBety = (info.bety.hasGruesa > 0) ? ((Number(info.bety.hasFina) + Number(info.bety.hasCobertura)) / Number(info.bety.hasGruesa)).toFixed(2) : ''
     let ratioPichi = (info.pichi.hasGruesa > 0) ? ((Number(info.bety.hasFina) + Number(info.bety.hasCobertura)) / Number(info.bety.hasGruesa)).toFixed(2) : ''
+    let ratioAntony = (Number(info.antony.hasGruesa) > 0) ? ((Number(info.antony.hasFina) + Number(info.antony.hasCobertura)) / Number(info.antony.hasGruesa)).toFixed(2) : ''
 
     document.getElementById(`ratioEjecucionBety`).innerText = ratioBety
     document.getElementById(`ratioEjecucionPichi`).innerText = ratioPichi
+    if (document.getElementById(`ratioEjecucionAntony`)) document.getElementById(`ratioEjecucionAntony`).innerText = ratioAntony
     
  
     // LOTES ACTIVIDAD

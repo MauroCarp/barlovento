@@ -42,6 +42,7 @@ function tipoEstInv($cultivo){
         case 'maiz2':
         case 'soja1':
         case 'soja2':
+        case 'girasol':
             $tipo = 'estival';
             break;
     }
@@ -154,10 +155,11 @@ class ControladorAgro{
 
                         if(trim($Row[1]) == 'EL PICHI') $campo = 'pichi';
                         if(trim($Row[1]) == 'LA BETY') $campo = 'bety';
-
+                        if(trim($Row[1]) == 'CAMPO ANTONY') $campo = 'antony';
+                        
                         if($rowNumber == 0) $rowValida = false;
 
-                        if($rowValida && $cultivo != 'cerealesyoleaginosas' && $cultivo != 'elpichi' && $cultivo != 'labety' && $cultivo != ''){
+                        if($rowValida && $cultivo != 'cerealesyoleaginosas' && $cultivo != 'elpichi' && $cultivo != 'labety' && $cultivo != 'campoantony' && $cultivo != ''){
 
                             $data[] = array('cultivo'=>$cultivo,
                                                  'tipo'=>tipoCultivo($cultivo),
@@ -209,10 +211,11 @@ class ControladorAgro{
 
                 $tabla = 'ejecucionLotes';
                 $cargarLotesEjecucion = ModeloAgro::mdlCargarLotesEjecucion($tabla,$arrLotesEjecucion);
-
+                var_dump('PASO 1');
                 $tabla = 'cultivosplanificacion';
-
+                
                 $respuesta = ModeloAgro::mdlCargarArchivo($tabla,$campos,implode(',',$dataSql));
+                var_dump('PASO 2');
 
                 if($respuesta == 'ok'){
                     echo "<script> window.location = 'index.php?ruta=agro/agro&idPlanificacion=" . $cargaPlanificacion . "&accion=costosCultivos'</script>";

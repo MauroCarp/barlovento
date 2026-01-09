@@ -23,7 +23,7 @@
 
         </div>
 
-        <div class='tab-pane' id='tab_2Planificacion'>
+        <div class='tab-pane' id='tab_3Planificacion'>
 
         <?php 
         
@@ -40,8 +40,7 @@
         <?php 
         
             $idGraficoPlanificacion = 'graficoPlanificacionAntony';
-            echo 'Antony';
-            // include 'graficos/planificacion.php';
+            include 'graficos/planificacion.php';
             
         ?>
 
