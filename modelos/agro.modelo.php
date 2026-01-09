@@ -427,6 +427,30 @@ class ModeloAgro{
 		}
 	
 	}
+
+
+		static public function mdlEliminarCampania($tabla){
+
+		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla");
+		$stmt -> execute();
+
+		
+		$stmt2 = Conexion::conectar()->prepare("DELETE FROM cultivosplanificacion");
+		$stmt2 -> execute();
+
+		$stmt3 = Conexion::conectar()->prepare("DELETE FROM ejecucionlabores");
+		$stmt3 -> execute();
+
+		$stmt4 = Conexion::conectar()->prepare("DELETE FROM ejecucionlotes");
+		$stmt4 -> execute();
+
+		$stmt5 = Conexion::conectar()->prepare("DELETE FROM costocultivos");
+		$stmt5 -> execute();
+		
+		return 'ok';
+
+	}
+
 	
 
 }

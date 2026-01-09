@@ -29,7 +29,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-
+    console.log(respuesta)
       $('#idPlanificacion').val(respuesta.idPlanificacion)
 
       generarInputFile(respuesta.lotes)
@@ -144,7 +144,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       }
 
       respuesta['cultivos'].forEach(cultivo => {
-
+        //console.log(cultivo)
         let costo = (parseInt(cultivo.has) * parseInt(respuesta['costos'][cultivo.cultivo]))
         let has = parseInt(cultivo.has)
         data[cultivo.campo].hasTotal += has
@@ -202,7 +202,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       data.pichi.costoTotal = data.pichi.fina.costo + data.pichi.cobertura.costo + data.pichi.gruesa.costo
       data.bety.costoTotal = data.bety.fina.costo + data.bety.cobertura.costo + data.bety.gruesa.costo
       data.antony.costoTotal = data.antony.fina.costo + data.antony.cobertura.costo + data.antony.gruesa.costo              
-
+      //console.log(data)
       // PINTAR DATOS
       $('#totalHasPlanificadas').text(data.bety.hasTotal + data.pichi.hasTotal + data.antony.hasTotal)
       $('#totalInversionPlanificada').text((data.bety.costoTotal + data.pichi.costoTotal + data.antony.costoTotal).toLocaleString('de-DE'))
@@ -496,7 +496,7 @@ if(btnCostosPlanificacion != null){
           }
 
         } else { 
-          tdCultivo.innerText = capitalizarPrimeraLetra(reg.cultivo)
+          tdCultivo.innerText = (reg.cultivo == 'pasturaconsociada') ? 'Pastura Consociada' : capitalizarPrimeraLetra(reg.cultivo)
         }
 
         tdCosto.innerText = `u$d ${reg.costo}`

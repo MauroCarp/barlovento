@@ -1,22 +1,27 @@
 <?php         
-if(!isset($_GET['campania']) ){
+// if(!isset($_GET['campania']) ){
+if($_SESSION['usuario'] == 'tecnicoAgro'){
 
-  $campania = ControladorAgro::ctrMostrarCampanias(null,'*','distinct');
-  if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
-
-    echo "<script>
-            window.location = 'index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '&idPlanificacion=" . $_GET['idPlanificacion'] . "&accion=costosCultivos'
-          </script>";
+  if(isset($_GET['accion']) && $_GET['accion'] == 'eliminarPlanificacion'){
+    $campania = ControladorAgro::ctrEliminarCampania();
 
   }
-  var_dump('REDIRECCIONO por campaa');
-  
-  echo '<script>
-          window.location = "index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '";
-        </script>';
 }
+//   $campania = ControladorAgro::ctrMostrarCampanias(null,'*','distinct');
+//   if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 
-var_dump('sali del validar campaña');
+//     echo "<script>
+//             window.location = 'index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '&idPlanificacion=" . $_GET['idPlanificacion'] . "&accion=costosCultivos'
+//           </script>";
+
+//   }
+
+
+//   echo '<script>
+//           window.location = "index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '";
+//         </script>';
+// }
+
 
 if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 
@@ -35,6 +40,8 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
     $len = strlen($cultivo) - 1;
     $cultivo = (is_numeric($ultimoCaracter)) ? substr(ucfirst($cultivo),0,$len) . ' ' . $ultimoCaracter . '°' : ucfirst($cultivo); 
 
+    $cultivo = ($cultivo == 'pasturaconsociada') ? 'Pastura Consociada' : $cultivo;
+
     $html .= '<div class="col-lg-5" style="font-size:1.2em;line-height:3.5em;text-align:right">
                 ' . $cultivo . ':
               </div>
@@ -52,6 +59,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
     swal({
       title: 'Costo de Cultivos',
       html:`<?=$html?>`,
+      width: '600px',
       showCancelButton: false, // Oculta el botón "Cancelar"
       showCloseButton: false, // Oculta el botón para cerrar
       allowOutsideClick: false, // Impide cerrar haciendo clic fuera del SweetAlert
@@ -162,6 +170,13 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
                             <div class='tab-pane' id='tab_3'>
                               
                               <h1>PRODUCCION</h1>
+                              <h4>
+                                <ul>
+                                  <li>Cosecha</li>
+                                  <li>Rinde</li>
+                                  <li>Flete</li>
+                                </ul>
+                              </h4>
                               <?php //include 'produccion.php';?>
                             </div>
                             <div class='tab-pane' id='tab_4'>

@@ -31,6 +31,7 @@ function tipoEstInv($cultivo){
         case 'vicia':
         case 'triticale':
         case 'vicia-triticale':
+        case 'vicia+triticale':
         case 'triticale-vicia':
         case 'avena':
         case 'sevadilla':
@@ -74,6 +75,7 @@ function tipoCultivo($cultivo){
         case 'sevadilla':
         case 'vicia':
         case 'vicia-triticale':
+        case 'vicia+triticale':
         case 'triticale-vicia':
         case 'avena':
         case 'pasturaconsociada':
@@ -357,7 +359,7 @@ class ControladorAgro{
                         }
                     
                         $tabla = 'ejecucionLabores';
-
+                        
                         $respuesta = ModeloAgro::mdlCargarLabores($tabla,implode(',',$data));
                         
                         if($respuesta != 'ok'){
@@ -461,7 +463,7 @@ class ControladorAgro{
                         
                         $idEjecucion = $_POST['idEjecucionRindes'];
 
-                        $cultivo = str_replace('rindes_',$file['name']);
+                        $cultivo = str_replace('rindes_','',$file['name']);
 
                         for($i=0;$i<$sheetCount;$i++){
                 
@@ -929,6 +931,15 @@ class ControladorAgro{
     }
 
     
+    static public function ctrEliminarCampania(){
+        
+        $tabla = 'planificaciones';
+        
+        $ejecucionValido = ModeloAgro::mdlEliminarCampania($tabla);
+
+        return $ejecucionValido[0];
+    
+    }
 
 }
 

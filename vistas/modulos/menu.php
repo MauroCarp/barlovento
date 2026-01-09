@@ -427,113 +427,38 @@
 					</li>
 						</ul>
 
-					</li>
+					</li>';
+ 
+					if($_SESSION["usuario"] == "tecnicoAgro"){
 
+						echo '<li class="treeview">
 
-					<li class="treeview">
+							<a href="#">
 
-						<a href="#">
-
-							<i class="icon-tractor"></i>
-							<span>Ejecución</span>
-							
-							<span class="pull-right-container">
-							
-								<i class="fa fa-angle-left pull-right"></i>
-
-							</span>
-
-						</a>
-
-						<ul class="treeview-menu">';
-				}
+								<i class="fa fa-times"></i>
+								<span>Eliminar Planificacion</span>
 								
-				if($_SESSION["perfil"] == "Agro" AND $_SESSION['carga'][1]){
-					
-					echo '		
-							<li>
+								<span class="pull-right-container">
+								
+									<i class="fa fa-angle-left pull-right"></i>
 
-							<a href="#" data-toggle="modal" data-target="#modalCarga"  class="menusCarga" data-carga="Ejecucion">
-
-								<i class="icon-tractor"></i>
-								<span>Cargar Ejecución</span>
+								</span>
 
 							</a>
 
-							</li>';
-				}
-
-				if($_SESSION["perfil"] == "Agro"){
-
-					echo '
-					<li>
-
-						<a href="#" data-toggle="modal" data-target="#modalInforme"  class="menusInforme" data-informe="Ejecucion">
-							
-							<i class="fa fa-bar-chart"></i>
-							<span>Generar Reportes</span>
-
-						</a>
-
-					</li>
-						</ul>
-
-					</li>';
-				}
-
-				if($_SESSION["perfil"] == "Agro" AND in_array('Produccion',$_SESSION['perfilAgro'])){
-
-					echo '<li class="treeview">
-
-						<a href="#">
-
-							<i class="icon-fardo"></i>
-							<span>Producción</span>
-								
-							<span class="pull-right-container">
-							
-								<i class="fa fa-angle-left pull-right"></i>
-
-							</span>
-
-						</a>
-
-						<ul class="treeview-menu">';
-
-					if($_SESSION['carga'][2]){
-						
-						echo '		
+							<ul class="treeview-menu">		
 								<li>
 
-									<a href="#" data-toggle="modal" data-target="#modalCarga"  class="menusCarga" data-carga="Produccion">
+								<a href="index.php?ruta=agro/agro&&accion=eliminarPlanificacion">
 
-										<i class="icon-fardo"></i>
-										<span>Cargar Producción</span>
+									<i class="fa fa-times"></i>
+									<span>Eliminmar Planifiacion</span>
 
-									</a>
+								</a>
 
 								</li>';
 					}
 
-					if($_SESSION["perfil"] == "Agro"){
-
-						echo '
-						<li>
-
-						<a href="#" data-toggle="modal" data-target="#modalInforme"  class="menusInforme" data-informe="Produccion">
-								
-								<i class="fa fa-bar-chart"></i>
-								<span>Generar Reportes</span>
-
-							</a>
-
-						</li>
-							</ul>
-
-						</li>';
-
-					} 
-					
 				}
 
 				if($_SESSION["perfil"] == "Contable" AND $_SESSION['carga']){
