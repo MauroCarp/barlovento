@@ -86,6 +86,33 @@ const cargarInfoPlanificacion = (campania,carga)=>{
           'hasTotal':0,
           'costoTotal':0,
         },
+        'antony':{
+          'fina':{
+            'hasTotal':0,
+            'costo':0,
+          },
+          'gruesa':{
+            'hasTotal':0,
+            'costo':0,
+          },
+          'cobertura':{
+            'hasTotal':0,
+            'costo':0,
+          },
+          'estival':{
+            'hasTotal':0,
+          },
+          'invernal':{
+            'hasTotal':0,
+          },
+          'grafico':{
+            'labels': [],
+            'has': [],
+            'costoHas':[]
+          },
+          'hasTotal':0,
+          'costoTotal':0,
+        },
         'bety':{
           'fina':{
             'hasTotal':0,
@@ -173,21 +200,23 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       });
 
       data.pichi.costoTotal = data.pichi.fina.costo + data.pichi.cobertura.costo + data.pichi.gruesa.costo
-      data.bety.costoTotal = data.bety.fina.costo + data.bety.cobertura.costo + data.bety.gruesa.costo              
+      data.bety.costoTotal = data.bety.fina.costo + data.bety.cobertura.costo + data.bety.gruesa.costo
+      data.antony.costoTotal = data.antony.fina.costo + data.antony.cobertura.costo + data.antony.gruesa.costo              
 
       // PINTAR DATOS
-      $('#totalHasPlanificadas').text(data.bety.hasTotal + data.pichi.hasTotal)
-      $('#totalInversionPlanificada').text((data.bety.costoTotal + data.pichi.costoTotal).toLocaleString('de-DE'))
+      $('#totalHasPlanificadas').text(data.bety.hasTotal + data.pichi.hasTotal + data.antony.hasTotal)
+      $('#totalInversionPlanificada').text((data.bety.costoTotal + data.pichi.costoTotal + data.antony.costoTotal).toLocaleString('de-DE'))
 
-      let arr = ['bety','pichi']
+      let arr = ['bety','pichi','antony']
       
       arr.forEach(campo => {      
 
         $(`#hasInvPlanificacion${capitalizarPrimeraLetra(campo)}`).text(data[campo].invernal.hasTotal)
         $(`#hasCobPlanificacion${capitalizarPrimeraLetra(campo)}`).text(data[campo].cobertura.hasTotal)
         $(`#hasEstPlanificacion${capitalizarPrimeraLetra(campo)}`).text(data[campo].estival.hasTotal)
-        let ratio = (data[campo].invernal.hasTotal + data[campo].cobertura.hasTotal) / data[campo].estival.hasTotal 
-        $(`#ratioPlanificacion${capitalizarPrimeraLetra(campo)}`).text(ratio.toFixed(2))
+        let denom = Number(data[campo].estival.hasTotal)
+        let ratio = denom > 0 ? ((Number(data[campo].invernal.hasTotal) + Number(data[campo].cobertura.hasTotal)) / denom) : 0
+        $(`#ratioPlanificacion${capitalizarPrimeraLetra(campo)}`).text((ratio).toFixed(2))
   
         $(`#hasFinaPlanificacion${capitalizarPrimeraLetra(campo)}`).text(data[campo].fina.hasTotal)
         $(`#totalCostoFinaPlanificacion${capitalizarPrimeraLetra(campo)}`).text(data[campo].fina.costo.toLocaleString('de-DE'))
@@ -204,9 +233,9 @@ const cargarInfoPlanificacion = (campania,carga)=>{
         $(`#totalHasPlanificadas${capitalizarPrimeraLetra(campo)}`).text(data[campo].hasTotal)
         $(`#totalInversionPlanificada${capitalizarPrimeraLetra(campo)}`).text(data[campo].costoTotal.toLocaleString('de-DE'))
         
-        cargarDetallesCulltivos(data[campo].fina.cultivos,`${campo}Fina`)
-        cargarDetallesCulltivos(data[campo].cobertura.cultivos,`${campo}Cobertura`)
-        cargarDetallesCulltivos(data[campo].gruesa.cultivos,`${campo}Gruesa`)
+        if (data[campo].fina.cultivos) cargarDetallesCulltivos(data[campo].fina.cultivos,`${campo}Fina`)
+        if (data[campo].cobertura.cultivos) cargarDetallesCulltivos(data[campo].cobertura.cultivos,`${campo}Cobertura`)
+        if (data[campo].gruesa.cultivos) cargarDetallesCulltivos(data[campo].gruesa.cultivos,`${campo}Gruesa`)
 
         // PINTAR GRAFICO
         let configPlanificacion = {
@@ -274,7 +303,9 @@ const cargarInfoPlanificacion = (campania,carga)=>{
           }
         }
             
-        generarGraficoBar(`graficoPlanificacion${capitalizarPrimeraLetra(campo)}`,configPlanificacion,'noOption')
+        if (document.getElementById(`graficoPlanificacion${capitalizarPrimeraLetra(campo)}`)) {
+          generarGraficoBar(`graficoPlanificacion${capitalizarPrimeraLetra(campo)}`,configPlanificacion,'noOption')
+        }
 
       });
  

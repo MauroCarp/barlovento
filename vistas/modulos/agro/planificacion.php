@@ -140,4 +140,16 @@ $idModalDetalle = 'pichiGruesa';
 
 include 'detalleCultivos.php';
 
+$idModalDetalle = 'antonyFina';
+
+include 'detalleCultivos.php';
+
+$idModalDetalle = 'antonyCobertura';
+
+include 'detalleCultivos.php';
+
+$idModalDetalle = 'antonyGruesa';
+
+include 'detalleCultivos.php';
+
 ?>

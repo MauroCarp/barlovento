@@ -1,13 +1,22 @@
 <?php         
-if(!isset($_GET['campania'])){
+if(!isset($_GET['campania']) ){
 
   $campania = ControladorAgro::ctrMostrarCampanias(null,'*','distinct');
+  if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
+
+    echo "<script>
+            window.location = 'index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '&idPlanificacion=" . $_GET['idPlanificacion'] . "&accion=costosCultivos'
+          </script>";
+
+  }
+  var_dump('REDIRECCIONO por campaa');
   
   echo '<script>
           window.location = "index.php?ruta=agro/agro&campania=' . $campania[0]['campania'] . '";
         </script>';
 }
 
+var_dump('sali del validar campaña');
 
 if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 

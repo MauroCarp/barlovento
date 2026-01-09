@@ -388,6 +388,7 @@ class ModeloAgro{
 	static public function mdlCargarLotesEjecucion($tabla,$data){
 
 		$conexion = Conexion::conectar();
+
 		$stmt = $conexion->prepare("INSERT INTO $tabla(campania,lote,cultivo,campo,etapa) VALUES $data");
 
 		if($stmt->execute()){ 
