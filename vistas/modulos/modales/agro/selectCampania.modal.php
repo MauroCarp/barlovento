@@ -29,13 +29,20 @@
             <div class="form-group">
 
               <label for="campaniaAgro">Campa&ntilde;a</label>
-
               <select name="campaniaAgro" class="form-control" id="campaniaAgro">
                 <?php
                 $tabla = 'planificaciones';
   
                 $campanias = ControladorAgro::ctrMostrarCampanias(null,'DISTINCT(campania)');
-  
+                // Ordenar por 'campania' DESC en PHP y evitar salida de depuración
+                if (!is_array($campanias)) {
+                  $campanias = array();
+                } else {
+                  usort($campanias, function($a, $b) {
+                    return strnatcasecmp($b['campania'], $a['campania']);
+                  });
+                }
+              
                 foreach ($campanias as $key => $value) {
                     echo "<option value='" . $value['campania'] . "'>" . $value['campania'] . "</option>";
                 }
