@@ -40,7 +40,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
     $len = strlen($cultivo) - 1;
     $cultivo = (is_numeric($ultimoCaracter)) ? substr(ucfirst($cultivo),0,$len) . ' ' . $ultimoCaracter . '°' : ucfirst($cultivo); 
 
-    $cultivo = ($cultivo == 'pasturaconsociada') ? 'Pastura Consociada' : $cultivo;
+    $cultivo = ($cultivo == 'Pasturaconsociada') ? 'Pastura Consociada' : $cultivo;
 
     $html .= '<div class="col-lg-5" style="font-size:1.2em;line-height:3.5em;text-align:right">
                 ' . $cultivo . ':

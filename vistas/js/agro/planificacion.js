@@ -29,7 +29,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-    console.log(respuesta)
+
       $('#idPlanificacion').val(respuesta.idPlanificacion)
 
       generarInputFile(respuesta.lotes)
@@ -175,7 +175,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
           data[cultivo.campo].cobertura.cultivos[cultivo.cultivo] = data[cultivo.campo].cobertura.cultivos[cultivo.cultivo] || {}
           data[cultivo.campo].cobertura.cultivos[cultivo.cultivo].has = (data[cultivo.campo].cobertura.cultivos[cultivo.cultivo].has || 0) + has
           data[cultivo.campo].cobertura.cultivos[cultivo.cultivo].costo = (data[cultivo.campo].cobertura.cultivos[cultivo.cultivo].costo || 0) + costo
-          data[cultivo.campo].cobertura.costo += costo
+          data[cultivo.campo].cobertura.costo += (isNaN(costo) || costo == undefined) ? 0 : costo
 
         }
         
@@ -387,7 +387,7 @@ const cargarDetallesCulltivos = (cultivos,idDetalle)=>{
       }
 
     } else { 
-      tdCultivo.innerText = capitalizarPrimeraLetra(key)
+      tdCultivo.innerText = (key == 'pasturaconsociada') ? 'Pastura Consociada' : capitalizarPrimeraLetra(key)
     }
 
     tdCostoHas.innerText = `u$s ${cultivos[key]['costo'].toLocaleString('de-DE')}`
@@ -496,6 +496,7 @@ if(btnCostosPlanificacion != null){
           }
 
         } else { 
+          console.log('btnCostosPlanificacion', reg.cultivo);
           tdCultivo.innerText = (reg.cultivo == 'pasturaconsociada') ? 'Pastura Consociada' : capitalizarPrimeraLetra(reg.cultivo)
         }
 
