@@ -4,6 +4,7 @@
 
         <li class='tabs active' id='betyTab'><a href='#tab_1Ejecucion' data-toggle='tab' id="btnBety"><b>La Bety</b></a></li>
         <li class='tabs' id='pichiTab'><a href='#tab_2Ejecucion' data-toggle='tab' id="btnPichi"><b>El Pichi</b></a></li>
+        <li class='tabs' id='antonyTab'><a href='#tab_3Ejecucion' data-toggle='tab' id="btnAntony"><b>Antony</b></a></li>
 
     </ul>
 
@@ -34,6 +35,19 @@
         ?>
 
         <div id="actividadLotesPichi" class="row"></div>
+        </div>
+
+        <div class='tab-pane' id='tab_3Ejecucion'>
+
+        <?php 
+        
+            $idTablaEjecucion = 'tablaEjecucionAntony';
+
+            include 'tablas/ejecucion.php';
+            
+        ?>
+
+        <div id="actividadLotesAntony" class="row"></div>
         </div>
     
     </div>

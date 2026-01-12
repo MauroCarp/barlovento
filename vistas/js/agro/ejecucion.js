@@ -311,14 +311,18 @@ const cargarInfoEjecucion = (campania)=>{
   }).then(resp=>resp.json())
   .then(respuesta=>{
    
-    setTimeout(() => {
-      $('#idEjecucionRindes').val(respuesta['data'][0].idEjecucion);
-    }, 600);
+    // setTimeout(() => {
+    //   $('#idEjecucionRindes').val(respuesta['data'][0].idEjecucion);
+    // }, 600);
 
     $('#hasTotalEjecutado').text(respuesta['totales'][0]['totalHas'])
-    $('#costoTotalEjecutado').text((respuesta['totales'][0]['totalCosto']).toLocaleString('de-DE'))
+    $('#costoTotalEjecutado').text(Number(respuesta['totales'][0]['totalCosto']).toLocaleString('de-DE'))
 
     if(respuesta['data'].length == 0){
+          
+    document.getElementById(`totalHasEjecutadas`).innerText = 0
+    document.getElementById(`totalInversionEjecutada`).innerText = 0
+    
       document.getElementById(`hasInvEjecucionBety`).innerText = '-'
       document.getElementById(`hasInvEjecucionPichi`).innerText = '-'
       if (document.getElementById(`hasInvEjecucionAntony`)) document.getElementById(`hasInvEjecucionAntony`).innerText = '-'
@@ -564,10 +568,12 @@ const cargarInfoEjecucion = (campania)=>{
 
 
     // HAS INFO
-    document.getElementById(`totalHasEjecutadas`).innerText = Number(info.bety.hasFina) + Number(info.bety.hasGruesa) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasCobertura) + Number(info.antony.hasFina) + Number(info.antony.hasGruesa) + Number(info.antony.hasCobertura)
+    //varia segun etapa
+    let totalHasEjecutadas = (etapa == 'fina') ? Number(info.bety.hasFina) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura) + Number(info.antony.hasFina) + Number(info.antony.hasCobertura) : Number(info.bety.hasGruesa) + Number(info.pichi.hasGruesa) + Number(info.antony.hasGruesa)
+    
+    document.getElementById(`totalHasEjecutadas`).innerText = totalHasEjecutadas
     
     let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa) + Number(info.antony.costoCobertura)
-    
 
     document.getElementById(`totalInversionEjecutada`).innerText = totalInversion.toLocaleString('de-DE')
 
