@@ -238,8 +238,8 @@ $(document).ready(function() {
     }
     
     function calcularResumenes(datos) {
-        const totalHasPlan = datos.planificacion.fina.has + datos.planificacion.gruesa.has
-        const totalHasEjec = datos.ejecucion.fina.has + datos.ejecucion.gruesa.has;
+        const totalHasPlan = datos.planificacion.fina.has + datos.planificacion.gruesa.has + datos.planificacion.cobertura.has;
+        const totalHasEjec = datos.ejecucion.fina.has + datos.ejecucion.gruesa.has + datos.ejecucion.cobertura.has;
         const totalDolaresPlan = datos.planificacion.fina.dolares + datos.planificacion.gruesa.dolares;
         const totalDolaresEjec = datos.ejecucion.fina.dolares + datos.ejecucion.gruesa.dolares;
 
