@@ -48,9 +48,9 @@
                                                 <th class="text-center">Tipo</th>
                                                 <th class="text-center">Has<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">U$S<br><small>(Plan | Ejec)</small></th>
-                                                <th class="text-center">%<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">Dif Has</th>
                                                 <th class="text-center">Dif U$S</th>
+                                                <th class="text-center">%<br><small>Diff U$S</small></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -58,41 +58,41 @@
                                                 <td><strong>Fina</strong></td>
                                                 <td class="text-right" id="hasFinaCombinado">-</td>
                                                 <td class="text-right" id="dolareFinaCombinado">-</td>
-                                                <td class="text-right" id="porcentajeFinaCombinado">-</td>
                                                 <td class="text-right" id="hasFinaDiferencia">-</td>
                                                 <td class="text-right" id="dolareFinaDiferencia">-</td>
+                                                <td class="text-right" id="porcentajeFinaCombinado">-</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Gruesa</strong></td>
                                                 <td class="text-right" id="hasGruesaCombinado">-</td>
                                                 <td class="text-right" id="dolareGruesaCombinado">-</td>
-                                                <td class="text-right" id="porcentajeGruesaCombinado">-</td>
                                                 <td class="text-right" id="hasGruesaDiferencia">-</td>
                                                 <td class="text-right" id="dolareGruesaDiferencia">-</td>
+                                                <td class="text-right" id="porcentajeGruesaCombinado">-</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Cobertura</strong></td>
                                                 <td class="text-right" id="hasCoberturaCombinado">-</td>
                                                 <td class="text-right" id="dolareCoberturaCombinado">-</td>
-                                                <td class="text-right" id="porcentajeCoberturaCombinado">-</td>
                                                 <td class="text-right" id="hasCoberturaDiferencia">-</td>
                                                 <td class="text-right" id="dolareCoberturaDiferencia">-</td>
+                                                <td class="text-right" id="porcentajeCoberturaCombinado">-</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Invernales</strong></td>
                                                 <td class="text-right" id="hasInvernalesCombinado">-</td>
                                                 <td class="text-right" id="dolareInvernalesCombinado">-</td>
-                                                <td class="text-right" id="porcentajeInvernalesCombinado">-</td>
                                                 <td class="text-right" id="hasInvernalesDiferencia">-</td>
                                                 <td class="text-right" id="dolareInvernalesDiferencia">-</td>
+                                                <td class="text-right" id="porcentajeInvernalesCombinado">-</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Estivales</strong></td>
                                                 <td class="text-right" id="hasEstivalesCombinado">-</td>
                                                 <td class="text-right" id="dolareEstivalesCombinado">-</td>
-                                                <td class="text-right" id="porcentajeEstivalesCombinado">-</td>
                                                 <td class="text-right" id="hasEstivalesDiferencia">-</td>
                                                 <td class="text-right" id="dolareEstivalesDiferencia">-</td>
+                                                <td class="text-right" id="porcentajeEstivalesCombinado">-</td>
                                             </tr>
                                         </tbody>
                                         
@@ -118,9 +118,9 @@
                                                 <th class="text-center">Cultivo</th>
                                                 <th class="text-center">Has<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">U$S<br><small>(Plan | Ejec)</small></th>
-                                                <th class="text-center">%<br><small>(Plan | Ejec)</small></th>
                                                 <th class="text-center">Dif Has</th>
                                                 <th class="text-center">Dif U$S</th>
+                                                <th class="text-center">%<br><small>Diff U$S</small></th>
                                             </tr>
                                         </thead>
                                         <tbody id="tablaEstadisticasCultivoBody">
@@ -186,22 +186,22 @@ $(document).ready(function() {
             // Diferencias
             const diffHas = ejec.has - plan.has;
             const diffDolares = ejec.dolares - plan.dolares;
-            const diffPorcentaje = ejec.porcentaje - plan.porcentaje;
+            const diffPorcentaje = plan.dolares > 0 ? ((ejec.dolares - plan.dolares) / plan.dolares) * 100 : 0;
             
             // Datos combinados con colores
             const hasCombinado = `<span class="text-primary">${plan.has.toLocaleString()}</span> | <span class="text-info">${ejec.has.toLocaleString()}</span>`;
             const dolaresCombinado = `<span class="text-primary">U$S ${plan.dolares.toLocaleString()}</span> | <span class="text-info">U$S ${ejec.dolares.toLocaleString()}</span>`;
-            const porcentajeCombinado = `<span class="text-primary">${plan.porcentaje}%</span> | <span class="text-info">${ejec.porcentaje}%</span>`;
-            
+            const diffPorcentajeSpan = `<span class="text-primary">${diffPorcentaje.toLocaleString('DE-de',{maximumFractionDigits:0,minimumFractionDigits:0})}%</span>`;
+
             // Llenar datos combinados
             $(`#has${capitalizarPrimeraLetra(tipo)}Combinado`).html(hasCombinado);
             $(`#dolare${capitalizarPrimeraLetra(tipo)}Combinado`).html(dolaresCombinado);
-            $(`#porcentaje${capitalizarPrimeraLetra(tipo)}Combinado`).html(porcentajeCombinado);
+            $(`#porcentaje${capitalizarPrimeraLetra(tipo)}Combinado`).html(diffPorcentajeSpan);
             
             // Llenar diferencias con colores
             const colorHas = diffHas >= 0 ? 'text-green' : 'text-red';
-            const colorDolares = diffDolares >= 0 ? 'text-green' : 'text-red';
-            const colorPorcentaje = diffPorcentaje >= 0 ? 'text-green' : 'text-red';
+            const colorDolares = diffDolares >= 0 ? 'text-red' : 'text-green';
+            const colorPorcentaje = diffPorcentaje >= 0 ? 'text-red' : 'text-green';
             
             $(`#has${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorHas}">${diffHas > 0 ? '+' : ''}${diffHas}</span>`);
             $(`#dolare${capitalizarPrimeraLetra(tipo)}Diferencia`).html(`<span class="${colorDolares}">U$S ${diffDolares.toLocaleString()}</span>`);
@@ -216,20 +216,20 @@ $(document).ready(function() {
         cultivos.forEach(cultivo => {
             const diffHas = cultivo.ejecucion.has - cultivo.planificacion.has;
             const diffDolares = cultivo.ejecucion.dolares - cultivo.planificacion.dolares;
-            const diffPorcentaje = cultivo.ejecucion.porcentaje - cultivo.planificacion.porcentaje;
+            const diffPorcentaje = cultivo.planificacion.dolares > 0 ? ((cultivo.ejecucion.dolares - cultivo.planificacion.dolares) / cultivo.planificacion.dolares) * 100 : 0;
             
             const colorHas = diffHas >= 0 ? 'text-green' : 'text-red';
-            const colorDolares = diffDolares >= 0 ? 'text-green' : 'text-red';
-            const colorPorcentaje = diffPorcentaje >= 0 ? 'text-green' : 'text-red';
+            const colorDolares = diffDolares >= 0 ? 'text-red' : 'text-green';
+            const colorPorcentaje = diffPorcentaje >= 0 ? 'text-red' : 'text-green';
             
             tbody += `
                 <tr>
                     <td><strong>${cultivo.nombre}</strong></td>
                     <td class="text-right"><span class="text-primary">${cultivo.planificacion.has.toLocaleString()}</span> | <span class="text-info">${cultivo.ejecucion.has.toLocaleString()}</span></td>
                     <td class="text-right"><span class="text-primary">U$S ${cultivo.planificacion.dolares.toLocaleString()}</span> | <span class="text-info">U$S ${cultivo.ejecucion.dolares.toLocaleString()}</span></td>
-                    <td class="text-right"><span class="text-primary">${cultivo.planificacion.porcentaje}%</span> | <span class="text-info">${cultivo.ejecucion.porcentaje}%</span></td>
                     <td class="text-right"><span class="${colorHas}">${diffHas > 0 ? '+' : ''}${diffHas}</span></td>
                     <td class="text-right"><span class="${colorDolares}">U$S ${diffDolares.toLocaleString()}</span></td>
+                    <td class="text-right"><span class="text-primary">${diffPorcentaje.toLocaleString('DE-de',{maximumFractionDigits:0,minimumFractionDigits:0})}%</span></td>
                 </tr>
             `;
         });
