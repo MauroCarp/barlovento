@@ -2,7 +2,7 @@
 
 <div class="row">
 
-    <div class="col-lg-4">
+    <div class="col-lg-5">
             
         <div class="row">
                 
@@ -101,7 +101,7 @@
     
     </div>
 
-    <div class="col-lg-8">
+    <div class="col-lg-7">
 
         <?php include "tablasProduccion.php"; ?>
 

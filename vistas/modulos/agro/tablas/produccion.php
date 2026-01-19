@@ -16,8 +16,11 @@
                     <thead>
                         <th>Lote</th>
                         <th>Cultivo</th>
-                        <th>Cosecha</th>
-                        <th>Rinde</th>
+                        <th>Has Asig.</th>
+                        <th>Costo Cosecha U$S/Has</th>
+                        <th>Kg/Has</th>
+                        <th>Kg Totales</th>
+                        <th>Rinde QQ</th>
                         <th>Flete (U$D)</th>
                     </thead>
                     <tbody>

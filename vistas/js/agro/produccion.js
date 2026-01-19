@@ -72,6 +72,13 @@ $('#selectEtapaProduccion, #etapaProduccion').on('change', function(){
 
 function cargarInfoProduccion(campania){
   const etapa = $('#etapaProduccion').val() || 'gruesa'
+  const calcularSuggestedMax = (datos,tipo)=>{
+    const max = Math.max(...datos)
+    const min = Math.min(...datos)
+    const margen = (max * 0.05)
+    if(tipo === 'min') return min - margen
+    return max + margen
+  }
   // Demo/harcodeo de datos para validar UI
   const demo = {
     bety: {
@@ -84,8 +91,8 @@ function cargarInfoProduccion(campania){
         { lote:'L3', cultivo:'soja2', cosecha:120, rinde: 36.0, flete: 1600 }
       ],
       lotesFina: [
-        { lote:'L7', cultivo:'trigo', cosecha:200, rinde: 30.0, flete: 2600 },
-        { lote:'L8', cultivo:'vicia-triticale', cosecha:60, rinde: 0, flete: 300 },
+        { lote:'Lote 2', cultivo:'Trigo', cosecha:30, costo: 97.87, kg: 7023.66, kgtotal: 210719.8,rinde: 70.24, flete:0 },
+        { lote:'L3', cultivo:'vicia-triticale', cosecha:60, rinde: 0, flete: 300 },
         { lote:'L9', cultivo:'triticale', cosecha:120, rinde: 28.2, flete: 1200 }
       ]
     },
@@ -99,8 +106,8 @@ function cargarInfoProduccion(campania){
         { lote:'P3', cultivo:'soja2', cosecha:100, rinde: 35.4, flete: 1500 }
       ],
       lotesFina: [
-        { lote:'P7', cultivo:'trigo', cosecha:180, rinde: 28.4, flete: 2200 },
-        { lote:'P8', cultivo:'avena', cosecha:70, rinde: 0, flete: 350 },
+        { lote:'Lote 9', cultivo:'Trigo', cosecha:180, costo: 87.6, kg: 6429.53, kgtotal: 443638, rinde: 64.29, flete: 0 },
+        { lote:'Lote 8B Sur', cultivo:'Trigo', cosecha:62, costo: 87.21, kg: 6486.2, kgtotal: 402145, rinde: 64.86, flete: 0 },
         { lote:'P9', cultivo:'triticale', cosecha:100, rinde: 27.0, flete: 1250 }
       ]
     },
@@ -174,18 +181,81 @@ function cargarInfoProduccion(campania){
     // Tablas
     const tbody = $(`#tablaProduccion${C(c)} tbody`)
     tbody.html('')
-    const rows = (etapa==='gruesa') ? d.lotesGruesa : d.lotesFina
+    const rowsBase = (etapa==='gruesa') ? d.lotesGruesa : d.lotesFina
+    // Normalizar filas: asegurar propiedades costo, kg, kgtotal siempre presentes
+    const rows = rowsBase.map(r => Object.assign({ costo: 0, kg: 0, kgtotal: 0 }, r))
     rows.forEach(item=>{
       tbody.append($(`
         <tr>
           <td>${item.lote}</td>
           <td>${item.cultivo}</td>
           <td>${Number(item.cosecha).toLocaleString('de-DE')}</td>
+          <td>${Number(item.costo).toLocaleString('de-DE')}</td>
+          <td>${Number(item.kg).toLocaleString('de-DE')}</td>
+          <td>${Number(item.kgtotal).toLocaleString('de-DE')}</td>
           <td>${Number(item.rinde).toLocaleString('de-DE')}</td>
           <td>${Number(item.flete).toLocaleString('de-DE')}</td>
         </tr>
       `))
     })
+
+    // Gráfico: Has (barras) y Rinde (línea) por Lote/Cultivo
+    const labels = rows.map(r => `${r.cultivo} / ${r.lote}`)
+    const datosHas = rows.map(r => Number(r.cosecha))
+    const datosRinde = rows.map(r => Number(r.rinde))
+
+    const config = {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            type: 'line',
+            label: 'Rinde',
+            borderColor: window.chartColors.red,
+            backgroundColor: window.chartColors.red,
+            fill: false,
+            yAxisID: 'A',
+            data: datosRinde
+          },
+          {
+            label: 'Has',
+            type: 'bar',
+            backgroundColor: window.chartColors.green,
+            borderColor: 'white',
+            borderWidth: 2,
+            yAxisID: 'B',
+            data: datosHas
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            display: true,
+            ticks: { autoSkip: false }
+          }],
+          yAxes: [
+            {
+              id: 'A', type: 'linear', position: 'left',
+              ticks: {
+                beginAtZero: true,
+                suggestedMax: calcularSuggestedMax(datosRinde,'max')
+              }
+            },
+            { id: 'B', type: 'linear', position: 'right', ticks: { beginAtZero: true } }
+          ]
+        },
+        plugins: { labels: { render: function(reg){ return Number(reg.value).toLocaleString('de-DE') } } },
+        legend: { labels: { boxWidth: 5 } }
+      }
+    }
+
+    const canvasId = `graficoProduccion${C(c)}`
+    if(document.getElementById(canvasId)){
+      if(window[canvasId]){ try { window[canvasId].destroy() } catch(e){} }
+      generarGraficoBar(canvasId, config, 'noOption')
+    }
   })
 
   const rindeProm = (rindeCount>0) ? (rindeAcum/rindeCount).toFixed(2) : 0

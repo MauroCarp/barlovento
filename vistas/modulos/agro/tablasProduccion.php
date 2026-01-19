@@ -16,6 +16,9 @@
                     <?php
                         $idTablaProduccion = 'tablaProduccionBety';
                         include 'tablas/produccion.php';
+                        // Gráfico debajo de la tabla (La Bety)
+                        $idGraficoProduccion = 'graficoProduccionBety';
+                        include 'graficos/produccion.php';
                     ?>
                 </div>
 
@@ -23,6 +26,9 @@
                     <?php
                         $idTablaProduccion = 'tablaProduccionPichi';
                         include 'tablas/produccion.php';
+                        // Gráfico debajo de la tabla (El Pichi)
+                        $idGraficoProduccion = 'graficoProduccionPichi';
+                        include 'graficos/produccion.php';
                     ?>
                 </div>
 
@@ -30,6 +36,9 @@
                     <?php
                         $idTablaProduccion = 'tablaProduccionAntony';
                         include 'tablas/produccion.php';
+                        // Gráfico debajo de la tabla (Antony)
+                        $idGraficoProduccion = 'graficoProduccionAntony';
+                        include 'graficos/produccion.php';
                     ?>
                 </div>
 
