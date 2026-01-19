@@ -600,6 +600,10 @@ class ControladorAgro{
 
 	}
 
+    static public function ctrMostrarDataProduccion($tabla, $item, $valor,$item2, $valor2){
+        return ModeloAgro::mdlMostrarDataProduccion($tabla, $item, $valor,$item2, $valor2);
+    }
+
     /*=============================================
 	ELIMINAR ARCHIVO
 	=============================================*/
@@ -766,6 +770,71 @@ class ControladorAgro{
 
         return $ejecucionValido[0];
     
+    }
+
+    static public function ctrMostrarProduccion($campania){
+        $tabla = 'produccion';
+        $valido = ModeloAgro::mdlMostrarProduccion($tabla,$campania);
+        return $valido[0];
+    }
+
+    static public function ctrCargarProduccion(){
+        require_once('extensiones/excel/php-excel-reader/excel_reader2.php');
+        require_once('extensiones/excel/SpreadsheetReader.php');
+
+        if(isset($_POST['btnCargarProduccion'])){
+            $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            $campania = $_POST['campania'];
+            $etapa = $_POST['etapaProduccion'];
+
+            $tablaProd = 'produccion';
+            $existe = ModeloAgro::mdlMostrarProduccion($tablaProd, $campania);
+            if (!empty($existe) && $existe[0] == 1) {
+                $idProduccion = $existe[1];
+            } else {
+                $idProduccion = ModeloAgro::mdlCargarProduccion($tablaProd, $campania);
+            }
+
+            $rowsSql = [];
+            foreach ($_FILES as $key => $file) {
+                if($file['size'] > 0 && in_array($file["type"],$allowedFileType)){
+                    $ruta = "carga/" . $file['name'];
+                    move_uploaded_file($file['tmp_name'], $ruta);
+                    $Reader = new SpreadsheetReader($ruta);
+                    $sheetCount = count($Reader->sheets());
+                    for($i=0;$i<$sheetCount;$i++){
+                        $Reader->ChangeSheet($i);
+                        $rowNumber = 0;
+                        foreach ($Reader as $Row){
+                            // Espera columnas: Lote(2), Has(1), Cultivo(inferido del name), Cosecha(?, ex: columna 3), Rinde(?, ex: columna 4), Flete(?, ex: columna 5)
+                            // Ajusta índices según tu planilla
+                            if($rowNumber > 0 && isset($Row[2]) && trim($Row[2]) !== ''){
+                                $lote = trim($Row[2]);
+                                $cultivo = isset($_POST[$key.'cultivo']) ? $_POST[$key.'cultivo'] : str_replace($lote.'_', '', $key);
+                                $campo = isset($_POST[$key.'campo']) ? $_POST[$key.'campo'] : '';
+                                $has = isset($Row[1]) ? number_format(str_replace(',','',$Row[1]),0,'.','') : 0;
+                                $cosecha = isset($Row[3]) ? number_format(str_replace(',','',$Row[3]),2,'.','') : 0;
+                                $rinde = isset($Row[4]) ? number_format(str_replace(',','',$Row[4]),2,'.','') : 0;
+                                $flete = isset($Row[5]) ? number_format(str_replace(',','',$Row[5]),2,'.','') : 0;
+                                $rowsSql[] = "(".$idProduccion.",'".$lote."','".$cultivo."','".$has."',".$cosecha.",".$rinde.",".$flete.",'".$campo."','".$etapa."')";
+                            }
+                            $rowNumber++;
+                        }
+                    }
+                }
+            }
+
+            if(!empty($rowsSql)){
+                $tablaLotes = 'produccionLotes';
+                $resp = ModeloAgro::mdlCargarLotesProduccion($tablaLotes, implode(',', $rowsSql));
+                if($resp != 'ok'){
+                    echo'<script>swal({type:"error",title:"Hubo un error al cargar Producción. Informar",showConfirmButton:true,confirmButtonText:"Cerrar"}).then(function(result){if(result.value){window.location = "index.php?ruta=agro/agro"}})</script>';
+                } else {
+                    echo'<script>swal({type:"success",title:"Producción cargada correctamente",showConfirmButton:true,confirmButtonText:"Cerrar",closeOnConfirm:false}).then(function(result){if(result.value){window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"}})</script>';
+                }
+                die;
+            }
+        }
     }
 
     /*=============================================

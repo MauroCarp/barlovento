@@ -365,6 +365,54 @@ class ModeloAgro{
 
 	}
 
+	/*=============================================
+	CARGAR PRODUCCION
+	=============================================*/
+	static public function mdlCargarProduccion($tabla,$campania){
+		$conexion = Conexion::conectar(); 
+		$stmt = $conexion->prepare("INSERT INTO $tabla(campania) VALUES (:campania)");
+		$stmt->bindParam(":campania", $campania, PDO::PARAM_STR);
+		if($stmt->execute()){
+			return $conexion->lastInsertId();
+		}else{
+			$stmt = Conexion::conectar()->prepare("SELECT id FROM $tabla WHERE campania = :campania");
+			$stmt->bindParam(":campania", $campania, PDO::PARAM_STR);
+			$stmt->execute();
+			$resp = $stmt->fetch();
+			return $resp['id'];
+		}
+	}
+
+	static public function mdlMostrarProduccion($tabla, $campania){
+		$stmt = Conexion::conectar()->prepare("SELECT COUNT(*), id FROM $tabla WHERE campania = :campania");
+		$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
+		$stmt -> execute();
+		return $stmt -> fetch();
+	}
+
+	static public function mdlCargarLotesProduccion($tabla,$data){
+		$conexion = Conexion::conectar();
+		$stmt = $conexion->prepare("INSERT INTO $tabla(idProduccion,lote,cultivo,has,cosecha,rinde,flete,campo,etapa) VALUES $data");
+		if($stmt->execute()){ 
+			return 'ok';
+		}else{
+			return $stmt->errorInfo();
+		}
+	}
+
+	static public function mdlMostrarDataProduccion($tabla, $item,$valor,$item2,$valor2){
+		if($valor2){
+			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla p INNER JOIN produccionLotes pl ON p.id = pl.idProduccion WHERE p.$item = :$item AND pl.$item2 = :$item2");
+			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
+			$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
+		} else {
+			$stmt = Conexion::conectar()->prepare("SELECT (SELECT SUM(pl2.cosecha) FROM $tabla p2 INNER JOIN produccionLotes pl2 ON p2.id = pl2.idProduccion WHERE p2.$item = :$item) AS totalCosecha, (SELECT AVG(pl3.rinde) FROM $tabla p3 INNER JOIN produccionLotes pl3 ON p3.id = pl3.idProduccion WHERE p3.$item = :$item) AS rindePromedio, (SELECT SUM(pl4.flete) FROM $tabla p4 INNER JOIN produccionLotes pl4 ON p4.id = pl4.idProduccion WHERE p4.$item = :$item) AS totalFlete");
+			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
+		}
+		$stmt -> execute();
+		return $stmt -> fetchAll();
+	}
+
 	static public function mdlMostrarDataEjecucion($tabla, $item,$valor,$item2,$valor2){
 
 		if($valor2){

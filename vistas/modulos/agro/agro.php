@@ -169,15 +169,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 
                             <div class='tab-pane' id='tab_3'>
                               
-                              <h1>PRODUCCION</h1>
-                              <h4>
-                                <ul>
-                                  <li>Cosecha</li>
-                                  <li>Rinde</li>
-                                  <li>Flete</li>
-                                </ul>
-                              </h4>
-                              <?php //include 'produccion.php';?>
+                              <?php include 'produccion.php';?>
                             </div>
                             <div class='tab-pane' id='tab_4'>
                               

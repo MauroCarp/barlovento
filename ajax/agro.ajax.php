@@ -67,6 +67,16 @@ class AjaxAgro{
 
 	}
 
+	public function ajaxMostrarDataProduccion(){
+		$tabla = 'produccion';
+		$campania = $this->campania;
+		$etapa = $this->etapa;
+
+		$data = ControladorAgro::ctrMostrarDataProduccion($tabla,'campania',$campania,'etapa',$etapa);
+
+		echo json_encode($data);
+	}
+
 	public function ajaxMostrarCostos(){
 
 		$tabla = 'planificaciones';
@@ -110,6 +120,19 @@ class AjaxAgro{
 		
 		echo $ejecucionValido;
 	
+	}
+
+	public function ajaxProduccionValido(){
+		$campania = $this->campania;
+		$valido = ControladorAgro::ctrMostrarProduccion($campania);
+		$valido = ($valido == 0) ? false : true;
+		echo $valido;
+	}
+
+	public function ajaxGetLotes(){
+		$campania = $this->campania;
+		$lotes = ControladorAgro::ctrGetLotes($campania);
+		echo json_encode($lotes);
 	}
 
 	public function ajaxObtenerEstadisticas(){
@@ -163,10 +186,30 @@ if(isset($_POST["accion"])){
 		$cargarCostos-> ajaxCargarCostos();
 	}
 
+	if($accion == 'mostrarDataProduccion'){
+		$mostrarData = new AjaxAgro();
+		$mostrarData -> campania = $_POST["campania"];
+		$mostrarData -> etapa = $_POST["etapa"];
+		$mostrarData -> ajaxMostrarDataProduccion();
+
+	}
+
 	if($accion == 'ejecucion'){
 		$ejecucionValido = new AjaxAgro;
 		$ejecucionValido->campania = $_POST['campania'];
 		$ejecucionValido-> ajaxEjecucionValido();
+	}
+
+	if($accion == 'produccion'){
+		$produccionValido = new AjaxAgro;
+		$produccionValido->campania = $_POST['campania'];
+		$produccionValido-> ajaxProduccionValido();
+	}
+
+	if($accion == 'getLotes'){
+		$getLotes = new AjaxAgro;
+		$getLotes->campania = $_POST['campania'];
+		$getLotes-> ajaxGetLotes();
 	}
 
 	if($accion == 'estadisticas'){
