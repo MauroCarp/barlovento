@@ -15,7 +15,7 @@
     <div class="modal fade" id="modalActualizar" tabindex="-1" role="dialog" aria-labelledby="modalActualizarLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="post" action="ajax/gordosUpload.ajax.php" enctype="multipart/form-data">
+                <form method="post" action="" enctype="multipart/form-data">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                             <span aria-hidden="true">&times;</span>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Subir</button>
+                        <button type="submit" class="btn btn-primary" name="cargarGordos"><i class="fa fa-upload"></i> Subir</button>
                     </div>
                 </form>
             </div>
@@ -84,3 +84,9 @@
     .catch(()=>{});
 })();
 </script>
+
+<?php
+
+    $cargarGordos = new ControladorGordos();
+    $cargarGordos->ctrCargarExcel();
+?>

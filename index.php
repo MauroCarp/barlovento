@@ -14,6 +14,7 @@ require_once "controladores/agro.controlador.php";
 require_once "controladores/contable.controlador.php";
 require_once "controladores/pastoreo.controlador.php";
 require_once "controladores/trazabilidad.controlador.php";
+require_once "controladores/gordos.controlador.php";
 
 
 require_once "modelos/usuarios.modelo.php";
@@ -29,6 +30,7 @@ require_once "modelos/agro.modelo.php";
 require_once "modelos/contable.modelo.php";
 require_once "modelos/pastoreo.modelo.php";
 require_once "modelos/trazabilidad.modelo.php";
+require_once "modelos/gordos.modelo.php";
 require_once "extensiones/vendor/autoload.php";
 
 
