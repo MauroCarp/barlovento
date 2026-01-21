@@ -82,46 +82,46 @@ function cargarInfoProduccion(campania){
   // Demo/harcodeo de datos para validar UI
   const demo = {
     bety: {
-      fina: { cosecha: 320, rinde: 29.4, flete: 4100 },
-      cobertura: { cosecha: 60, rinde: 0, flete: 300 },
-      gruesa: { cosecha: 520, rinde: 36.2, flete: 7100 },
+      fina: { cosecha: 30, rinde: 70.24, flete: 0 },
+      cobertura: { cosecha: 0, rinde: 0, flete: 0 },
+      gruesa: { cosecha: 0, rinde: 0, flete: 0 },
       lotesGruesa: [
-        { lote:'L1', cultivo:'soja1', cosecha:180, rinde: 36.8, flete: 2500 },
-        { lote:'L2', cultivo:'maiz1', cosecha:220, rinde: 35.9, flete: 3000 },
-        { lote:'L3', cultivo:'soja2', cosecha:120, rinde: 36.0, flete: 1600 }
+        { lote:'L1', cultivo:'soja1', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'L2', cultivo:'maiz1', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'L3', cultivo:'soja2', cosecha:0, rinde: 0, flete: 0 }
       ],
       lotesFina: [
         { lote:'Lote 2', cultivo:'Trigo', cosecha:30, costo: 97.87, kg: 7023.66, kgtotal: 210719.8,rinde: 70.24, flete:0 },
-        { lote:'L3', cultivo:'vicia-triticale', cosecha:60, rinde: 0, flete: 300 },
-        { lote:'L9', cultivo:'triticale', cosecha:120, rinde: 28.2, flete: 1200 }
+        { lote:'L3', cultivo:'vicia-triticale', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'L9', cultivo:'triticale', cosecha:0, rinde: 0, flete: 0 }
       ]
     },
     pichi: {
-      fina: { cosecha: 280, rinde: 27.9, flete: 3800 },
-      cobertura: { cosecha: 70, rinde: 0, flete: 350 },
-      gruesa: { cosecha: 460, rinde: 35.2, flete: 6600 },
+      fina: { cosecha: 131, rinde: 27.9, flete: 0 },
+      cobertura: { cosecha: 0, rinde: 0, flete: 0 },
+      gruesa: { cosecha: 0, rinde: 0, flete: 0 },
       lotesGruesa: [
-        { lote:'P1', cultivo:'maiz1', cosecha:190, rinde: 34.7, flete: 2700 },
-        { lote:'P2', cultivo:'soja1', cosecha:170, rinde: 35.6, flete: 2400 },
-        { lote:'P3', cultivo:'soja2', cosecha:100, rinde: 35.4, flete: 1500 }
+        { lote:'P1', cultivo:'maiz1', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'P2', cultivo:'soja1', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'P3', cultivo:'soja2', cosecha:0, rinde: 0, flete: 0 }
       ],
       lotesFina: [
-        { lote:'Lote 9', cultivo:'Trigo', cosecha:180, costo: 87.6, kg: 6429.53, kgtotal: 443638, rinde: 64.29, flete: 0 },
+        { lote:'Lote 9', cultivo:'Trigo', cosecha:69, costo: 87.6, kg: 6429.53, kgtotal: 443638, rinde: 64.29, flete: 0 },
         { lote:'Lote 8B Sur', cultivo:'Trigo', cosecha:62, costo: 87.21, kg: 6486.2, kgtotal: 402145, rinde: 64.86, flete: 0 },
-        { lote:'P9', cultivo:'triticale', cosecha:100, rinde: 27.0, flete: 1250 }
+        { lote:'P9', cultivo:'triticale', cosecha:0, rinde: 0, flete: 0 }
       ]
     },
     antony: {
-      fina: { cosecha: 150, rinde: 26.5, flete: 2100 },
-      cobertura: { cosecha: 40, rinde: 0, flete: 220 },
-      gruesa: { cosecha: 260, rinde: 34.1, flete: 4300 },
+      fina: { cosecha: 0, rinde: 0, flete: 0 },
+      cobertura: { cosecha: 0, rinde: 0, flete: 0 },
+      gruesa: { cosecha: 0, rinde: 0, flete: 0 },
       lotesGruesa: [
-        { lote:'A1', cultivo:'soja1', cosecha:140, rinde: 34.0, flete: 2100 },
-        { lote:'A2', cultivo:'maiz2', cosecha:120, rinde: 34.2, flete: 2200 }
+        { lote:'A1', cultivo:'soja1', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'A2', cultivo:'maiz2', cosecha:0, rinde: 0, flete: 0 }
       ],
       lotesFina: [
-        { lote:'A7', cultivo:'trigo', cosecha:110, rinde: 27.0, flete: 1600 },
-        { lote:'A9', cultivo:'vicia', cosecha:40, rinde: 0, flete: 220 }
+        { lote:'A7', cultivo:'trigo', cosecha:0, rinde: 0, flete: 0 },
+        { lote:'A9', cultivo:'vicia', cosecha:0, rinde: 0, flete: 0 }
       ]
     }
   }

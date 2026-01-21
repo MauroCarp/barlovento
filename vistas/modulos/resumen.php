@@ -1,221 +1,570 @@
-<?php
-// Vista: Resumen de oferta (7 tablas + tabla compuesta + gráfico)
-?>
-<div class="content-wrapper">
-  <section class="content-header">
-    <h1>Resumen <small>Oferta de Gordos</small></h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
-      <li class="active">Resumen</li>
-    </ol>
-  </section>
+<section class="content-header">
 
-  <section class="content">
-    <!-- 7 tablas -->
-    <div class="row">
-      <!-- Grupo NOVILLOS: Exportación, Campo-Pastoreo, Mercado Interno -->
-      <div class="col-lg-9 col-md-12">
-        <div class="box box-primary">
-          <div class="box-header with-border"><h3 class="box-title">NOVILLOS</h3></div>
-          <div class="box-body" style="padding-bottom:0;">
-            <div class="row">
-              <!-- 1: Exportación -->
-              <div class="col-lg-4 col-md-4">
-                <div class="box box-default" style="margin-bottom:10px;">
-                  <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Exportación</h3></div>
-                  <div class="box-body no-padding">
-                    <table class="table table-condensed table-bordered" style="margin:0;">
-                      <thead>
-                        <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                      </thead>
-                      <tbody id="tbl-exportacion"></tbody>
-                      <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-exportacion">0</th></tr></tfoot>
-                    </table>
-                  </div>
+  <h1>Resumen</h1>
+
+  <ol class="breadcrumb">
+
+    <li>
+
+      <a href="inicio"><i class="fa fa-dashboard"></i>Inicio</a>
+    
+    </li>
+
+    <li class="active">Resumen</li>
+
+  </ol>
+
+</section>
+
+<section class="content">
+
+  <!-- 7 tablas -->
+
+  <div class="row">
+
+    <!-- Grupo NOVILLOS: Exportación, Campo-Pastoreo, Mercado Interno -->
+
+    <div class="col-lg-9 col-md-12">
+
+      <div class="box box-primary">
+
+        <div class="box-header with-border">
+
+          <h3 class="box-title">NOVILLOS</h3>
+
+      </div>
+
+        <div class="box-body" style="padding-bottom:0;">
+
+          <div class="row">
+
+            <!-- 1: Exportación -->
+
+            <div class="col-lg-4 col-md-4">
+
+              <div class="box box-default" style="margin-bottom:10px;">
+
+                <div class="box-header with-border">
+                  
+                  <h3 class="box-title" style="font-size:14px;">Exportación</h3>
+
                 </div>
+
+                <div class="box-body no-padding">
+
+                  <table class="table table-condensed table-bordered" style="margin:0;">
+
+                    <thead>
+
+                      <tr>
+                        
+                        <th style="width:60%">Kg</th>
+
+                        <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+
+                      </tr>
+
+                    </thead>
+
+                    <tbody id="tbl-exportacion"></tbody>
+                    
+                    <tfoot>
+                      
+                      <tr>
+
+                        <th class="text-right">TOTAL</th>
+                        
+                        <th class="text-right" id="tot-exportacion">0</th>
+                        
+                      
+                      </tr>
+                  
+                    </tfoot>
+
+                  </table>
+
+                </div>
+
               </div>
+              
+            </div>
 
-              <!-- 2: Campo - Pastoreo -->
-              <div class="col-lg-4 col-md-4">
-                <div class="box box-default" style="margin-bottom:10px;">
-                  <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Campo - Pastoreo</h3></div>
-                  <div class="box-body no-padding">
-                    <table class="table table-condensed table-bordered" style="margin:0;">
-                      <thead>
-                        <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                      </thead>
-                      <tbody id="tbl-campo"></tbody>
-                      <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-campo">0</th></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-              </div>
+            <!-- 2: Campo - Pastoreo -->
+            <div class="col-lg-4 col-md-4">
 
-              <!-- 3: Mercado Interno -->
-              <div class="col-lg-4 col-md-4">
-                <div class="box box-default" style="margin-bottom:10px;">
-                  <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Mercado Interno</h3></div>
-                  <div class="box-body no-padding">
-                    <table class="table table-condensed table-bordered" style="margin:0;">
-                      <thead>
-                        <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                      </thead>
-                      <tbody id="tbl-mi-novillos"></tbody>
-                      <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-mi-novillos">0</th></tr></tfoot>
-                    </table>
-                  </div>
+              <div class="box box-default" style="margin-bottom:10px;">
+
+                <div class="box-header with-border">
+
+                  <h3 class="box-title" style="font-size:14px;">Campo - Pastoreo</h3>
+
                 </div>
+
+                <div class="box-body no-padding">
+
+                  <table class="table table-condensed table-bordered" style="margin:0;">
+
+                    <thead>
+
+                      <tr>
+
+                        <th style="width:60%">Kg</th>
+                        
+                        <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+                      
+                      </tr>
+                    </thead>
+
+                    <tbody id="tbl-campo"></tbody>
+
+                    <tfoot>
+                      
+                      <tr>
+
+                        <th class="text-right">TOTAL</th>
+                        
+                        <th class="text-right" id="tot-campo">0</th>
+                      
+                      </tr>
+
+                    </tfoot>
+
+                  </table>
+
+                </div>
+
               </div>
 
             </div>
+
+            <!-- 3: Mercado Interno -->
+            <div class="col-lg-4 col-md-4">
+
+              <div class="box box-default" style="margin-bottom:10px;">
+
+                <div class="box-header with-border">
+
+                  <h3 class="box-title" style="font-size:14px;">Mercado Interno</h3>
+                  
+                </div>
+
+                <div class="box-body no-padding">
+
+                  <table class="table table-condensed table-bordered" style="margin:0;">
+
+                    <thead>
+
+                      <tr>
+
+                        <th style="width:60%">Kg</th>
+                        
+                        <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+                      
+                      </tr>
+
+                    </thead>
+
+                    <tbody id="tbl-mi-novillos"></tbody>
+
+                    <tfoot>
+                      
+                      <tr>
+
+                        <th class="text-right">TOTAL</th>
+                        
+                        <th class="text-right" id="tot-mi-novillos">0</th>
+                      
+                      </tr>
+
+                    </tfoot>
+
+                  </table>
+
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
+
         </div>
+
       </div>
 
-      <!-- 4: TOROS -->
-      <div class="col-lg-3 col-md-6">
-        <div class="box box-primary">
-          <div class="box-header with-border"><h3 class="box-title">TOROS</h3></div>
-          <div class="box-body" style="padding-bottom:0;">
-            <div class="box box-default" style="margin-bottom:10px;">
-              <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Mercado Interno</h3></div>
-              <div class="box-body no-padding">
-                <table class="table table-condensed table-bordered" style="margin:0;">
-                  <thead>
-                    <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                  </thead>
-                  <tbody id="tbl-toros-mi"></tbody>
-                  <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-toros-mi">0</th></tr></tfoot>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="row">
-      <!-- 5: VAQUILLONAS -->
-      <div class="col-lg-4 col-md-6">
-        <div class="box box-primary">
-          <div class="box-header with-border"><h3 class="box-title">VAQUILLONAS</h3></div>
-          <div class="box-body" style="padding-bottom:0;">
-            <div class="box box-default" style="margin-bottom:10px;">
-              <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Mercado Interno</h3></div>
-              <div class="box-body no-padding">
-                <table class="table table-condensed table-bordered" style="margin:0;">
-                  <thead>
-                    <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                  </thead>
-                  <tbody id="tbl-vq-mi"></tbody>
-                  <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-vq-mi">0</th></tr></tfoot>
-                </table>
-              </div>
-            </div>
-          </div>
+    <!-- 4: TOROS -->
+    <div class="col-lg-3 col-md-6">
+
+      <div class="box box-primary">
+
+        <div class="box-header with-border">
+
+          <h3 class="box-title">TOROS</h3>
+
         </div>
-      </div>
 
-      <!-- 6-7: HOTELERIA (Novillitos + Vaquillonas) -->
-      <div class="col-lg-8 col-md-12">
-        <div class="box box-primary">
-          <div class="box-header with-border"><h3 class="box-title">HOTELERIA</h3></div>
-          <div class="box-body" style="padding-bottom:0;">
-            <div class="row">
-              <!-- Novillitos -->
-              <div class="col-lg-6 col-md-6">
-                <div class="box box-default" style="margin-bottom:10px;">
-                  <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Novillitos</h3></div>
-                  <div class="box-body no-padding">
-                    <table class="table table-condensed table-bordered" style="margin:0;">
-                      <thead>
-                        <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                      </thead>
-                      <tbody id="tbl-hotel-nt"></tbody>
-                      <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-hotel-nt">0</th></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-              </div>
+        <div class="box-body" style="padding-bottom:0;">
 
-              <!-- Vaquillonas -->
-              <div class="col-lg-6 col-md-6">
-                <div class="box box-default" style="margin-bottom:10px;">
-                  <div class="box-header with-border"><h3 class="box-title" style="font-size:14px;">Vaquillonas</h3></div>
-                  <div class="box-body no-padding">
-                    <table class="table table-condensed table-bordered" style="margin:0;">
-                      <thead>
-                        <tr><th style="width:60%">Kg</th><th class="text-right">N° CAB</th></tr>
-                      </thead>
-                      <tbody id="tbl-vq-hotel"></tbody>
-                      <tfoot><tr><th class="text-right">TOTAL</th><th class="text-right" id="tot-vq-hotel">0</th></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-              </div>
+          <div class="box box-default" style="margin-bottom:10px;">
+
+            <div class="box-header with-border">
+
+              <h3 class="box-title" style="font-size:14px;">Mercado Interno</h3>
 
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Tabla mensual + gráfico -->
-    <div class="row">
-      <div class="col-lg-7">
-        <div class="box box-default">
-          <div class="box-header with-border"><h3 class="box-title">Oferta mensual</h3></div>
-          <div class="box-body no-padding">
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped" style="margin:0;">
+            <div class="box-body no-padding">
+
+              <table class="table table-condensed table-bordered" style="margin:0;">
+
                 <thead>
-                  <tr class="bg-gray">
-                    <th rowspan="2" style="vertical-align:middle;">Mes</th>
-                    <th colspan="4" class="text-center">EXPO</th>
-                    <th colspan="4" class="text-center">MI</th>
-                  </tr>
-                  <tr class="bg-gray-light">
-                    <th class="text-right">Total</th>
-                    <th class="text-right">Feedlot</th>
-                    <th class="text-right">Campo</th>
-                    <th class="text-right">Hotel</th>
-                    <th class="text-right">Total</th>
-                    <th class="text-right">NT</th>
-                    <th class="text-right">VQ</th>
-                    <th class="text-right">Hotel</th>
-                  </tr>
-                </thead>
-                <tbody id="tbl-mensual"></tbody>
-                <tfoot>
+
                   <tr>
-                    <th class="text-right">TOTAL</th>
-                    <th class="text-right" id="mensual-expo"></th>
-                    <th class="text-right" id="mensual-expo-feed"></th>
-                    <th class="text-right" id="mensual-expo-campo"></th>
-                    <th class="text-right" id="mensual-expo-hotel"></th>
-                    <th class="text-right" id="mensual-mi"></th>
-                    <th class="text-right" id="mensual-mi-nt"></th>
-                    <th class="text-right" id="mensual-mi-vq"></th>
-                    <th class="text-right" id="mensual-mi-hotel"></th>
+
+                    <th style="width:60%">Kg</th>
+                    
+                    <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+                  
                   </tr>
+
+                </thead>
+
+                <tbody id="tbl-toros-mi"></tbody>
+
+                <tfoot>
+
+                  <tr>
+
+                    <th class="text-right">TOTAL</th>
+                    
+                    <th class="text-right" id="tot-toros-mi">0</th>
+                  
+                  </tr>
+
                 </tfoot>
+
               </table>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
 
-      <div class="col-lg-5">
-        <div class="box box-default">
-          <div class="box-header with-border"><h3 class="box-title">Oferta de Gordos</h3></div>
-          <div class="box-body">
-            <canvas id="chart-oferta" height="220"></canvas>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <!-- 5: VAQUILLONAS -->
+    <div class="col-lg-4 col-md-6">
+
+      <div class="box box-primary">
+
+        <div class="box-header with-border">
+
+          <h3 class="box-title">VAQUILLONAS</h3>
+
+        </div>
+
+        <div class="box-body" style="padding-bottom:0;">
+
+          <div class="box box-default" style="margin-bottom:10px;">
+
+            <div class="box-header with-border">
+
+              <h3 class="box-title" style="font-size:14px;">Mercado Interno</h3>
+
+            </div>
+
+            <div class="box-body no-padding">
+
+              <table class="table table-condensed table-bordered" style="margin:0;">
+
+                <thead>
+
+                  <tr>
+
+                    <th style="width:60%">Kg</th>
+                    
+                    <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+                  
+                  </tr>
+
+                </thead>
+
+                <tbody id="tbl-vq-mi"></tbody>
+
+                <tfoot>
+                  
+                  <tr>
+
+                    <th class="text-right">TOTAL</th>
+                    
+                    <th class="text-right" id="tot-vq-mi">0</th>
+                  
+                  </tr>
+
+                </tfoot>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 6-7: HOTELERIA (Novillitos + Vaquillonas) -->
+    <div class="col-lg-8 col-md-12">
+
+      <div class="box box-primary">
+
+        <div class="box-header with-border">
+
+          <h3 class="box-title">HOTELERIA</h3>
+
+        </div>
+
+        <div class="box-body" style="padding-bottom:0;">
+
+          <div class="row">
+
+            <!-- Novillitos -->
+
+            <div class="col-lg-6 col-md-6">
+
+              <div class="box box-default" style="margin-bottom:10px;">
+
+                <div class="box-header with-border">
+
+                  <h3 class="box-title" style="font-size:14px;">Novillitos</h3>
+
+                </div>
+
+                <div class="box-body no-padding">
+
+                  <table class="table table-condensed table-bordered" style="margin:0;">
+
+                    <thead>
+
+                      <tr>
+
+                        <th style="width:60%">Kg</th>
+                        
+                        <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+                      
+                      </tr>
+
+                    </thead>
+                    
+                    <tbody id="tbl-hotel-nt"></tbody>
+
+                    <tfoot>
+
+                      <tr>
+
+                        <th class="text-right">TOTAL</th>
+                        
+                        <th class="text-right" id="tot-hotel-nt">0</th>
+                    
+                      </tr>
+                    
+                    </tfoot>
+
+                  </table>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Vaquillonas -->
+            <div class="col-lg-6 col-md-6">
+
+              <div class="box box-default" style="margin-bottom:10px;">
+
+                <div class="box-header with-border">
+
+                  <h3 class="box-title" style="font-size:14px;">Vaquillonas</h3>
+
+                </div>
+
+                <div class="box-body no-padding">
+
+                  <table class="table table-condensed table-bordered" style="margin:0;">
+
+                    <thead>
+
+                      <tr>
+
+                        <th style="width:60%">Kg</th>
+                        
+                        <th class="text-right">N° CAB</th>
+
+                        <th class="text-center">Mes</th>
+                      
+                      </tr>
+
+                    </thead>
+
+                    <tbody id="tbl-vq-hotel"></tbody>
+
+                    <tfoot>
+
+                      <tr>
+
+                      <th class="text-right">TOTAL</th>
+                      
+                      <th class="text-right" id="tot-vq-hotel">0</th>
+                    
+                    </tr></tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+
+  <!-- Tabla mensual + gráfico -->
+  <div class="row">
+
+    <div class="col-lg-7">
+
+      <div class="box box-default">
+
+        <div class="box-header with-border">
+
+          <h3 class="box-title">Oferta mensual</h3>
+
+        </div>
+
+        <div class="box-body no-padding">
+
+          <div class="table-responsive">
+
+            <table class="table table-bordered table-striped" style="margin:0;">
+
+              <thead>
+
+                <tr class="bg-gray">
+
+                  <th rowspan="2" style="vertical-align:middle;">Mes</th>
+
+                  <th colspan="4" class="text-center">EXPO</th>
+
+                  <th colspan="4" class="text-center">MI</th>
+
+                </tr>
+
+                <tr class="bg-gray-light">
+
+                  <th class="text-right">Total</th>
+
+                  <th class="text-right">Feedlot</th>
+
+                  <th class="text-right">Campo</th>
+
+                  <th class="text-right">Hotel</th>
+
+                  <th class="text-right">Total</th>
+
+                  <th class="text-right">NT</th>
+
+                  <th class="text-right">VQ</th>
+
+                  <th class="text-right">Hotel</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="tbl-mensual"></tbody>
+
+              <tfoot>
+
+                <tr>
+
+                  <th class="text-right">TOTAL</th>
+
+                  <th class="text-right" id="mensual-expo"></th>
+
+                  <th class="text-right" id="mensual-expo-feed"></th>
+
+                  <th class="text-right" id="mensual-expo-campo"></th>
+
+                  <th class="text-right" id="mensual-expo-hotel"></th>
+
+                  <th class="text-right" id="mensual-mi"></th>
+
+                  <th class="text-right" id="mensual-mi-nt"></th>
+
+                  <th class="text-right" id="mensual-mi-vq"></th>
+
+                  <th class="text-right" id="mensual-mi-hotel"></th>
+
+                </tr>
+
+              </tfoot>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-5">
+
+      <div class="box box-default">
+
+        <div class="box-header with-border">
+
+          <h3 class="box-title">Oferta de Gordos</h3>
+        
+        </div>
+
+        <div class="box-body">
+
+          <canvas id="chart-oferta" height="220"></canvas>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
 <script>
 (function(){

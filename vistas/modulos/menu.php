@@ -351,6 +351,17 @@
 
 				echo '<li>
 
+						<a href="panelGordos">
+
+							<i class="fa fa-table"></i>
+							<span>Panel Gordos</span>
+
+						</a>
+
+					</li>
+					
+					<li>
+
 							<a href="piri">
 
 								<i class="fa fa-line-chart "></i>
@@ -359,6 +370,7 @@
 							</a>
 
 						</li>';
+
 				}
 			
 				if($_SESSION["perfil"] == "Ganadero" AND $_SESSION['carga'][0]){
