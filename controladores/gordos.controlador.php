@@ -21,7 +21,7 @@ class ControladorGordos{
   static public function ctrCargarExcel(){
 
       
-      if(isset($_POST['cargarGordos'])){
+    if(isset($_POST['cargarGordos'])){
 
         require_once('extensiones/excel/php-excel-reader/excel_reader2.php');
         require_once('extensiones/excel/SpreadsheetReader.php');
@@ -38,7 +38,19 @@ class ControladorGordos{
                     
                     move_uploaded_file($file['tmp_name'], $ruta);
                                                             
-                    $rowNumber = 0;
+                    // Helper: convierte serial Excel o texto a Y-m-d
+                    $excelSerialToDate = function($serial){
+                        if(is_numeric($serial)){
+                            $ts = ((float)$serial - 25569) * 86400; // 25569 días hasta epoch
+                            return gmdate('Y-m-d', (int)$ts);
+                        }
+                        $s = trim((string)$serial);
+                        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $s)) return $s;
+                        if(preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $s, $m)){
+                            return sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]);
+                        }
+                        return date('Y-m-d');
+                    };
 
                     $data = array();
                     
@@ -46,45 +58,84 @@ class ControladorGordos{
                     
                     $sheetCount = count($Reader->sheets());
 
+                    $objResumen = array();
+
+                    $objGordos = array();
+
+                    $nResumen = 0;
+
+                    $nGordos = 0;   
+
                     for($i=0;$i<$sheetCount;$i++){
 
                         if($i == 1 || $i == 2){
 
                             $Reader->ChangeSheet($i);
     
+                            $rowNumber = 0;
                             foreach ($Reader as $Row){     
                                 
-                                    var_dump($Row[0]);
+                                if($i == 1){
                                     
-                              
-                                    // if($rowValida){
-    
-                                    //     $arr = array('idEjecucion'=>$idEjecucion,
-                                    //                 'lote'=>"'" . $Row[2] . "'",
-                                    //                 'rinde'=> $Row[15],
-                                    //                 'cultivo'=>"'" . $cultivo . "'",
-                                    //                 'has'=>"'" . number_format(str_replace(',','',$Row[1]),0,'.','') . "'",
-                                    //                 'costoLabor'=>"'" . number_format(str_replace(',','',$Row[2]),2,'.','') . "'",
-                                    //                 'costoInsumo'=>"'" . number_format(str_replace(',','',$Row[4]),2,'.','') . "'",
-                                    //                 'campo'=>"'" . $_POST[$key.'campo'] . "'",
-                                    //                 'etapa'=>"'" . $etapa . "'"
-                                    //     );
-    
-    
-                                    //     $data[] = "(" . implode(',',$arr) . ")";
-    
-                                    // }
-    
-                            }
-    
-                            $rowNumber++;
+                                    if($rowNumber == 1)
+                                        $fecha = isset($Row[2]) ? $excelSerialToDate($Row[2]) : date('Y-m-d');
+                                        
+                                    if($rowNumber > 3 && $rowNumber < 12){
+                                            
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[4]."'","'Exportacion'","'Novillos'","'".$Row[2]."'",$Row[3],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[7]."'","'Campo Pastoreo'","'Novillos'","'".$Row[5]."'",$Row[6],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[10]."'","'Mercado Interno'","'Novillos'","'".$Row[8]."'",$Row[9],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[13]."'","'Mercado Interno'","'Toros'","'".$Row[11]."'",$Row[12],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[16]."'","'Mercado Interno'","'Vaquillonas'","'".$Row[14]."'",$Row[15],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[19]."'","'Mercado Interno'","'Vaquillonas'","'".$Row[17]."'",$Row[18],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[22]."'","'Vaquillonas'","'Hoteleria'","'".$Row[20]."'","'".$Row[21]."'",$nResumen)) . ')';
 
+                                        $nResumen++;
+
+                                    }
+
+                                    // if($rowNumber > 18 && $rowNumber < 23){
+
+                                    //     $objGordos[] = array(
+                                    //         'fecha' => $fecha,
+                                    //         'mes' => $Row[0],
+                                    //         'oferta' => $Row[2],
+                                    //         'demanda' => $Row[3],
+                                    //         'tipo' => 'Exportacion',
+                                    //     );
+
+                                    // }
+                   
+                                    
+                                    $rowNumber++;
+                                }
+
+                                if($i == 2){
+                                    
+                                    if($rowNumber == 1)
+                                        $fecha = isset($Row[2]) ? $excelSerialToDate($Row[2]) : date('Y-m-d');
+                                        
+                                    if($rowNumber > 1 && $rowNumber < 13){
+                                        
+                                        $objGordos[] = "(" . implode(',',array("'".$fecha."'","'".$Row[0]."'","'".$Row[2]."'","'".$Row[1]."'","'Mercado Externo'")) . ")";
+
+                                        $objGordos[] = "(" . implode(',',array("'".$fecha."'","'".$Row[0]."'","'".$Row[6]."'","'".$Row[5]."'","'Mercado Interno'")) . ")";
+
+                                    }
+                                    
+                                    $rowNumber++;
+                                }
+
+                            }
                         }
-                            
+
                     }
+
+                    // $respuesta[] = ModeloGordos::mdlInsertResumen(implode(',',$objResumen));
+                    // var_dump($respuesta);
+                    $respuesta[] = ModeloGordos::mdlInsertGordos(implode(',',$objGordos));
+                    var_dump($respuesta);
                     die;
-                    $respuesta[] = ModeloGordos::mdlInsertResumen($tabla,implode(',',$data));
-                    $respuesta[] = ModeloGordos::mdlInsertGordos($tabla,implode(',',$data));
 
                     if($respuesta != 'ok'){
                         echo'<script>
@@ -104,11 +155,8 @@ class ControladorGordos{
                         </script>';
                         die();
                     }
-
-                
-
                 }
-
+                
             }
 
             echo'<script>
@@ -122,7 +170,7 @@ class ControladorGordos{
                 }).then(function(result) {
                         if (result.value) {
 
-                            window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"
+                            window.location = "index.php?ruta=panelGordos"
                         }
                     })
 
@@ -135,3 +183,4 @@ class ControladorGordos{
   }
   
 }
+  
