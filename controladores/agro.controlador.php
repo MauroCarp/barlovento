@@ -344,8 +344,8 @@ class ControladorAgro{
                                     }
 
                                 }
-
-                                if ($etapa == 'fina' && $rowNumber == 8) {
+                                
+                                if ($etapa == 'fina' && $rowNumber == 6) {
                                     $rowValida = true;
                                 } elseif ($etapa == 'gruesa' && $rowNumber == 5) {
                                     $rowValida = true;
