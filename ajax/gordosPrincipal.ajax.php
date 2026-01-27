@@ -15,6 +15,13 @@ class AjaxGordos{
     echo json_encode($respuesta);
 
 	}
+  
+
+  public function ajaxObtenerResumen(){
+    $respuesta = ControladorGordos::ctrResumenData();
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($respuesta);
+  }
 
 }
 
@@ -30,6 +37,11 @@ if(isset($_POST["accion"])){
 		  $mostrarData = new AjaxGordos();
       $mostrarData -> ajaxMostrarData();
 
+    }
+
+    if($accion === 'dataResumen'){
+      $inst = new AjaxGordos();
+      $inst->ajaxObtenerResumen();
     }
 
 }

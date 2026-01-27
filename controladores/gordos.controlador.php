@@ -182,5 +182,82 @@ class ControladorGordos{
 
   }
   
+    // Devuelve data formateada para vistas/modulos/resumen.php
+    static public function ctrResumenData(){
+
+        $map = [
+            'exportacion' => ['tipo' => 'Exportacion', 'categoria' => 'Novillos'],
+            'campo' => ['tipo' => 'Campo Pastoreo', 'categoria' => 'Novillos'],
+            'mi_novillos' => ['tipo' => 'Mercado Interno', 'categoria' => 'Novillos'],
+            'toros_mi' => ['tipo' => 'Mercado Interno', 'categoria' => 'Toros'],
+            'vq_mi' => ['tipo' => 'Mercado Interno', 'categoria' => 'Vaquillonas'],
+            // Estos dos pueden variar según cómo se cargó el Excel; se intentan valores comunes
+            'hotel_nt' => ['tipo' => 'Hoteleria', 'categoria' => 'Novillitos'],
+            'vq_hotel' => ['tipo' => 'Vaquillonas', 'categoria' => 'Hoteleria'],
+        ];
+
+        $superiores = [];
+        foreach($map as $key => $tc){
+            $rows = ModeloGordos::mdlFilasKgPorTipoCategoria($tc['tipo'], $tc['categoria']);
+            $filas = [];
+            foreach($rows as $r){
+                $filas[] = ['kg' => $r['kg'], 'cab' => (int)$r['cantidad'], 'mes'=> ($r['mes'] ?? '') ];
+            }
+            $superiores[$key] = ['filas' => $filas];
+        }
+
+        // Mensual: agregamos por mes
+        $mensualRaw = ModeloGordos::mdlAgrupadoMensual();
+        $byMes = [];
+        foreach($mensualRaw as $r){
+            $mes = $r['mes'];
+            $tipo = $r['tipo'];
+            $cat = $r['categoria'];
+            $cant = (int)$r['cantidad'];
+            if(!isset($byMes[$mes])){
+                $byMes[$mes] = [
+                    'expo' => ['total'=>0,'feedlot'=>0,'campo'=>0,'hotel'=>0],
+                    'mi' => ['total'=>0,'nt'=>0,'vq'=>0,'hotel'=>0]
+                ];
+            }
+            // Expo
+            if($tipo === 'Exportacion' && $cat === 'Novillos'){
+                $byMes[$mes]['expo']['feedlot'] += $cant; // asumimos feedlot = exportación directa
+            }
+            if($tipo === 'Campo Pastoreo' && $cat === 'Novillos'){
+                $byMes[$mes]['expo']['campo'] += $cant;
+            }
+            // Hotel expo (si existiera alguna marca específica)
+            if($tipo === 'Exportacion' && $cat === 'Hoteleria'){
+                $byMes[$mes]['expo']['hotel'] += $cant;
+            }
+            // MI
+            if($tipo === 'Mercado Interno' && $cat === 'Novillos'){
+                $byMes[$mes]['mi']['nt'] += $cant;
+            }
+            if($tipo === 'Mercado Interno' && $cat === 'Vaquillonas'){
+                $byMes[$mes]['mi']['vq'] += $cant;
+            }
+            // Hotelería (independientemente del tipo) se acumula en MI.hotel
+            if($cat === 'Hoteleria'){
+                $byMes[$mes]['mi']['hotel'] += $cant;
+            }
+        }
+        // calcular totales
+        $mensual = [];
+        foreach($byMes as $mes => $vals){
+            $expo = $vals['expo'];
+            $expo['total'] = $expo['feedlot'] + $expo['campo'] + $expo['hotel'];
+            $mi = $vals['mi'];
+            $mi['total'] = $mi['nt'] + $mi['vq'] + $mi['hotel']; // se excluyen Toros, según ejemplo
+            $mensual[] = [ 'mes'=>$mes, 'expo'=>$expo, 'mi'=>$mi ];
+        }
+
+        return [
+            'superiores' => $superiores,
+            'mensual' => $mensual
+        ];
+    }
+  
 }
   

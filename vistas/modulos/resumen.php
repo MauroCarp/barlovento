@@ -568,68 +568,6 @@
 
 <script>
 (function(){
-  // Datos de ejemplo (fallback). Reemplazar por AJAX cuando esté disponible.
-  const data = {
-    superiores: {
-      exportacion: {
-        filas: [
-          {kg:'menos 300', cab:227}, {kg:'300 - 330', cab:169}, {kg:'330 - 360', cab:167},
-          {kg:'360 - 390', cab:213}, {kg:'390 - 420', cab:384}, {kg:'420 - 450', cab:285},
-          {kg:'450 a 480', cab:50}, {kg:'480 a 490', cab:115}, {kg:'MÁS 490', cab:24}
-        ]
-      },
-      campo: {
-        filas: [
-          {kg:'menos 300', cab:230}, {kg:'300 - 330', cab:192}, {kg:'330 - 360', cab:179},
-          {kg:'360 - 390', cab:82}, {kg:'390 - 420', cab:27}, {kg:'420 - 450', cab:21},
-          {kg:'450 a 460', cab:0}, {kg:'460 a 490', cab:0}, {kg:'MÁS 490', cab:1}
-        ]
-      },
-      mi_novillos: {
-        filas: [
-          {kg:'menos 300', cab:9}, {kg:'300 - 330', cab:13}, {kg:'330 - 360', cab:11},
-          {kg:'360 - 390', cab:29}, {kg:'390 - 420', cab:26}, {kg:'420 - 450', cab:0},
-          {kg:'450 a 480', cab:15}, {kg:'480 a 510', cab:11}, {kg:'MÁS 510', cab:1}
-        ]
-      },
-      toros_mi: {
-        filas: [
-          {kg:'menos 300', cab:9}, {kg:'300 - 330', cab:1}, {kg:'330 - 360', cab:11},
-          {kg:'360 - 390', cab:5}, {kg:'390 - 420', cab:1}, {kg:'420 a 450', cab:0},
-          {kg:'450 a 480', cab:0}, {kg:'480 a 510', cab:0}, {kg:'MÁS 510', cab:0}
-        ]
-      },
-      vq_mi: {
-        filas: [
-          {kg:'menos 180', cab:9}, {kg:'180 a 210', cab:18}, {kg:'210 - 240', cab:26},
-          {kg:'240 - 270', cab:37}, {kg:'270 - 300', cab:60}, {kg:'300 a 320', cab:168},
-          {kg:'320 a 350', cab:183}, {kg:'350 a 380', cab:97}, {kg:'MÁS 380', cab:76}
-        ]
-      },
-      hotel_nt: {
-        filas: [
-          {kg:'menos 300', cab:63}, {kg:'300 - 330', cab:20}, {kg:'330 - 360', cab:30},
-          {kg:'360 - 390', cab:3}, {kg:'390 - 420', cab:0}, {kg:'420 a 450', cab:8},
-          {kg:'450 a 480', cab:0}, {kg:'480 a 510', cab:0}, {kg:'MÁS 510', cab:0}
-        ]
-      },
-      vq_hotel: {
-        filas: [
-          {kg:'menos 180', cab:0}, {kg:'180 a 210', cab:12}, {kg:'210 - 240', cab:60},
-          {kg:'240 - 270', cab:102}, {kg:'270 - 300', cab:59}, {kg:'300 a 330', cab:9},
-          {kg:'330 a 350', cab:6}, {kg:'350 a 380', cab:2}, {kg:'MÁS 380', cab:2}
-        ]
-      }
-    },
-    mensual: [
-      {mes:'ENE', expo:{total:189, feedlot:189, campo:0, hotel:0}, mi:{total:337, nt:61, vq:259, hotel:17}},
-      {mes:'FEB', expo:{total:669, feedlot:669, campo:0, hotel:0}, mi:{total:407, nt:66, vq:260, hotel:81}},
-      {mes:'MAR', expo:{total:497, feedlot:382, campo:115, hotel:0}, mi:{total:469, nt:44, vq:243, hotel:182}},
-      {mes:'ABR', expo:{total:540, feedlot:169, campo:371, hotel:0}, mi:{total:529, nt:18, vq:336, hotel:175}},
-      {mes:'MAY', expo:{total:342, feedlot:227, campo:115, hotel:0}, mi:{total:18, nt:0, vq:18, hotel:0}},
-      {mes:'JUN', expo:{total:115, feedlot:0, campo:115, hotel:0}, mi:{total:9, nt:0, vq:9, hotel:0}},
-    ]
-  };
 
   function fillSimpleTable(rows, bodySel, totalSel){
     let total = 0;
@@ -638,75 +576,106 @@
     rows.forEach(r => {
       total += Number(r.cab)||0;
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${r.kg}</td><td class="text-right">${Number(r.cab).toLocaleString('es-AR')}</td>`;
+      tr.innerHTML = `<td>${r.kg}</td><td class="text-right">${Number(r.cab).toLocaleString('es-AR')}</td><td class="text-center">${r.mes}</td>`;
       tbody.appendChild(tr);
     });
     document.getElementById(totalSel).innerText = total.toLocaleString('es-AR');
   }
 
-  // Render 7 tablas
-  fillSimpleTable(data.superiores.exportacion.filas, 'tbl-exportacion', 'tot-exportacion');
-  fillSimpleTable(data.superiores.campo.filas, 'tbl-campo', 'tot-campo');
-  fillSimpleTable(data.superiores.mi_novillos.filas, 'tbl-mi-novillos', 'tot-mi-novillos');
-  fillSimpleTable(data.superiores.toros_mi.filas, 'tbl-toros-mi', 'tot-toros-mi');
-  fillSimpleTable(data.superiores.vq_mi.filas, 'tbl-vq-mi', 'tot-vq-mi');
-  fillSimpleTable(data.superiores.hotel_nt.filas, 'tbl-hotel-nt', 'tot-hotel-nt');
-  fillSimpleTable(data.superiores.vq_hotel.filas, 'tbl-vq-hotel', 'tot-vq-hotel');
+  function renderAll(payload){
+    // Render 7 tablas superiores
+    fillSimpleTable((payload.superiores?.exportacion?.filas)||[], 'tbl-exportacion', 'tot-exportacion');
+    fillSimpleTable((payload.superiores?.campo?.filas)||[], 'tbl-campo', 'tot-campo');
+    fillSimpleTable((payload.superiores?.mi_novillos?.filas)||[], 'tbl-mi-novillos', 'tot-mi-novillos');
+    fillSimpleTable((payload.superiores?.toros_mi?.filas)||[], 'tbl-toros-mi', 'tot-toros-mi');
+    fillSimpleTable((payload.superiores?.vq_mi?.filas)||[], 'tbl-vq-mi', 'tot-vq-mi');
+    fillSimpleTable((payload.superiores?.hotel_nt?.filas)||[], 'tbl-hotel-nt', 'tot-hotel-nt');
+    fillSimpleTable((payload.superiores?.vq_hotel?.filas)||[], 'tbl-vq-hotel', 'tot-vq-hotel');
 
-  // Tabla mensual
-  const tbodyMensual = document.getElementById('tbl-mensual');
-  let totExpo=0, totExpoFeed=0, totExpoCampo=0, totExpoHotel=0,
-      totMi=0, totMiNt=0, totMiVq=0, totMiHotel=0;
-  data.mensual.forEach(r => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = [
-      `<td>${r.mes}</td>`,
-      `<td class='text-right'>${r.expo.total.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.expo.feedlot.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.expo.campo.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.expo.hotel.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.mi.total.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.mi.nt.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.mi.vq.toLocaleString('es-AR')}</td>`,
-      `<td class='text-right'>${r.mi.hotel.toLocaleString('es-AR')}</td>`
-    ].join('');
-    tbodyMensual.appendChild(tr);
+    // Tabla mensual
+    const mensual = Array.isArray(payload.mensual) ? payload.mensual : [];
+    const tbodyMensual = document.getElementById('tbl-mensual');
+    tbodyMensual.innerHTML = '';
+    let totExpo=0, totExpoFeed=0, totExpoCampo=0, totExpoHotel=0,
+        totMi=0, totMiNt=0, totMiVq=0, totMiHotel=0;
+    mensual.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = [
+        `<td>${r.mes}</td>`,
+        `<td class='text-right'>${Number(r.expo?.total||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.expo?.feedlot||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.expo?.campo||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.expo?.hotel||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.mi?.total||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.mi?.nt||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.mi?.vq||0).toLocaleString('es-AR')}</td>`,
+        `<td class='text-right'>${Number(r.mi?.hotel||0).toLocaleString('es-AR')}</td>`
+      ].join('');
+      tbodyMensual.appendChild(tr);
 
-    totExpo += r.expo.total; totExpoFeed += r.expo.feedlot; totExpoCampo += r.expo.campo; totExpoHotel += r.expo.hotel;
-    totMi += r.mi.total; totMiNt += r.mi.nt; totMiVq += r.mi.vq; totMiHotel += r.mi.hotel;
-  });
-  document.getElementById('mensual-expo').textContent = totExpo.toLocaleString('es-AR');
-  document.getElementById('mensual-expo-feed').textContent = totExpoFeed.toLocaleString('es-AR');
-  document.getElementById('mensual-expo-campo').textContent = totExpoCampo.toLocaleString('es-AR');
-  document.getElementById('mensual-expo-hotel').textContent = totExpoHotel.toLocaleString('es-AR');
-  document.getElementById('mensual-mi').textContent = totMi.toLocaleString('es-AR');
-  document.getElementById('mensual-mi-nt').textContent = totMiNt.toLocaleString('es-AR');
-  document.getElementById('mensual-mi-vq').textContent = totMiVq.toLocaleString('es-AR');
-  document.getElementById('mensual-mi-hotel').textContent = totMiHotel.toLocaleString('es-AR');
-
-  // Gráfico EXPO vs MI
-  try {
-    const ctx = document.getElementById('chart-oferta').getContext('2d');
-    const labels = data.mensual.map(m => m.mes);
-    const expo = data.mensual.map(m => m.expo.total);
-    const mi = data.mensual.map(m => m.mi.total);
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {label: 'EXPO', data: expo, borderColor: 'rgba(54,162,235,1)', backgroundColor: 'rgba(54,162,235,0.1)', fill: false, tension: 0.2},
-          {label: 'MI', data: mi, borderColor: 'rgba(255,99,132,1)', backgroundColor: 'rgba(255,99,132,0.1)', fill: false, tension: 0.2}
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
-        legend: { display: true }
-      }
+      totExpo += Number(r.expo?.total||0);
+      totExpoFeed += Number(r.expo?.feedlot||0);
+      totExpoCampo += Number(r.expo?.campo||0);
+      totExpoHotel += Number(r.expo?.hotel||0);
+      totMi += Number(r.mi?.total||0);
+      totMiNt += Number(r.mi?.nt||0);
+      totMiVq += Number(r.mi?.vq||0);
+      totMiHotel += Number(r.mi?.hotel||0);
     });
-  } catch (e) {
-    console.warn('Chart no disponible:', e);
+    
+    document.getElementById('mensual-expo').textContent = totExpo.toLocaleString('es-AR');
+    document.getElementById('mensual-expo-feed').textContent = totExpoFeed.toLocaleString('es-AR');
+    document.getElementById('mensual-expo-campo').textContent = totExpoCampo.toLocaleString('es-AR');
+    document.getElementById('mensual-expo-hotel').textContent = totExpoHotel.toLocaleString('es-AR');
+    document.getElementById('mensual-mi').textContent = totMi.toLocaleString('es-AR');
+    document.getElementById('mensual-mi-nt').textContent = totMiNt.toLocaleString('es-AR');
+    document.getElementById('mensual-mi-vq').textContent = totMiVq.toLocaleString('es-AR');
+    document.getElementById('mensual-mi-hotel').textContent = totMiHotel.toLocaleString('es-AR');
+
+    // Gráfico EXPO vs MI
+    try {
+      const ctx = document.getElementById('chart-oferta').getContext('2d');
+      const labels = mensual.map(m => m.mes);
+      const expo = mensual.map(m => Number(m.expo?.total||0));
+      const mi = mensual.map(m => Number(m.mi?.total||0));
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {label: 'EXPO', data: expo, borderColor: 'rgba(54,162,235,1)', backgroundColor: 'rgba(54,162,235,0.1)', fill: false, tension: 0.2},
+            {label: 'MI', data: mi, borderColor: 'rgba(255,99,132,1)', backgroundColor: 'rgba(255,99,132,0.1)', fill: false, tension: 0.2}
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+          legend: { display: true }
+        }
+      });
+    } catch (e) {
+      console.warn('Chart no disponible:', e);
+    }
   }
+
+  // Cargar datos por AJAX; fallback si falla
+  if(window.$ && $.ajax){
+    $.ajax({
+      url: 'ajax/gordosPrincipal.ajax.php',
+      method: 'POST',
+      data: { accion: 'dataResumen' },
+      success: function(res){
+
+      try{
+          const payload = (typeof res === 'string') ? JSON.parse(res) : res;
+    console.log(payload)
+          renderAll(payload);
+        }catch(err){
+          console.warn('Respuesta inválida', err);
+        }
+      },
+    });
+  }
+
 })();
 </script>
