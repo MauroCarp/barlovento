@@ -378,7 +378,7 @@
 
                     </thead>
                     
-                    <tbody id="tbl-hotel-nt"></tbody>
+                    <tbody id="tbl-nt-hotel"></tbody>
 
                     <tfoot>
 
@@ -386,7 +386,7 @@
 
                         <th class="text-right">TOTAL</th>
                         
-                        <th class="text-right" id="tot-hotel-nt">0</th>
+                        <th class="text-right" id="tot-nt-hotel">0</th>
                     
                       </tr>
                     
@@ -589,73 +589,86 @@
     fillSimpleTable((payload.superiores?.mi_novillos?.filas)||[], 'tbl-mi-novillos', 'tot-mi-novillos');
     fillSimpleTable((payload.superiores?.toros_mi?.filas)||[], 'tbl-toros-mi', 'tot-toros-mi');
     fillSimpleTable((payload.superiores?.vq_mi?.filas)||[], 'tbl-vq-mi', 'tot-vq-mi');
-    fillSimpleTable((payload.superiores?.hotel_nt?.filas)||[], 'tbl-hotel-nt', 'tot-hotel-nt');
+    fillSimpleTable((payload.superiores?.nt_hotel?.filas)||[], 'tbl-nt-hotel', 'tot-nt-hotel');
     fillSimpleTable((payload.superiores?.vq_hotel?.filas)||[], 'tbl-vq-hotel', 'tot-vq-hotel');
 
-    // Tabla mensual
-    const mensual = Array.isArray(payload.mensual) ? payload.mensual : [];
-    const tbodyMensual = document.getElementById('tbl-mensual');
-    tbodyMensual.innerHTML = '';
-    let totExpo=0, totExpoFeed=0, totExpoCampo=0, totExpoHotel=0,
-        totMi=0, totMiNt=0, totMiVq=0, totMiHotel=0;
-    mensual.forEach(r => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = [
-        `<td>${r.mes}</td>`,
-        `<td class='text-right'>${Number(r.expo?.total||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.expo?.feedlot||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.expo?.campo||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.expo?.hotel||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.mi?.total||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.mi?.nt||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.mi?.vq||0).toLocaleString('es-AR')}</td>`,
-        `<td class='text-right'>${Number(r.mi?.hotel||0).toLocaleString('es-AR')}</td>`
-      ].join('');
-      tbodyMensual.appendChild(tr);
-
-      totExpo += Number(r.expo?.total||0);
-      totExpoFeed += Number(r.expo?.feedlot||0);
-      totExpoCampo += Number(r.expo?.campo||0);
-      totExpoHotel += Number(r.expo?.hotel||0);
-      totMi += Number(r.mi?.total||0);
-      totMiNt += Number(r.mi?.nt||0);
-      totMiVq += Number(r.mi?.vq||0);
-      totMiHotel += Number(r.mi?.hotel||0);
-    });
-    
-    document.getElementById('mensual-expo').textContent = totExpo.toLocaleString('es-AR');
-    document.getElementById('mensual-expo-feed').textContent = totExpoFeed.toLocaleString('es-AR');
-    document.getElementById('mensual-expo-campo').textContent = totExpoCampo.toLocaleString('es-AR');
-    document.getElementById('mensual-expo-hotel').textContent = totExpoHotel.toLocaleString('es-AR');
-    document.getElementById('mensual-mi').textContent = totMi.toLocaleString('es-AR');
-    document.getElementById('mensual-mi-nt').textContent = totMiNt.toLocaleString('es-AR');
-    document.getElementById('mensual-mi-vq').textContent = totMiVq.toLocaleString('es-AR');
-    document.getElementById('mensual-mi-hotel').textContent = totMiHotel.toLocaleString('es-AR');
-
-    // Gráfico EXPO vs MI
+    // Tabla Mensual (Oferta mensual)
     try {
-      const ctx = document.getElementById('chart-oferta').getContext('2d');
-      const labels = mensual.map(m => m.mes);
-      const expo = mensual.map(m => Number(m.expo?.total||0));
-      const mi = mensual.map(m => Number(m.mi?.total||0));
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {label: 'EXPO', data: expo, borderColor: 'rgba(54,162,235,1)', backgroundColor: 'rgba(54,162,235,0.1)', fill: false, tension: 0.2},
-            {label: 'MI', data: mi, borderColor: 'rgba(255,99,132,1)', backgroundColor: 'rgba(255,99,132,0.1)', fill: false, tension: 0.2}
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
-          legend: { display: true }
-        }
+      const mensual = Array.isArray(payload.mensual) ? payload.mensual : [];
+      const tbody = document.getElementById('tbl-mensual');
+      tbody.innerHTML = '';
+
+      let sumExpoTotal = 0, sumExpoFeed = 0, sumExpoCampo = 0, sumExpoHotel = 0;
+      let sumMiTotal = 0, sumMiNt = 0, sumMiVq = 0, sumMiHotel = 0;
+
+      mensual.forEach(m => {
+        const expo = m.expo || { total:0, feedlot:0, campo:0, hotel:0 };
+        const mi = m.mi || { total:0, nt:0, vq:0, hotel:0 };
+
+        sumExpoTotal += Number(expo.total)||0;
+        sumExpoFeed += Number(expo.feedlot)||0;
+        sumExpoCampo += Number(expo.campo)||0;
+        sumExpoHotel += Number(expo.hotel)||0;
+
+        sumMiTotal += Number(mi.total)||0;
+        sumMiNt += Number(mi.nt)||0;
+        sumMiVq += Number(mi.vq)||0;
+        sumMiHotel += Number(mi.hotel)||0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${m.mes}</td>
+          <td class="text-right">${Number(expo.total).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(expo.feedlot).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(expo.campo).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(expo.hotel).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(mi.total).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(mi.nt).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(mi.vq).toLocaleString('es-AR')}</td>
+          <td class="text-right">${Number(mi.hotel).toLocaleString('es-AR')}</td>
+        `;
+        tbody.appendChild(tr);
       });
-    } catch (e) {
-      console.warn('Chart no disponible:', e);
+
+      // Totales en el footer
+      const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = Number(val).toLocaleString('es-AR'); };
+      setTxt('mensual-expo', sumExpoTotal);
+      setTxt('mensual-expo-feed', sumExpoFeed);
+      setTxt('mensual-expo-campo', sumExpoCampo);
+      setTxt('mensual-expo-hotel', sumExpoHotel);
+      setTxt('mensual-mi', sumMiTotal);
+      setTxt('mensual-mi-nt', sumMiNt);
+      setTxt('mensual-mi-vq', sumMiVq);
+      setTxt('mensual-mi-hotel', sumMiHotel);
+    } catch(e) {
+      console.warn('Error al renderizar mensual:', e);
     }
+
+    
+    // Gráfico EXPO vs MI
+    // try {
+    //   const ctx = document.getElementById('chart-oferta').getContext('2d');
+    //   const labels = mensual.map(m => m.mes);
+    //   const expo = mensual.map(m => Number(m.expo?.total||0));
+    //   const mi = mensual.map(m => Number(m.mi?.total||0));
+    //   new Chart(ctx, {
+    //     type: 'line',
+    //     data: {
+    //       labels,
+    //       datasets: [
+    //         {label: 'EXPO', data: expo, borderColor: 'rgba(54,162,235,1)', backgroundColor: 'rgba(54,162,235,0.1)', fill: false, tension: 0.2},
+    //         {label: 'MI', data: mi, borderColor: 'rgba(255,99,132,1)', backgroundColor: 'rgba(255,99,132,0.1)', fill: false, tension: 0.2}
+    //       ]
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+    //       legend: { display: true }
+    //     }
+    //   });
+    // } catch (e) {
+    //   console.warn('Chart no disponible:', e);
+    // }
   }
 
   // Cargar datos por AJAX; fallback si falla

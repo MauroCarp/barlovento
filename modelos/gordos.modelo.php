@@ -5,8 +5,28 @@ class ModeloGordos{
 
   // Inserta una fila en gordosResumen
   static public function mdlInsertResumen($datos){
-      
-    $sql = "INSERT INTO gordosResumen(fecha, mes, tipo, categoria, kg, cantidad, posicion) VALUES $datos";
+    
+    $sql = "DELETE FROM gordosresumen";
+    $stmt = Conexion::conectar()->prepare($sql);
+    $stmt->execute();
+    $stmt = null;
+
+    $sql = "INSERT INTO gordosresumen(fecha, mes, tipo, categoria, kg, cantidad, posicion) VALUES $datos";
+
+    $stmt = Conexion::conectar()->prepare($sql);
+    
+    return $stmt->execute();
+
+  }
+
+  static public function mdlInsertResumenMensual($datos){
+    
+    $sql = "DELETE FROM gordosresumenmensual";
+    $stmt = Conexion::conectar()->prepare($sql);
+    $stmt->execute();
+    $stmt = null;
+
+    $sql = "INSERT INTO gordosresumenmensual(mes, tipo, feedlot_novillos, campo_vaquillona, hotel) VALUES $datos";
 
     $stmt = Conexion::conectar()->prepare($sql);
     
@@ -17,10 +37,13 @@ class ModeloGordos{
   // Inserta una fila en gordos
   static public function mdlInsertGordos($datos){
 
+    $sql = "DELETE FROM gordos";
+    $stmt = Conexion::conectar()->prepare($sql);
+    $stmt->execute();
+    $stmt = null;
+
     $sql = "INSERT INTO gordos(fecha, mes, oferta, demanda, tipo) VALUES $datos";
     
-    var_dump($sql);
-
     $stmt = Conexion::conectar()->prepare($sql);
 
     return $stmt->execute();
@@ -51,11 +74,16 @@ class ModeloGordos{
   }
 
   // Todas las filas agrupadas por mes, tipo y categoría (para armar "mensual")
-  static public function mdlAgrupadoMensual(){
-    $sql = "SELECT mes, tipo, categoria, SUM(cantidad) AS cantidad FROM gordosresumen GROUP BY mes, tipo, categoria";
+  static public function mdlResumenMensual(){
+
+    $sql = "SELECT * FROM gordosresumenmensual ORDER BY id ASC";
+
     $stmt = Conexion::conectar()->prepare($sql);
+
     $stmt->execute();
+
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
   }
 
 

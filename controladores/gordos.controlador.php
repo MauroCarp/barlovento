@@ -60,6 +60,8 @@ class ControladorGordos{
 
                     $objResumen = array();
 
+                    $objResumenMensual = array();
+
                     $objGordos = array();
 
                     $nResumen = 0;
@@ -76,36 +78,38 @@ class ControladorGordos{
                             foreach ($Reader as $Row){     
                                 
                                 if($i == 1){
-                                    
+                                  
                                     if($rowNumber == 1)
                                         $fecha = isset($Row[2]) ? $excelSerialToDate($Row[2]) : date('Y-m-d');
                                         
-                                    if($rowNumber > 3 && $rowNumber < 12){
+                                    if($rowNumber >= 3 && $rowNumber < 12){
                                             
                                         $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[4]."'","'Exportacion'","'Novillos'","'".$Row[2]."'",$Row[3],$nResumen)) . ')';
                                         $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[7]."'","'Campo Pastoreo'","'Novillos'","'".$Row[5]."'",$Row[6],$nResumen)) . ')';
                                         $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[10]."'","'Mercado Interno'","'Novillos'","'".$Row[8]."'",$Row[9],$nResumen)) . ')';
                                         $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[13]."'","'Mercado Interno'","'Toros'","'".$Row[11]."'",$Row[12],$nResumen)) . ')';
                                         $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[16]."'","'Mercado Interno'","'Vaquillonas'","'".$Row[14]."'",$Row[15],$nResumen)) . ')';
-                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[19]."'","'Mercado Interno'","'Vaquillonas'","'".$Row[17]."'",$Row[18],$nResumen)) . ')';
+                                        $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[19]."'","'Novillitos'","'Hoteleria'","'".$Row[17]."'",$Row[18],$nResumen)) . ')';
                                         $objResumen[] = '(' . implode(',',array("'".$fecha."'","'".$Row[22]."'","'Vaquillonas'","'Hoteleria'","'".$Row[20]."'","'".$Row[21]."'",$nResumen)) . ')';
 
                                         $nResumen++;
 
-                                    }
+                                    } 
+                                    
+                                    if($rowNumber >= 16 && $rowNumber < 22){
+                                     
+                                        $mes = ($Row[2] != '') ? $Row[2] : '-';
+                                        $feedlot = ($Row[4] != '') ? $Row[4] : 0;
+                                        $campo = ($Row[5] != '') ? $Row[5] : 0;
+                                        $hotel = ($Row[6] != '') ? $Row[6] : 0;
+                                        $novillos = ($Row[8] != '') ? $Row[8] : 0;
+                                        $vaquillona = ($Row[9] != '') ? $Row[9] : 0;
+                                        $hotel2 = ($Row[10] != '') ? $Row[10] : 0;
 
-                                    // if($rowNumber > 18 && $rowNumber < 23){
+                                        $objResumenMensual[] = '(' . implode(',',array("'".$mes."'","'exportacion'","'".$feedlot."'","'".$campo."'",$hotel)) . ')';
+                                        $objResumenMensual[] = '(' . implode(',',array("'".$mes."'","'interno'","'".$novillos."'","'".$vaquillona."'",$hotel2)) . ')';
 
-                                    //     $objGordos[] = array(
-                                    //         'fecha' => $fecha,
-                                    //         'mes' => $Row[0],
-                                    //         'oferta' => $Row[2],
-                                    //         'demanda' => $Row[3],
-                                    //         'tipo' => 'Exportacion',
-                                    //     );
-
-                                    // }
-                   
+                                    } 
                                     
                                     $rowNumber++;
                                 }
@@ -131,14 +135,18 @@ class ControladorGordos{
 
                     }
 
-                    // $respuesta[] = ModeloGordos::mdlInsertResumen(implode(',',$objResumen));
-                    // var_dump($respuesta);
-                    $respuesta[] = ModeloGordos::mdlInsertGordos(implode(',',$objGordos));
-                    var_dump($respuesta);
-                    die;
+                    $respuesta[] = ModeloGordos::mdlInsertResumen(implode(',',$objResumen));
 
-                    if($respuesta != 'ok'){
-                        echo'<script>
+                    $respuesta[] = ModeloGordos::mdlInsertResumenMensual(implode(',',$objResumenMensual));
+
+                    $respuesta[] = ModeloGordos::mdlInsertGordos(implode(',',$objGordos));
+
+                    $todosOk = !empty($respuesta) && array_reduce($respuesta, function($acc, $val) {
+                        return $acc && $val === 'ok';
+                    }, true);
+
+                    if(!$todosOk){
+                        echo'<script>,
 
                         swal({
                                 type: "error",
@@ -192,11 +200,12 @@ class ControladorGordos{
             'toros_mi' => ['tipo' => 'Mercado Interno', 'categoria' => 'Toros'],
             'vq_mi' => ['tipo' => 'Mercado Interno', 'categoria' => 'Vaquillonas'],
             // Estos dos pueden variar según cómo se cargó el Excel; se intentan valores comunes
-            'hotel_nt' => ['tipo' => 'Hoteleria', 'categoria' => 'Novillitos'],
+            'nt_hotel' => ['tipo' => 'Novillitos', 'categoria' => 'Hoteleria'],
             'vq_hotel' => ['tipo' => 'Vaquillonas', 'categoria' => 'Hoteleria'],
         ];
 
         $superiores = [];
+
         foreach($map as $key => $tc){
             $rows = ModeloGordos::mdlFilasKgPorTipoCategoria($tc['tipo'], $tc['categoria']);
             $filas = [];
@@ -206,50 +215,43 @@ class ControladorGordos{
             $superiores[$key] = ['filas' => $filas];
         }
 
-        // Mensual: agregamos por mes
-        $mensualRaw = ModeloGordos::mdlAgrupadoMensual();
+
+        // Construir estructura mensual usando gordosresumenmensual:
+        // Para cada mes:
+        // - EXPO: tomar fila donde tipo = 'exportacion' y mapear feedlot/campo/hotel
+        // - MI: tomar fila donde tipo = 'interno' y mapear nt/vq/hotel
+        $mensualRaw = ModeloGordos::mdlResumenMensual();
         $byMes = [];
         foreach($mensualRaw as $r){
             $mes = $r['mes'];
-            $tipo = $r['tipo'];
-            $cat = $r['categoria'];
-            $cant = (int)$r['cantidad'];
+            $tipo = strtolower(trim($r['tipo']));
+            $feedlot = (int)($r['feedlot_novillos'] ?? 0);
+            $campo = (int)($r['campo_vaquillona'] ?? 0);
+            $hotel = (int)($r['hotel'] ?? 0);
             if(!isset($byMes[$mes])){
                 $byMes[$mes] = [
                     'expo' => ['total'=>0,'feedlot'=>0,'campo'=>0,'hotel'=>0],
                     'mi' => ['total'=>0,'nt'=>0,'vq'=>0,'hotel'=>0]
                 ];
             }
-            // Expo
-            if($tipo === 'Exportacion' && $cat === 'Novillos'){
-                $byMes[$mes]['expo']['feedlot'] += $cant; // asumimos feedlot = exportación directa
-            }
-            if($tipo === 'Campo Pastoreo' && $cat === 'Novillos'){
-                $byMes[$mes]['expo']['campo'] += $cant;
-            }
-            // Hotel expo (si existiera alguna marca específica)
-            if($tipo === 'Exportacion' && $cat === 'Hoteleria'){
-                $byMes[$mes]['expo']['hotel'] += $cant;
-            }
-            // MI
-            if($tipo === 'Mercado Interno' && $cat === 'Novillos'){
-                $byMes[$mes]['mi']['nt'] += $cant;
-            }
-            if($tipo === 'Mercado Interno' && $cat === 'Vaquillonas'){
-                $byMes[$mes]['mi']['vq'] += $cant;
-            }
-            // Hotelería (independientemente del tipo) se acumula en MI.hotel
-            if($cat === 'Hoteleria'){
-                $byMes[$mes]['mi']['hotel'] += $cant;
+            if($tipo === 'exportacion'){
+                $byMes[$mes]['expo']['feedlot'] = $feedlot;
+                $byMes[$mes]['expo']['campo'] = $campo;
+                $byMes[$mes]['expo']['hotel'] = $hotel;
+            } elseif($tipo === 'interno' || $tipo === 'mercado interno'){
+                $byMes[$mes]['mi']['nt'] = $feedlot; // en MI, 'feedlot_novillos' representa NT
+                $byMes[$mes]['mi']['vq'] = $campo;   // en MI, 'campo_vaquillona' representa VQ
+                $byMes[$mes]['mi']['hotel'] = $hotel;
             }
         }
-        // calcular totales
+
+        // calcular totales por bloque
         $mensual = [];
         foreach($byMes as $mes => $vals){
             $expo = $vals['expo'];
-            $expo['total'] = $expo['feedlot'] + $expo['campo'] + $expo['hotel'];
+            $expo['total'] = ($expo['feedlot'] + $expo['campo'] + $expo['hotel']);
             $mi = $vals['mi'];
-            $mi['total'] = $mi['nt'] + $mi['vq'] + $mi['hotel']; // se excluyen Toros, según ejemplo
+            $mi['total'] = ($mi['nt'] + $mi['vq'] + $mi['hotel']);
             $mensual[] = [ 'mes'=>$mes, 'expo'=>$expo, 'mi'=>$mi ];
         }
 
