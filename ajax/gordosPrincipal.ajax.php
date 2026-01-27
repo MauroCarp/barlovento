@@ -1,15 +1,35 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../controladores/gordos.controlador.php';
 
-$accion = $_GET['accion'] ?? $_POST['accion'] ?? 'data';
+require_once "../controladores/gordos.controlador.php";
 
-if ($accion === 'data') {
-  $response = ControladorGordos::ctrObtenerPrincipal();
-  echo json_encode($response);
-  exit;
+class AjaxGordos{
+
+	/*=============================================
+	CARGAR DATA REGISTRO
+	=============================================*/	
+
+	public function ajaxMostrarData(){
+
+		$respuesta = ControladorGordos::ctrMostrarData();
+        
+    echo json_encode($respuesta);
+
+	}
+
 }
 
-http_response_code(400);
-echo json_encode(['error' => 'Acción no soportada']);
-exit;
+/*=============================================
+EDITAR USUARIO
+=============================================*/
+if(isset($_POST["accion"])){
+
+	$accion = $_POST['accion'];
+
+    if($accion == 'data'){
+      
+		  $mostrarData = new AjaxGordos();
+      $mostrarData -> ajaxMostrarData();
+
+    }
+
+}

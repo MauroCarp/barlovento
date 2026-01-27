@@ -1,18 +1,18 @@
 <?php
-require_once "modelos/gordos.modelo.php";
+require_once __DIR__ . '/../modelos/gordos.modelo.php';
 
 class ControladorGordos{
 
   // Obtiene datos para el panel principal desde DB
-  static public function ctrObtenerPrincipal(){
+  static public function ctrMostrarData(){
 
 
-    return [
-      'fecha' => date('Y-m-d'),
-    //   'meses' => $meses,
-    //   'externo' => $externo,
-    //   'interno' => $interno,
-    ];
+    $tabla = "gordos";
+
+    $data = ModeloGordos::mdlMostrarData($tabla);
+    
+    return $data;
+
   }
 
   // Carga desde un archivo CSV con encabezados

@@ -27,4 +27,18 @@ class ModeloGordos{
     
   }
 
+  static public function mdlMostrarData($tabla){
+
+    $sql = "SELECT * FROM $tabla";
+    
+    $stmt = Conexion::conectar()->prepare($sql);
+    
+    $stmt -> execute();
+
+    return $stmt -> fetchAll();
+    
+  }
+
+
+
 }
