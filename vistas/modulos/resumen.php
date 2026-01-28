@@ -593,8 +593,8 @@
     fillSimpleTable((payload.superiores?.vq_hotel?.filas)||[], 'tbl-vq-hotel', 'tot-vq-hotel');
 
     // Tabla Mensual (Oferta mensual)
+    const mensual = Array.isArray(payload.mensual) ? payload.mensual : [];
     try {
-      const mensual = Array.isArray(payload.mensual) ? payload.mensual : [];
       const tbody = document.getElementById('tbl-mensual');
       tbody.innerHTML = '';
 
@@ -618,11 +618,11 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${m.mes}</td>
-          <td class="text-right">${Number(expo.total).toLocaleString('es-AR')}</td>
+          <td class="text-right"><strong>${Number(expo.total).toLocaleString('es-AR')}</strong></td>
           <td class="text-right">${Number(expo.feedlot).toLocaleString('es-AR')}</td>
           <td class="text-right">${Number(expo.campo).toLocaleString('es-AR')}</td>
           <td class="text-right">${Number(expo.hotel).toLocaleString('es-AR')}</td>
-          <td class="text-right">${Number(mi.total).toLocaleString('es-AR')}</td>
+          <td class="text-right"><strong>${Number(mi.total).toLocaleString('es-AR')}</strong></td>
           <td class="text-right">${Number(mi.nt).toLocaleString('es-AR')}</td>
           <td class="text-right">${Number(mi.vq).toLocaleString('es-AR')}</td>
           <td class="text-right">${Number(mi.hotel).toLocaleString('es-AR')}</td>
@@ -646,29 +646,34 @@
 
     
     // Gráfico EXPO vs MI
-    // try {
-    //   const ctx = document.getElementById('chart-oferta').getContext('2d');
-    //   const labels = mensual.map(m => m.mes);
-    //   const expo = mensual.map(m => Number(m.expo?.total||0));
-    //   const mi = mensual.map(m => Number(m.mi?.total||0));
-    //   new Chart(ctx, {
-    //     type: 'line',
-    //     data: {
-    //       labels,
-    //       datasets: [
-    //         {label: 'EXPO', data: expo, borderColor: 'rgba(54,162,235,1)', backgroundColor: 'rgba(54,162,235,0.1)', fill: false, tension: 0.2},
-    //         {label: 'MI', data: mi, borderColor: 'rgba(255,99,132,1)', backgroundColor: 'rgba(255,99,132,0.1)', fill: false, tension: 0.2}
-    //       ]
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
-    //       legend: { display: true }
-    //     }
-    //   });
-    // } catch (e) {
-    //   console.warn('Chart no disponible:', e);
-    // }
+    try {
+      const ctx = document.getElementById('chart-oferta').getContext('2d');
+      const labels = mensual.map(m => m.mes);
+      const expo = mensual.map(m => Number(m.expo?.total||0));
+      const mi = mensual.map(m => Number(m.mi?.total||0));
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {label: 'EXPORTACION', data: expo, borderColor: 'rgba(54,162,235,1)', backgroundColor: 'rgba(54,162,235,0.1)', fill: false, tension: 0.2},
+            {label: 'MERCADO INTERNO', data: mi, borderColor: 'rgba(255,99,132,1)', backgroundColor: 'rgba(255,99,132,0.1)', fill: false, tension: 0.2}
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+          legend: { display: true },
+          plugins: {
+            labels: {
+              render: 'value'
+            }
+          }
+        }
+      });
+    } catch (e) {
+      console.warn('Chart no disponible:', e);
+    }
   }
 
   // Cargar datos por AJAX; fallback si falla
