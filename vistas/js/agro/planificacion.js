@@ -33,6 +33,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       $('#idPlanificacion').val(respuesta.idPlanificacion)
 
       generarInputFile(respuesta.lotes)
+      // generarInputFile(respuesta.lotes,'produccion')
 
       cultivosActuales = Object.keys(respuesta.costos)
       cultivosNoCobertura = [...new Set(cultivosActuales

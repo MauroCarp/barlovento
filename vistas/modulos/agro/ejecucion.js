@@ -36,7 +36,7 @@ $('#ejecucionTab').on('click',function(){
 })
 
 const generarInputFile = (lotes) => {
-
+  console.log('chay')
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
   
   let pichiGruesa = []

@@ -55,7 +55,7 @@ const nombreCultivos = {
   'carinata': 'Carinata',
 }
 
-const generarInputFile = (lotes) => {
+const generarInputFile = (lotes,tipo = 'Ejecucion') => {
 
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
   
@@ -64,7 +64,7 @@ const generarInputFile = (lotes) => {
   let betyGruesa = []
   let betyFina = []
 
-  $('#formEjecucion').append($(`
+  $(`#form${tipo}`).append($(`
                               <div class="box box-success">
       
                                   <div class="box-header with-border">
@@ -73,7 +73,7 @@ const generarInputFile = (lotes) => {
                               
                                   </div>
                             
-                                  <div class="box-body" id="inputPichi">
+                                  <div class="box-body" id="inputPichi${tipo}">
                             
                                   </div>
 
@@ -86,7 +86,7 @@ const generarInputFile = (lotes) => {
                               
                                   </div>
                             
-                                  <div class="box-body" id="inputBety">
+                                  <div class="box-body" id="inputBety${tipo}">
                             
                                   </div>
 
@@ -107,7 +107,7 @@ const generarInputFile = (lotes) => {
 
               <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${lotes[key]['campo']}"/>
 
               </div>
               
@@ -125,9 +125,9 @@ const generarInputFile = (lotes) => {
 
             <div class="input-group">
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}${tipo}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${lotes[key]['campo']}"/>
 
               </div>
               
@@ -151,9 +151,9 @@ const generarInputFile = (lotes) => {
 
             <div class="input-group">
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}${tipo}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${campo}"/>
 
               </div>
               
@@ -173,9 +173,9 @@ const generarInputFile = (lotes) => {
 
             <div class="input-group">
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}${tipo}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${campo}"/>
 
               </div>
               
@@ -191,57 +191,54 @@ const generarInputFile = (lotes) => {
 
   if(pichiGruesa != undefined){
     
-    $('#inputPichi').append($('<div id="inputPichiGruesa" style="display:none"></div>'))
-    $('#inputPichiGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $('#inputPichiGruesa').append($(`${pichiGruesa.join('')}`))
+    $(`#inputPichi${tipo}`).append($(`<div id="inputPichiGruesa${tipo}" style="display:none"></div>`))
+    $(`#inputPichiGruesa${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
+    $(`#inputPichiGruesa${tipo}`).append($(`${pichiGruesa.join('')}`))
 
   }
 
   if(pichiFina != undefined){
 
-    $('#inputPichi').append($('<div id="inputPichiFina"></div>'))
-    $('#inputPichiFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $('#inputPichiFina').append($(`${pichiFina.join('')}`))
+    $(`#inputPichi${tipo}`).append($(`<div id="inputPichiFina${tipo}"></div>`))
+    $(`#inputPichiFina${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
+    $(`#inputPichiFina${tipo}`).append($(`${pichiFina.join('')}`))
 
   }
 
   if(betyGruesa != undefined){
 
-    $('#inputBety').append($('<div id="inputBetyGruesa" style="display:none"></div>'))
-    $('#inputBetyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $('#inputBetyGruesa').append($(`${betyGruesa.join('')}`))
+    $(`#inputBety${tipo}`).append($(`<div id="inputBetyGruesa${tipo}" style="display:none"></div>`))
+    $(`#inputBetyGruesa${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
+    $(`#inputBetyGruesa${tipo}`).append($(`${betyGruesa.join('')}`))
 
   }
 
   if(betyFina != undefined){
 
-    $('#inputBety').append($('<div id="inputBetyFina"></div>'))
-    $('#inputBetyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $('#inputBetyFina').append($(`${betyFina.join('')}`))
+    $(`#inputBety${tipo}`).append($(`<div id="inputBetyFina${tipo}"></div>`))
+    $(`#inputBetyFina${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
+    $(`#inputBetyFina${tipo}`).append($(`${betyFina.join('')}`))
 
   }
 
 }
 
 
-$('#selectEtapa').on('change',function(){
-  
-  let value = $(this).val()
+const toggleEtapaInputs = (tipo, value) => {
+  const isGruesa = value === 'gruesa';
+  $(`#inputPichiGruesa${tipo}`).toggle(isGruesa ? 250 : 0);
+  $(`#inputBetyGruesa${tipo}`).toggle(isGruesa ? 250 : 0);
+  $(`#inputPichiFina${tipo}`).toggle(!isGruesa ? 250 : 0);
+  $(`#inputBetyFina${tipo}`).toggle(!isGruesa ? 250 : 0);
+};
 
-  if(value == 'gruesa'){
-    $('#inputPichiGruesa').show(250)
-    $('#inputBetyGruesa').show(250)
-    $('#inputPichiFina').hide(250)
-    $('#inputBetyFina').hide(250)
-  } else {
-    $('#inputPichiGruesa').hide(250)
-    $('#inputBetyGruesa').hide(250)
-    $('#inputPichiFina').show(250)
-    $('#inputBetyFina').show(250)
+$('#selectEtapaProduccion').on('change', function () {
+  toggleEtapaInputs('Produccion', $(this).val());
+});
 
-  }
-
-})
+$('#selectEtapaEjecucion').on('change', function () {
+  toggleEtapaInputs('Ejecucion', $(this).val());
+});
 
 
 const tipoCultivo = (cultivo)=>{
@@ -701,15 +698,36 @@ $('#btnCargaLotes').on('click',function(){
   $('#selectEtapa').val(etapa)
 
   if(etapa == 'gruesa'){
-    $('#inputPichiGruesa').show(250)
-    $('#inputBetyGruesa').show(250)
-    $('#inputPichiFina').hide(250)
-    $('#inputBetyFina').hide(250)
+    $('#inputPichiGruesaEjecucion').show(250)
+    $('#inputBetyGruesaEjecucion').show(250)
+    $('#inputPichiFinaEjecucion').hide(250)
+    $('#inputBetyFinaEjecucion').hide(250)
   } else {
-    $('#inputPichiGruesa').hide(250)
-    $('#inputBetyGruesa').hide(250)
-    $('#inputPichiFina').show(250)
-    $('#inputBetyFina').show(250)
+    $('#inputPichiGruesaEjecucion').hide(250)
+    $('#inputBetyGruesaEjecucion').hide(250)
+    $('#inputPichiFinaEjecucion').show(250)
+    $('#inputBetyFinaEjecucion').show(250)
+
+  }
+
+})
+
+$('#btnCargaLotesProduccion').on('click',function(){
+
+  let etapa = $('#etapaProduccion').val()
+
+  $('#selectEtapa').val(etapa)
+
+  if(etapa == 'gruesa'){
+    $('#inputPichiGruesaProduccion').show(250)
+    $('#inputBetyGruesaProduccion').show(250)
+    $('#inputPichiFinaProduccion').hide(250)
+    $('#inputBetyFinaProduccion').hide(250)
+  } else {
+    $('#inputPichiGruesaProduccion').hide(250)
+    $('#inputBetyGruesaProduccion').hide(250)
+    $('#inputPichiFinaProduccion').show(250)
+    $('#inputBetyFinaProduccion').show(250)
 
   }
 

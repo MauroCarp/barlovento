@@ -199,7 +199,7 @@ include 'vistas/modulos/modales/agro/costosPlanificacion.modal.php';
 
 include 'vistas/modulos/modales/agro/cargarEjecucion.modal.php';
 
-include 'vistas/modulos/modales/agro/cargarEjecucionRindes.modal.php';
+include 'vistas/modulos/modales/agro/cargarProduccion.modal.php';
 
 $eliminarArchivo = new ControladorAgro;
 
