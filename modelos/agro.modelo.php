@@ -418,7 +418,9 @@ class ModeloAgro{
 		if($valor2){
 			if($valor2 == 'cobertura'){
 				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = 'fina' AND el.cultivo != 'trigo' ");
-				return $stmt;
+				}else if($valor2 == 'fina'){
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2 AND el.cultivo = 'trigo' ");
+				$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
 			}else{
 				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2");
 				$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);

@@ -898,7 +898,7 @@ class ControladorAgro{
             $planPorCultivo[$cultivo]['has'] += $has;
             $planPorCultivo[$cultivo]['dolares'] += $dolares;
         }
-
+    
         $totalPlanHas = array_reduce($planPorTipo, function($s,$v){ return $s + $v['has']; }, 0);
 
         $etapas = ['fina','gruesa','cobertura'];
@@ -908,11 +908,18 @@ class ControladorAgro{
 
         foreach ($etapas as $etapa) {
             $rows = ModeloAgro::mdlMostrarDataEjecucion('ejecucion','campania',$campania,'etapa',$etapa);
+
+            
+
             foreach ($rows as $r) {
                 $cultivo = $r['cultivo'];
                 $lote = trim($r['lote']);
                 $has = floatval($r['has']);
                 $cost = floatval($r['costoLabor']) + floatval($r['costoInsumo']);
+
+                if($etapa == 'cobertura'){
+                // var_dump($cultivo,$lote,$has,$cost);
+                } 
 
                 if(isset($ejecPorTipo[$etapa])){
                     $key = $lote.'|'.$cultivo;
@@ -923,6 +930,11 @@ class ControladorAgro{
                     }
                     $ejecPorTipo[$etapa]['dolares'] += $cost;
                 }
+                
+                if($etapa == 'cobertura'){
+                // var_dump($ejecPorTipo);
+                } 
+
 
                 $tipoEI = $tipoPlural(tipoEstInv($cultivo));
                 if(isset($ejecPorTipo[$tipoEI])){
@@ -945,7 +957,9 @@ class ControladorAgro{
                 if(!isset($ejecPorCultivoCostos[$cultivo])) $ejecPorCultivoCostos[$cultivo] = 0;
                 $ejecPorCultivoCostos[$cultivo] += $cost;
             }
+
         }
+        // return $ejecPorTipo;
 
         $totalEjecHas = $ejecPorTipo['fina']['has'] + $ejecPorTipo['gruesa']['has'] + $ejecPorTipo['cobertura']['has'];
 

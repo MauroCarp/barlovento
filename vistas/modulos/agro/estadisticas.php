@@ -160,6 +160,8 @@ $(document).ready(function() {
             url,
             data: { accion: 'estadisticas', campania },
             success: function(resp) {
+            //     console.log(resp)
+            // return
                 try {
                     const datos = JSON.parse(resp);
                     if(!datos || !datos.planificacion || !datos.ejecucion) return;
@@ -178,7 +180,7 @@ $(document).ready(function() {
     
     function llenarTablaPorTipo(datos) {
         const tipos = ['fina', 'gruesa', 'cobertura', 'invernales', 'estivales'];
-        
+        console.log(datos)
         tipos.forEach(tipo => {
             const plan = datos.planificacion[tipo];
             const ejec = datos.ejecucion[tipo];
