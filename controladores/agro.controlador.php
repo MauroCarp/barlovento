@@ -883,7 +883,7 @@ class ControladorAgro{
             $costoUnit = isset($costos[$cultivo]) ? floatval($costos[$cultivo]) : 0;
             $dolares = $has * $costoUnit;
 
-            $tipo = $row['tipo'];
+            $tipo = ($row['tipo'] == 'fina' && $cultivo != 'trigo') ? 'cobertura' : $row['tipo'];
             $tipoEI = $tipoPlural(tipoEstInv($cultivo));
 
             if(isset($planPorTipo[$tipo])){

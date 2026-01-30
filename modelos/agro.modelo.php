@@ -416,9 +416,14 @@ class ModeloAgro{
 	static public function mdlMostrarDataEjecucion($tabla, $item,$valor,$item2,$valor2){
 
 		if($valor2){
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2");
+			if($valor2 == 'cobertura'){
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = 'fina' AND el.cultivo != 'trigo' ");
+				return $stmt;
+			}else{
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2");
+				$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
+			}
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
-			$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
 		} else {
 			$stmt = Conexion::conectar()->prepare("SELECT (SELECT SUM(has_unico) FROM ( SELECT el.lote, el.cultivo, MAX(el.has) AS has_unico FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item GROUP BY el.lote, el.cultivo ) t) AS totalHas, (SELECT SUM(el2.costoLabor) + SUM(el2.costoInsumo) FROM $tabla e2 INNER JOIN ejecucionLabores el2 ON e2.id = el2.idEjecucion WHERE e2.$item = :$item) AS totalCosto");
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);

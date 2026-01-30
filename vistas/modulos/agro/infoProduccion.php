@@ -12,12 +12,12 @@
 
                         <h2 class="widget-user-username">
                             | <b> <?php echo $campo;?></b><br>
-                            <span class="info-fina hide">| Cosecha Fina: <span id="cosechaFinaProduccion<?php echo $campoId;?>"></span><br>
-                            | Rinde Fina: <span id="rindeFinaProduccion<?php echo $campoId;?>"></span><br>
-                            | Flete Fina: <span id="fleteFinaProduccion<?php echo $campoId;?>"></span><br></span>
-                            <span class="info-gruesa">| Cosecha Gruesa: <span id="cosechaGruesaProduccion<?php echo $campoId;?>"></span><br>
-                            | Rinde Gruesa: <span id="rindeGruesaProduccion<?php echo $campoId;?>"></span><br>
-                            | Flete Gruesa: <span id="fleteGruesaProduccion<?php echo $campoId;?>"></span><br></span>
+                            <span class="info-fina hide">| Cosecha: <span id="cosechaFinaProduccion<?php echo $campoId;?>"></span><br>
+                            | Rinde: <span id="rindeFinaProduccion<?php echo $campoId;?>"></span><br>
+                            | Flete: <span id="fleteFinaProduccion<?php echo $campoId;?>"></span><br></span>
+                            <span class="info-gruesa">| Cosecha: <span id="cosechaGruesaProduccion<?php echo $campoId;?>"></span><br>
+                            | Rinde: <span id="rindeGruesaProduccion<?php echo $campoId;?>"></span><br>
+                            | Flete: <span id="fleteGruesaProduccion<?php echo $campoId;?>"></span><br></span>
                         </h2>
                     
                     </div>

@@ -244,12 +244,12 @@ $('#selectEtapaEjecucion').on('change', function () {
 const tipoCultivo = (cultivo)=>{
 
   switch (cultivo) {
-      case 'carinata':
-      case 'vicia':
-      case 'triticale':
-      case 'vicia-triticale':
-      case 'triticale-vicia':
-      case 'avena':
+      // case 'carinata':
+      // case 'vicia':
+      // case 'triticale':
+      // case 'vicia-triticale':
+      // case 'triticale-vicia':
+      // case 'avena':
       case 'trigo':
           $tipo = 'Invernal';
           break;
