@@ -58,6 +58,7 @@ class ControladorPanelControl{
 								'poblacionProm'=>array(),
 								'estadiaProm'=>array(),
 								'indiceReposicion'=>array(),
+								'kgProdVendido'=>array(),
 							);
 
 		for ($i=0; $i < sizeof($respuesta) ; $i++) { 
@@ -73,7 +74,7 @@ class ControladorPanelControl{
 			$datos['poblacionProm'][$arrayIndex] =  $respuesta[$i]['poblDiaPromPeriodo'];
 			$datos['estadiaProm'][$arrayIndex] =  $respuesta[$i]['estadiaProm'];
 			$datos['indiceReposicion'][$arrayIndex] =  $respuesta[$i]['indiceReposicion'];
-			
+			$datos['kgProdVendido'][$arrayIndex] =  $respuesta[$i]['totalCabSalida'] * $respuesta[$i]['kilosGanPeriodoTraz'];
 		}
 
 			$datos['precioKgMSAnual'] =  (array_sum($datos['precioKgMS']) / sizeof($respuesta));
@@ -83,7 +84,7 @@ class ControladorPanelControl{
 			$datos['poblacionPromAnual'] =  (array_sum($datos['poblacionProm']) / sizeof($respuesta));
 			$datos['estadiaPromAnual'] =  (array_sum($datos['estadiaProm']) / sizeof($respuesta));
 			$datos['indiceReposicionAnual'] =  (array_sum($datos['indiceReposicion']) / sizeof($respuesta));
-
+			$datos['kgProdVendidoAnual'] =  (array_sum($datos['kgProdVendido']));
 		return $datos;
 	}
 	

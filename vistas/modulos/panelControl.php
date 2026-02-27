@@ -90,10 +90,14 @@ function formatearNumero($number){
 
   $consumoMaiz = ControladorPanelControl::ctrMostrarUltimos($campo,$cantidad);
 
+  // KG PRODUCIDOS VENDIDOS
+
+  $campo = 'totalCabSalida,kilosGanPeriodoTraz';
+
 
   $dataGraficos = array();
 
-
+ 
   for ($i=5; $i >= 0 ; $i--) { 
       
       $tempExp = explode('-',$ultimosLabels[$i][0]);
@@ -127,7 +131,7 @@ function formatearNumero($number){
   }
 
   $dataGraficos = json_encode($dataGraficos);
-  
+
 ?>
 <div class="content-wrapper">
 
@@ -347,7 +351,7 @@ function generarGraficoBarSimple(registros,divId,labels,tituloLabel){
 function generarGraficoLinea(registros,divId,labels,tituloLabel){
 
   let ctx = document.getElementById(divId).getContext('2d');
-  
+
   let data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
 
   for (let index = 1; index <= labels.length; index++) {
@@ -360,18 +364,17 @@ function generarGraficoLinea(registros,divId,labels,tituloLabel){
     
   let minimo = 0;
 
+  console.log(data)
 
   if(tituloLabel == 'Conversión de MS' || tituloLabel == 'A.D.P.V'  || tituloLabel ==  'Estadia Promedio'){
-
-    // console.log(tituloLabel);
       
     let  result = data.filter(valor => valor != 0);
 
     minimo = (tituloLabel == 'A.D.P.V') ? Math.min.apply(null, result) : (Math.min.apply(null, result) - 1)
     
-    // console.log(minimo);
   }
 
+  
 
 
   let myChart = new Chart(ctx, {
@@ -510,7 +513,7 @@ let url = 'ajax/datosPanelControl.ajax.php';
       success: function(response){
 
         response = JSON.parse(response);
-          
+
         if(response.CajaPoblacion != null){
 
           $('#CostoDiario' + (index + 1)).html(response.Consumo1);
@@ -625,7 +628,7 @@ let url = 'ajax/datosPanelControl.ajax.php';
         divId = 'graficoCostoKgProd' + (index + 1);
 
         generarGraficoBarSimple(dataGraficos['KgProd'],divId,dataGraficos['Labels'],'$ Kg Prod.');
-        
+
         // MARGEN TEC * CAB SALIDAS 
         divId = 'graficoMargenTec' + (index + 1);
         
@@ -644,7 +647,7 @@ let url = 'ajax/datosPanelControl.ajax.php';
         let graficoConsumoSojaMaiz = generarGraficoBarDoble(divId,dataGraficos['Labels'],dataGraficos['ConsumoSoja'],dataGraficos['ConsumoMaiz']);        
 
         // CONSUMOS SOJA Y MAIZ ZOOM
-        divId = ' ' + (index + 1);    
+        divId = 'zGraficoConsumoSojaMaiz' + (index + 1);    
 
         let graficoZConsumoSojaMaiz = generarGraficoBarDoble(divId,dataGraficos['Labels'],dataGraficos['ConsumoSoja'],dataGraficos['ConsumoMaiz']);        
 
@@ -672,10 +675,7 @@ let url = 'ajax/datosPanelControl.ajax.php';
       success: function(respuesta){
 
         let response = JSON.parse(respuesta);
-                            
-        
-        console.log(response);
-        
+
         let divAnual = `tasaMSPrecioVentaAnual${index + 1}`
 
         let precioKgMSAnual = response.precioKgMSAnual
@@ -711,7 +711,7 @@ let url = 'ajax/datosPanelControl.ajax.php';
         $(`#${divAnual}`).html(response.conversionMSAnual.toFixed(2))
 
         divId = `graficoConversionMS${index + 1}`
-        
+
         generarGraficoLinea(response.conversionMS,divId,meses,'Conversión de MS')
         
         // 
@@ -753,6 +753,16 @@ let url = 'ajax/datosPanelControl.ajax.php';
         divId = `graficoIR${index + 1}`
                                           
         generarGraficoLinea(response.indiceReposicion,divId,meses,'Indice Reposicion')
+
+        //
+
+        divAnual = `kgProdVendidoAnual${index + 1}`
+
+        $(`#${divAnual}`).html(response.kgProdVendidoAnual.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' Kg')
+        
+        divId = `graficoKgProdVendido${index + 1}`
+                                          
+        generarGraficoLinea(response.kgProdVendido,divId,meses,'Kg Producción Vendido')
 
       }
 
