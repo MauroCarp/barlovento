@@ -1,6 +1,5 @@
 const cobertura = ['vicia','triticale','avena','avena cobertura','cebada','vicia-triticale','cebadilla','triticale espinillo','camelina']
 
-
 function calcularSuggestedMax(datos,tipo) {
 
   let max = Math.max(...datos)
@@ -24,13 +23,40 @@ const cargarInfoPlanificacion = (campania,carga)=>{
   let url = 'ajax/agro.ajax.php'
   let graficos = []
 
+
   fetch(url,{
       method:'post',
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-      
-    // generarInputFile(respuesta.lotes)
+
+      $('#idPlanificacion').val(respuesta.idPlanificacion)
+
+      generarInputFile(respuesta.lotes)
+
+      cultivosActuales = Object.keys(respuesta.costos)
+      cultivosNoCobertura = [...new Set(cultivosActuales
+        .filter(cultivo => !cobertura.includes(cultivo.toLowerCase()))
+        .map(cultivo => cultivo.replace(/\d+$/, '')))]
+
+      cultivosNoCobertura.forEach(cultivo => {
+
+        $('#formEjecucionRindes').append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(cultivo)}</b></div><br>
+        <div class="form-group">
+
+            <label for="rinde${capitalizarPrimeraLetra(cultivo)}"</label>
+
+            <div class="input-group">
+
+              <div class="custom-file"><input type="file" class="custom-file-input" name="rindes_${cultivo}">
+
+              </div>
+              
+            </div>
+
+          </div>`))
+      });  
+
 
       let data = {
         'pichi':{
@@ -89,7 +115,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
         }
 
       }
-  
+
       respuesta['cultivos'].forEach(cultivo => {
 
         let costo = (parseInt(cultivo.has) * parseInt(respuesta['costos'][cultivo.cultivo]))
@@ -148,7 +174,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
 
       data.pichi.costoTotal = data.pichi.fina.costo + data.pichi.cobertura.costo + data.pichi.gruesa.costo
       data.bety.costoTotal = data.bety.fina.costo + data.bety.cobertura.costo + data.bety.gruesa.costo              
-      console.log(data)
+
       // PINTAR DATOS
       $('#totalHasPlanificadas').text(data.bety.hasTotal + data.pichi.hasTotal)
       $('#totalInversionPlanificada').text((data.bety.costoTotal + data.pichi.costoTotal).toLocaleString('de-DE'))
@@ -251,7 +277,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
         generarGraficoBar(`graficoPlanificacion${capitalizarPrimeraLetra(campo)}`,configPlanificacion,'noOption')
 
       });
-
+ 
   })
   .catch( err=>console.log(err))
 
@@ -369,7 +395,7 @@ if(campania && campaniaValida){
   $('#campania').text(campania)
 
   let cargaPlanificacion = $('select[name="cargaPlanificacion"]').val()
-  console.log(cargaPlanificacion )
+
   cargarInfoPlanificacion(campania,cargaPlanificacion)
 
 }
@@ -415,7 +441,8 @@ if(btnCostosPlanificacion != null){
 
       let content = document.createDocumentFragment()
 
-      respuesta.map(reg=>{
+      Object.keys(respuesta).forEach(key => {
+        let reg = { cultivo: key, costo: respuesta[key] };
 
         let tr = document.createElement('TR')
         let tdCultivo = document.createElement('TD')
@@ -429,12 +456,12 @@ if(btnCostosPlanificacion != null){
 
           if (index !== -1) {
 
-            let parteAntesDelNumero = reg.cultivo.slice(0, index);
+        let parteAntesDelNumero = reg.cultivo.slice(0, index);
 
-            let numero = reg.cultivo.slice(index);
+        let numero = reg.cultivo.slice(index);
 
-            tdCultivo.innerText = capitalizarPrimeraLetra(`${parteAntesDelNumero} ${numero}°`);
-            
+        tdCultivo.innerText = capitalizarPrimeraLetra(`${parteAntesDelNumero} ${numero}°`);
+        
           }
 
         } else { 
@@ -472,4 +499,17 @@ $('select[name="cargaPlanificacion"]').on('change',function(){
 
 })
 
+let year2 = Number($('#campania1').val()) + 1
+
+$('#campania2').val(year2)
+  
+$('#campania1').on('change',function(){
+
+  let year = $(this).val()
+
+  let year2 = Number(year) + 1
+
+  $('#campania2').val(year2)
+
+})
 

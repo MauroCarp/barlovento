@@ -1,6 +1,28 @@
 <?php
 error_reporting(E_ERROR | E_PARSE);
 
+/**
+ * Limpia y normaliza strings para prevenir problemas de encoding en BD
+ * @param string $text - Texto a limpiar
+ * @return string - Texto limpio y normalizado
+ */
+function limpiarTexto($text) {
+    // Trim y convertir a minúsculas (UTF-8 safe)
+    $text = mb_strtolower(trim($text), 'UTF-8');
+    
+    // Remover espacios
+    $text = str_replace(' ', '', $text);
+    
+    // Remover caracteres especiales comunes que causan problemas
+    $caracteresProblematicos = ['°', '°', '˚', 'º', '®', '™', '©'];
+    $text = str_replace($caracteresProblematicos, '', $text);
+    
+    // Opcional: Normalizar caracteres acentuados si es necesario
+    // $text = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+    
+    return $text;
+}
+
 function tipoEstInv($cultivo){
 
     switch ($cultivo) {
@@ -123,6 +145,8 @@ class ControladorAgro{
 
                 $cargaPlanificacion = ModeloAgro::mdlCargarPlanificacion($tabla,$dataPlanificacion);
 
+                $arrLotesEjecucion = array();
+
                 for($i=0;$i<$sheetCount;$i++){
         
                     $Reader->ChangeSheet($i);
@@ -152,18 +176,16 @@ class ControladorAgro{
 
                         // }
 
-                        $cultivo = strtolower(trim(str_replace(' ','',str_replace('°','',$Row[1]))));
+                        // var_dump($Row[1]);
+
+                        // Limpiar y normalizar el cultivo
+                        $cultivo = limpiarTexto($Row[1]);
 
                         if(trim($Row[1]) == 'EL PICHI') $campo = 'pichi';
                         
                         if(trim($Row[1]) == 'LA BETY') $campo = 'bety';
 
                         if($rowValida && $cultivo != 'cerealesyoleaginosas' && $cultivo != 'elpichi' && $cultivo != 'labety' && $cultivo != ''){
-                            // var_dump($campo);
-                            // var_dump($Row[1]);
-
-                            // var_dump($cultivo);
-                            // die;
 
                             $data[] = array('cultivo'=>$cultivo,
                                                  'tipo'=>tipoCultivo($cultivo),
@@ -173,6 +195,12 @@ class ControladorAgro{
                                                  'idPlanificacion'=>$cargaPlanificacion,
                                                  'campo'=> $campo
                             );
+
+                            $arrLotesEjecucion[] = array('campania'=>"'" . $campania . "'",
+                                                         'lote'=>"'" . $Row[2] . "'",
+                                                         'cultivo'=>"'" . $cultivo . "'",
+                                                         'campo'=>"'" . $campo . "'",
+                                                         'etapa'=>"'" . tipoCultivo($cultivo) . "'");
 
                         }
 
@@ -198,8 +226,18 @@ class ControladorAgro{
         
                     $dataSql[] = "(" . implode(',',$tmp) . ")";
                 }
-        
                 
+                foreach ($arrLotesEjecucion as $key => $value) {
+
+                    $arrLotesEjecucion[$key] = "(" . implode(',',$value) . ")";
+
+                }
+
+                $arrLotesEjecucion = implode(',',$arrLotesEjecucion);
+
+                $tabla = 'ejecucionLotes';
+                $cargarLotesEjecucion = ModeloAgro::mdlCargarLotesEjecucion($tabla,$arrLotesEjecucion);
+
                 $tabla = 'cultivosplanificacion';
 
                 $respuesta = ModeloAgro::mdlCargarArchivo($tabla,$campos,implode(',',$dataSql));
@@ -228,206 +266,185 @@ class ControladorAgro{
                 }
 
             }
-            
-        // CARGA EJECUCION
-            // if(in_array($_FILES["nuevosDatosEjecucion"]["type"],$allowedFileType)){
-                
-            //     $tabla = 'ejecucion';
-
-            //     $ruta = "carga/" . $_FILES['nuevosDatosEjecucion']['name'];
-                
-            //     move_uploaded_file($_FILES['nuevosDatosEjecucion']['tmp_name'], $ruta);
-                
-            //     $nombreArchivo = str_replace(' ', '',$_FILES['nuevosDatosEjecucion']['name']);
-                                        
-            //     $rowNumber = 0;
-                
-            //     $rowValida = false;
-
-            //     $data = array();
-
-            //     $cultivoCosto = array();
-                
-            //     $dateTime = date('Y-m-d H:i:s');
-
-            //     $Reader = new SpreadsheetReader($ruta);	
-                
-            //     $sheetCount = count($Reader->sheets());
         
-            //     $primeraValida = true;
-
-            //     for($i=0;$i<$sheetCount;$i++){
-        
-            //         $Reader->ChangeSheet($i);
-
-            //         foreach ($Reader as $Row){
-                        
-            //             if($rowNumber == 1 AND $Row[0] != 'PLANILLA EJECUCION'){
-
-            //                 echo'<script>
-
-            //                     swal({
-            //                             type: "error",
-            //                             title: "La planilla seleccionada no corresponde a una planilla de Ejecución",
-            //                             showConfirmButton: true,
-            //                             confirmButtonText: "Cerrar"
-            //                             }).then(function(result) {
-            //                                     if (result.value) {
-
-            //                                         window.location = "index.php?ruta=agro/agro"
-
-            //                                     }
-            //                                 })
-
-            //                     </script>';
-            //                 die();
-
-            //             }
-
-            //             if($rowNumber == 0){
-
-            //                 $campania = trim(str_replace('EJECUCION','',$Row[4]));
-
-            //                 list($campania1,$campania2) = explode('-',$campania);
-
-            //             }
-
-            //             if($rowNumber == 1){
-            //                 $etapa = getEtapa($Row[4]);
-                        
-            //                 // VALIDAR SI YA ESTA CARGADA⁄
-
-            //                 $tabla = 'ejecucion';
-
-            //                 $item = 'campania1';
-                            
-            //                 $item2 = 'campania2';
-                            
-            //                 $item3 = 'etapa';
-
-            //                 $resultado = ControladorAgro::ctrMostrarData($tabla,$item,$campania1,$item2,$campania2,$item3,$etapa);
-                            
-            //                if(sizeof($resultado) > 0){
-            //                    echo'<script>
-
-            //                        swal({
-            //                                type: "error",
-            //                                title: "La planilla de la campaña '.$campania1.'-'.$campania2.' , etapa '. $Row[4].' ya ha sido cargada.",
-            //                                showConfirmButton: true,
-            //                                confirmButtonText: "Cerrar"
-            //                                }).then(function(result) {
-            //                                if (result.value) {
-                                               
-            //                                    window.location = "index.php?ruta=agro/agro"
-
-            //                                }
-            //                            })
-
-            //                        </script>';
-            //                        die();
-            //                }
-            //             }
-
-            //             if($Row[0] == 'TOTAL'){
-            //                 $rowValida = false;
-            //             }
-
-            //             if($rowValida){
-
-            //                 if($Row[0] == ''){
-
-            //                     $rowValida = false;
-
-            //                 }else{
-
-            //                     $data = array('campania1'=>$campania1,'campania2'=>$campania2,'etapa'=>$etapa,'campo'=>$campo,'lote'=>$Row[0],'has'=>$Row[1],'cultivo'=>strtolower(trim($Row[2])),'actividad'=>strtolower(trim($Row[3])),'costoActividad'=>$Row[4],'actividad2'=>strtolower($Row[5]),'costoActividad2'=>$Row[6],'periodoTime'=>$dateTime);
-
-            //                     $respuesta = ModeloAgro::mdlCargarArchivo($tabla,$data);                               
-                                
-            //                     $errors = array($respuesta);
-            //                 }
-
-            //             }
-
-            //             if($Row[0] == 'LOTES'){
-
-            //                 $rowValida = true;
-
-            //                 if($primeraValida){
-
-            //                     $campo = 'EL PICHI';
-            //                     $primeraValida = false;
-
-            //                 }else{
-
-            //                     $campo = 'LA BETY';
-
-            //                 }
-
-            //             }
-
-                        
-            //             $rowNumber++;
-
-            //         }
-
-                    
-            //     }
-                
-            // }
-
-        // VALIDA PROGRAMA DE CARGA                    
-            // if(in_array('error',$errors)){
-
-            //     echo'<script>
-
-            //         swal({
-            //                 type: "error",
-            //                 title: "¡No se pudo cargar la planilla!",
-            //                 showConfirmButton: true,
-            //                 confirmButtonText: "Cerrar"
-            //                 }).then(function(result) {
-            //                 if (result.value) {
-                                
-            //                     window.location = "index.php?ruta=agro/agro"
-
-            //                 }
-            //             })
-
-            //         </script>';
-
-            // }else{
-
-            //     echo'<script>
-
-            //     swal({
-            //             type: "success",
-            //             title: "La planilla ha sido cargada correctamente",
-            //             showConfirmButton: true,
-            //             confirmButtonText: "Cerrar"
-            //             }).then(function(result) {
-            //                     if (result.value) {
-
-            //                         window.location = "index.php?ruta=agro/agro"
-
-            //                     }
-            //                 })
-
-            //     </script>';
-
-            // }
-
         }
 
 	}
+
+
+    /*=============================================
+	CARGAR EJECUCION
+	=============================================*/
+
+	static public function ctrCargarEjecucion(){
+
+        
+        require_once('extensiones/excel/php-excel-reader/excel_reader2.php');
+        require_once('extensiones/excel/SpreadsheetReader.php');
+
+        if(isset($_POST['btnCargarEjecucion'])){
+            
+            $error = false;
+            
+            $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+
+            $etapa = $_POST['etapaEjecucion'];
+
+            
+            // CARGA Ejecucion
+            $arrLotesCargados = array();
+
+            $campania = $_POST['campania'];
+
+            foreach ($_FILES as $key => $file) {
+                
+                if($file['size'] > 0){
+
+                    if(in_array($file["type"],$allowedFileType))
+                        
+                        $ruta = "carga/" . $file['name'];
+                        
+                        move_uploaded_file($file['tmp_name'], $ruta);
+                                                                
+                        $rowNumber = 0;
+
+                        $data = array();
+                        
+                        $Reader = new SpreadsheetReader($ruta);	
+                        
+                        $sheetCount = count($Reader->sheets());
+                
+                        $tabla = 'ejecucion';
+                     
+                        // Validar si la campaña ya está cargada en la tabla
+                        $existeEjecucion = ModeloAgro::mdlMostrarEjecucion($tabla, $campania);
+
+                        if (!empty($existeEjecucion) && $existeEjecucion[0] == 1) {
+                            $idEjecucion = $existeEjecucion[1];
+                        } else {
+                            $idEjecucion = ModeloAgro::mdlCargarEjecucion($tabla, $campania);
+                        }
+
+                        $data = array();
+
+                        $explode = explode('_',$key);
+                        $cultivo = $explode[1];
+                        $lote = $explode[0];
+
+                        $arrLotesCargados[] = array('lote'=>$lote,'campo'=>$_POST[$key.'campo']);
+                    
+                        for($i=0;$i<$sheetCount;$i++){
+                
+                            $Reader->ChangeSheet($i);
+
+                            foreach ($Reader as $Row){     
+                                
+                                if($rowNumber == 0)
+                                    $rowValida = false;
+
+                                if($rowValida){
+
+                                    if($Row[0] != 'Totales:' && trim($Row[0]) != ''){
+
+                                        $arr = array('idEjecucion'=>$idEjecucion,
+                                                     'lote'=>"'" . $lote . "'",
+                                                     'labor'=>"'" . $Row[0] . "'",
+                                                     'cultivo'=>"'" . $cultivo . "'",
+                                                     'has'=>"'" . number_format(str_replace(',','',$Row[1]),0,'.','') . "'",
+                                                     'costoLabor'=>"'" . number_format(str_replace(',','',$Row[2]),2,'.','') . "'",
+                                                     'costoInsumo'=>"'" . number_format(str_replace(',','',$Row[4]),2,'.','') . "'",
+                                                     'campo'=>"'" . $_POST[$key.'campo'] . "'",
+                                                     'etapa'=>"'" . $etapa . "'"
+                                            );
+
+
+                                        $data[] = "(" . implode(',',$arr) . ")";
+
+                                    }
+
+                                }
+
+                                if ($etapa == 'fina' && $rowNumber == 8) {
+                                    $rowValida = true;
+                                } elseif ($etapa == 'gruesa' && $rowNumber == 5) {
+                                    $rowValida = true;
+                                }
+
+
+                                $rowNumber++;
+
+                            }
+                                
+                        }
+                    
+                        $tabla = 'ejecucionLabores';
+
+                        $respuesta = ModeloAgro::mdlCargarLabores($tabla,implode(',',$data));
+                        
+                        if($respuesta != 'ok'){
+                          
+                            echo'<script>
+
+                            swal({
+                                    type: "error",
+                                    title: "Hubo un error al cargar los Lotes.Informar",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "Cerrar"
+                                    }).then(function(result) {
+                                            if (result.value) {
+                                                window.location = "index.php?ruta=agro/agro"
+
+                                            }
+                                        })
+
+                            </script>';
+                        die();
+                        }
+
+                    
+
+                }
+
+            }
+
+            $tabla = 'ejecucionLotes';
+
+            
+            foreach ($arrLotesCargados as $key => $lote) {
+                
+                $validarLotes = ModeloAgro::mdlValidarLotes($tabla,$campania,$lote['lote'],$lote['campo'],$etapa);
+            }
+            
+            echo'<script>
+
+                swal({
+                    type: "success",
+                    title: "Lotes cargados correctamente",
+                    showConfirmButton: true,
+                    confirmButtonText: "Cerrar",
+                    closeOnConfirm: false
+                    }).then(function(result) {
+                            if (result.value) {
+
+                                window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"
+                            }
+                        })
+
+            </script>';
+            die;            
+        
+        }
+
+	}
+
 
     /*=============================================
 	CARGAR COSTOS
 	=============================================*/
 
-	static public function ctrCargarCostos($tabla,$dataSql,$idPlanificacion){
+	static public function ctrCargarCostos($tabla,$dataSql){
 
-        return $respuesta = ModeloAgro::mdlCargarCostos($tabla,$dataSql,$idPlanificacion);
+        return $respuesta = ModeloAgro::mdlCargarCostos($tabla,$dataSql);
             
 	}
 
@@ -437,7 +454,15 @@ class ControladorAgro{
 
 	static public function ctrMostrarCostos($tabla,$campania,$idPlanificacion){
 
-        return ModeloAgro::mdlMostrarCostos($tabla,$campania,$idPlanificacion);
+        $costos = ModeloAgro::mdlMostrarCostos($tabla,$campania,$idPlanificacion);
+
+        $dataCostos = array();
+
+		foreach ($costos as $costo) {
+			$dataCostos[$costo['cultivo']] = $costo['costo'];
+ 		}
+
+        return $dataCostos;
 
 	}
 
@@ -448,6 +473,12 @@ class ControladorAgro{
 	static public function ctrMostrarDataPlanificacion($tabla, $item, $valor, $item2 = null, $valor2 = null, $item3 = null, $valor3 = null){
 
         return $respuesta = ModeloAgro::mdlMostrarData($tabla, $item, $valor, $item2, $valor2, $item3, $valor3);
+
+	}
+
+    static public function ctrMostrarDataEjecucion($tabla, $item, $valor,$item2, $valor2){
+
+        return $respuesta = ModeloAgro::mdlMostrarDataEjecucion($tabla, $item, $valor,$item2,$valor2);
 
 	}
 
@@ -601,23 +632,17 @@ class ControladorAgro{
 
     static public function ctrGetLotes($campania){
 
-        $tabla = 'planificaciones';
+        $tabla = 'ejecucionLotes';
 
 		$lotes = ModeloAgro::mdlGetLotes($tabla,$campania);
-
-        $lotesFinal = array();
-
-        foreach ($lotes as $key => $lote) {
-
-            $lotesFinal[$lote['campo']][$lote['tipo']][] = array('lote'=>$lote['lote'],'cultivo'=>$lote['cultivo']);
-
-        }
-
-        return $lotesFinal;
+        
+        return $lotes;
 
     }
 
-    static public function ctrMostrarEjecucion($tabla,$campania){
+    static public function ctrMostrarEjecucion($campania){
+        
+        $tabla = 'ejecucion';
         
         $ejecucionValido = ModeloAgro::mdlMostrarEjecucion($tabla,$campania);
 

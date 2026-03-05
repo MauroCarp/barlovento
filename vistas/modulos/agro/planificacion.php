@@ -4,14 +4,13 @@
     
     <div class="col-lg-5">
 
-        <div class="row" sty>
+        <div class="row">
 
-            <div class="col-lg-8">
+            <div class="col-lg-7">
 
-                <div class="form-group">
-                
-                    <label>Planificaci&oacute;n</label>
-                
+                <div class="input-group" bis_skin_checked="1">
+                    <span class="input-group-addon"><b>Planificaci&oacute;n</B></span>
+                    <input type="hidden" name="idPlanificacion" id="idPlanificacion">
                     <select class="form-control" name="cargaPlanificacion">
 
                         <?php
@@ -25,16 +24,13 @@
                         ?>
                 
                     </select>
-                
                 </div>
                 
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-lg-5">
 
-                <div class="form-group" style="padding-top:5px">
-
-                    <br>
+                <div class="form-group">
 
                     <button id="btnCostosPlanificacion" class="btn btn-secondary" data-toggle="modal" data-target="#modalVerCostosInversion">
                     
@@ -54,7 +50,7 @@
                 
                 <div class="info-box">
 
-                    <span class="info-box-icon bg-aqua"><i class="fa fa-map-o"></i></span>      
+                    <span class="info-box-icon bg-green"><i class="fa fa-map-o"></i></span>      
 
                     <div class="info-box-content">
 
@@ -72,7 +68,7 @@
                 
                 <div class="info-box">
 
-                    <span class="info-box-icon bg-aqua"><i class="fa fa-dollar"></i></span>
+                    <span class="info-box-icon bg-green"><i class="fa fa-dollar"></i></span>
                     <div class="info-box-content">
                     <span class="info-box-text">Inversion <br> Total Proyectada</span>
                     <span class="info-box-number">U$D <span id="totalInversionPlanificada"></span></span>
@@ -98,6 +94,13 @@
         $campoId = 'Pichi';
 
         include 'infoPlanificacion.php';
+        
+        $campo = 'El Antony';
+        
+        $campoId = 'Antony';
+
+        include 'infoPlanificacion.php';
+
         
         ?>
 

@@ -1,4 +1,26 @@
 
+
+<?php if ($campoId == 'Antony'){ ?>
+    <!-- Acordeón para Antony -->
+    <div class="panel-group" id="accordionAntonyEjecucion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingAntonyEjecucion" style="display:flex;justify-content:space-between;align-items:center;">
+                <h4 class="panel-title" style="font-size:1.5em;">
+                    <a role="button" data-toggle="collapse" data-parent="#accordionAntonyEjecucion" href="#collapseAntonyEjecucion" aria-expanded="false" aria-controls="collapseAntonyEjecucion">
+                        <i class="fa fa-chevron-down"></i><b> <?php echo $campoId; ?></b>     
+                    </a>
+                </h4>
+                    <form action="" method="post" id="formAntonyEjecucion" style="display:flex;align-items:center;">
+                        <input type="file" name="archivoAntonyEjecucion" id="archivoAntonyEjecucion">
+                        <input type="button" class="btn btn-primary" id="btnCargarAntonyEjecucion" value="Cargar">
+                    </form>
+            </div>
+            <div id="collapseAntonyEjecucion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingAntonyEjecucion">
+                <div class="panel-body">
+<?php } ?>
+
+        
+        
         <div class="row">
             
             <div class="col-lg-12">
@@ -9,9 +31,9 @@
 
                         <h2 class="widget-user-username">
                             | <b> <?php echo $campo;?></b><br>
-                            | Cultivos Invernales: <span id="hasInvEjecucion<?php echo $campoId;?>"></span> Has.<br>
-                            | Cultivos Cobertura: <span id="hasCobEjecucion<?php echo $campoId;?>"></span>  Has.<br>
-                            | Cultivos Estivales: <span id="hasEstEjecucion<?php echo $campoId;?>"></span>  Has.<br>
+                            <span class="info-fina hide">| Cultivos Invernales: <span id="hasInvEjecucion<?php echo $campoId;?>"></span> Has.<br>
+                            | Cultivos Cobertura: <span id="hasCobEjecucion<?php echo $campoId;?>"></span>  Has.<br></span>
+                            <span class="info-gruesa">| Cultivos Estivales: <span id="hasEstEjecucion<?php echo $campoId;?>"></span>  Has.<br></span>
                             | Ratio de Cultivo: <span id="ratioEjecucion<?php echo $campoId;?>"></span>  %.
                         </h2>
                     
@@ -21,38 +43,50 @@
         
                         <div class="row"  style="font-size:1.5em;">
         
-                            <div class="col-sm-3 border-right">
+                            <div class="col-sm-4 border-right info-fina hide">
         
                                 <div class="description-block">
-                                    <h4 class="description-text"><span id="hasTrigoEjecucion<?php echo $campoId;?>"></span> Has. <br><span id="totalCostoTrigoEjecucion<?php echo $campoId;?>"></span> U$D</h4>
-                                    <span class="description-text">TRIGO</span>
+
+                                    <span class="description-text">FINA</span>
+
+                                    <h4 class="description-text">
+                                        <span id="hasFinaEjecucion<?php echo $campoId;?>"></span> Has. <br>
+                                        <span id="totalCostoFinaEjecucion<?php echo $campoId;?>"></span> U$D <br>
+                                        <span id="costoFinaEjecucionHas<?php echo $campoId;?>"></span> U$D/Has <br>
+                                    </h4>
+
                                 </div>
         
                             </div>
         
-                            <div class="col-sm-3 border-right">
+                            <div class="col-sm-4 border-right info-cobertura hide">
         
                                 <div class="description-block">
-                                    <h4 class="description-text"><span id="hasCoberturaEjecucion<?php echo $campoId;?>"></span> Has. <br><span id="totalCostoCoberturaEjecucion<?php echo $campoId;?>"></span> U$D</h4>
+
                                     <span class="description-text">COBERTURA</span>
+
+                                    <h4 class="description-text">
+                                        <span id="hasCoberturaEjecucion<?php echo $campoId;?>"></span> Has. <br>
+                                        <span id="totalCostoCoberturaEjecucion<?php echo $campoId;?>"></span> U$D <br>
+                                        <span id="costoCoberturaEjecucionHas<?php echo $campoId;?>"></span> U$D/Has <br>
+                                    </h4>
+
                                 </div>
         
                             </div>
         
-                            <div class="col-sm-3 border-right">
+                            <div class="col-sm-4 border-right info-gruesa">
         
                                 <div class="description-block">
-                                    <h4 class="description-text"><span id="hasCarinataEjecucion<?php echo $campoId;?>"></span> Has. <br><span id="totalCostoCarinataEjecucion<?php echo $campoId;?>"></span> U$D</h4>
-                                    <span class="description-text">CARINATA</span>
-                                </div>
-        
-                            </div>
-        
-                            <div class="col-sm-3">
-        
-                                <div class="description-block">
-                                    <h4 class="description-text"><span id="hasRestoEjecucion<?php echo $campoId;?>"></span> Has. <br><span id="totalCostoRestoEjecucion<?php echo $campoId;?>"></span> U$D</h4>
-                                    <span class="description-text">RESTO</span>
+
+                                    <span class="description-text">GRUESA</span>
+
+                                    <h4 class="description-text">
+                                        <span id="hasGruesaEjecucion<?php echo $campoId;?>"></span> Has. <br>
+                                        <span id="totalCostoGruesaEjecucion<?php echo $campoId;?>"></span> U$D <br>
+                                        <span id="costoGruesaEjecucionHas<?php echo $campoId;?>"></span> U$D/Has <br>
+                                    </h4>
+
                                 </div>
         
                             </div>
@@ -102,3 +136,10 @@
             </div>
         
         </div>
+
+<?php if ($campoId == 'Antony'){ ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
