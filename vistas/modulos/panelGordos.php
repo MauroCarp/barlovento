@@ -78,10 +78,19 @@
       }
     }catch(e){}
   }
-  fetch('ajax/gordosPrincipal.ajax.php?accion=data')
-    .then(r=>r.ok?r.json():null)
-    .then(d=>{ if(d && d.fecha){ setFecha(d.fecha); }})
-    .catch(()=>{});
+ $.ajax({
+    url: 'ajax/gordosPrincipal.ajax.php',
+    type: 'POST',
+    data:'accion=data',
+    success: function(d){
+      let data = JSON.parse(d);
+
+      if(data[0] && data[0].fecha){ 
+        setFecha(data[0].fecha);
+      }
+    
+    }
+  });
 })();
 </script>
 
