@@ -686,7 +686,7 @@
 
       try{
           const payload = (typeof res === 'string') ? JSON.parse(res) : res;
-    console.log(payload)
+  
           renderAll(payload);
         }catch(err){
           console.warn('Respuesta inválida', err);
