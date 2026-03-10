@@ -14,55 +14,55 @@ $('#produccionTab').on('click', function(){
   })
 })
 
-function prepararInputsProduccion(campania){
-  const url = 'ajax/agro.ajax.php'
-  $.ajax({
-    method:'POST',
-    url,
-    data:{accion:'getLotes',campania},
-    dataType:'json',
-    success:function(lotes){
-      if(!Array.isArray(lotes) || lotes.length === 0){
-        $('#formProduccion').html('')
-        return
-      }
-      $('#inputCampaniaProduccion').val(localStorage.getItem('campaniaAgro'))
-      const grupos = {}
-      lotes.forEach(l => {
-        const campo = l.campo
-        const etapa = l.etapa
-        if(!grupos[campo]) grupos[campo] = {fina:[],gruesa:[]}
-        if(grupos[campo][etapa]) grupos[campo][etapa].push(l)
-      })
-      const cont = $('#formProduccion')
-      cont.html('')
-      Object.keys(grupos).forEach(campo => {
-        cont.append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(campo)}</b></div>`))
-        ;['gruesa','fina'].forEach(etapa => {
-          const items = grupos[campo][etapa]
-          if(items && items.length){
-            const idDiv = `input${capitalizarPrimeraLetra(campo)}${capitalizarPrimeraLetra(etapa)}`
-            const div = $(`<div id="${idDiv}" ${etapa==='gruesa'?'style="display:none"':''}></div>`)
-            div.append($(`<div class="bg-info" style="font-size:1.5em"><b>${capitalizarPrimeraLetra(etapa)}</b></div>`))
-            items.forEach(l => {
-              div.append($(`<div class="form-group">
-                <label for="${l.lote.split(' ').join('')}">${l.lote} - ${capitalizarPrimeraLetra(l.cultivo)}</label>
-                <div class="input-group">
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="${l.lote.split(' ').join('')}_${l.cultivo}">
-                    <input type="hidden" name="${l.lote.split(' ').join('')}_${l.cultivo}campo" value="${l.campo}"/>
-                  </div>
-                </div>
-              </div>`))
-            })
-            cont.append(div)
-          }
-        })
-      })
-    },
-    error:function(){ $('#formProduccion').html('') }
-  })
-}
+// function prepararInputsProduccion(campania){
+//   const url = 'ajax/agro.ajax.php'
+//   $.ajax({
+//     method:'POST',
+//     url,
+//     data:{accion:'getLotes',campania},
+//     dataType:'json',
+//     success:function(lotes){
+//       if(!Array.isArray(lotes) || lotes.length === 0){
+//         $('#formProduccion').html('')
+//         return
+//       }
+//       $('#inputCampaniaProduccion').val(localStorage.getItem('campaniaAgro'))
+//       const grupos = {}
+//       lotes.forEach(l => {
+//         const campo = l.campo
+//         const etapa = l.etapa
+//         if(!grupos[campo]) grupos[campo] = {fina:[],gruesa:[]}
+//         if(grupos[campo][etapa]) grupos[campo][etapa].push(l)
+//       })
+//       const cont = $('#formProduccion')
+//       cont.html('')
+//       Object.keys(grupos).forEach(campo => {
+//         cont.append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(campo)}</b></div>`))
+//         ;['gruesa','fina'].forEach(etapa => {
+//           const items = grupos[campo][etapa]
+//           if(items && items.length){
+//             const idDiv = `input${capitalizarPrimeraLetra(campo)}${capitalizarPrimeraLetra(etapa)}`
+//             const div = $(`<div id="${idDiv}" ${etapa==='gruesa'?'style="display:none"':''}></div>`)
+//             div.append($(`<div class="bg-info" style="font-size:1.5em"><b>${capitalizarPrimeraLetra(etapa)}</b></div>`))
+//             items.forEach(l => {
+//               div.append($(`<div class="form-group">
+//                 <label for="${l.lote.split(' ').join('')}">${l.lote} - ${capitalizarPrimeraLetra(l.cultivo)}</label>
+//                 <div class="input-group">
+//                   <div class="custom-file">
+//                     <input type="file" class="custom-file-input" name="${l.lote.split(' ').join('')}_${l.cultivo}">
+//                     <input type="hidden" name="${l.lote.split(' ').join('')}_${l.cultivo}campo" value="${l.campo}"/>
+//                   </div>
+//                 </div>
+//               </div>`))
+//             })
+//             cont.append(div)
+//           }
+//         })
+//       })
+//     },
+//     error:function(){ $('#formProduccion').html('') }
+//   })
+// }
 
 $('#selectEtapaProduccion, #etapaProduccion').on('change', function(){
   const campania = $('#campania').html()

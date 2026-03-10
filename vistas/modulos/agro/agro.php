@@ -148,7 +148,8 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
                               <?php if(in_array('Produccion',$_SESSION['perfilAgro'])){ ?>
                                 <li class='tabs' id='produccionTab'><a href='#tab_3' data-toggle='tab' id="btnProduccion"><b>Producci&oacute;n</b></a></li>
                               <?php } ?>
-                              <li class='tabs' id='estadisticaTab'><a href='#tab_4' data-toggle='tab' id="btnEstadistica"><b>Estad&iacute;stica</b></a></li>
+                              <li class='tabs' id='comercializacionTab'><a href='#tab_4' data-toggle='tab' id="btnComercializacion"><b>Comercializaci&oacute;n</b></a></li>
+                              <li class='tabs' id='estadisticaTab'><a href='#tab_5' data-toggle='tab' id="btnEstadistica"><b>Estad&iacute;stica</b></a></li>
 
                           </ul>
 
@@ -171,7 +172,14 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
                               
                               <?php include 'produccion.php';?>
                             </div>
+                        
                             <div class='tab-pane' id='tab_4'>
+                              <h1>HOLA</h1>
+                              <?php //include 'comercializacion.php';?>
+                        
+                            </div>
+
+                            <div class='tab-pane' id='tab_5'>
                               
                               <?php include 'estadisticas.php';?>
 
