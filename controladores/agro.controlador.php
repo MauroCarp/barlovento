@@ -783,20 +783,25 @@ class ControladorAgro{
         require_once('extensiones/excel/SpreadsheetReader.php');
 
         if(isset($_POST['btnCargarProduccion'])){
+        
             $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
             $campania = $_POST['campania'];
             $etapa = $_POST['etapaProduccion'];
 
             $tablaProd = 'produccion';
+
             $existe = ModeloAgro::mdlMostrarProduccion($tablaProd, $campania);
+
             if (!empty($existe) && $existe[0] == 1) {
                 $idProduccion = $existe[1];
             } else {
                 $idProduccion = ModeloAgro::mdlCargarProduccion($tablaProd, $campania);
             }
 
+        
             $rowsSql = [];
-            foreach ($_FILES as $key => $file) {
+
+            foreach ($_FILES['archivosProduccion'] as $key => $file) {
                 if($file['size'] > 0 && in_array($file["type"],$allowedFileType)){
                     $ruta = "carga/" . $file['name'];
                     move_uploaded_file($file['tmp_name'], $ruta);
