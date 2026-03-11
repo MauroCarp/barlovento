@@ -2,12 +2,14 @@ $('#produccionTab').on('click', function(){
   const url = 'ajax/agro.ajax.php'
   const campania = $('#campania').html()
   if(!campania) return
+
+  $('#inputCampaniaProduccion').val(campania)
   // Ajusta visibilidad según etapa seleccionada (por defecto GRUESA)
   actualizarVistaEtapaProduccion()
   $.post(url,{accion:'produccion',campania}, function(resp){
     if(resp == 0){
       $('#modalCargarProduccion').modal('show')
-      prepararInputsProduccion(campania)
+      // prepararInputsProduccion(campania)
     }else{
       cargarInfoProduccion(campania)
     }

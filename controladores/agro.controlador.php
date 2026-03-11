@@ -783,45 +783,57 @@ class ControladorAgro{
         require_once('extensiones/excel/SpreadsheetReader.php');
 
         if(isset($_POST['btnCargarProduccion'])){
-        
+
             $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
             $campania = $_POST['campania'];
             $etapa = $_POST['etapaProduccion'];
-
-            $tablaProd = 'produccion';
-
-            $existe = ModeloAgro::mdlMostrarProduccion($tablaProd, $campania);
-
-            if (!empty($existe) && $existe[0] == 1) {
-                $idProduccion = $existe[1];
-            } else {
-                $idProduccion = ModeloAgro::mdlCargarProduccion($tablaProd, $campania);
-            }
-
         
             $rowsSql = [];
 
-            foreach ($_FILES['archivosProduccion'] as $key => $file) {
-                if($file['size'] > 0 && in_array($file["type"],$allowedFileType)){
-                    $ruta = "carga/" . $file['name'];
-                    move_uploaded_file($file['tmp_name'], $ruta);
+            $countFiles = count($_FILES['archivosProduccion']['name']);
+
+            for ($i=0; $i < $countFiles; $i++) { 
+
+                if($_FILES['archivosProduccion']['size'][$i] > 0 && in_array($_FILES['archivosProduccion']["type"][$i],$allowedFileType)){
+
+                    $ruta = "carga/" . $_FILES['archivosProduccion']['name'][$i];
+                    move_uploaded_file($_FILES['archivosProduccion']['tmp_name'][$i], $ruta);
                     $Reader = new SpreadsheetReader($ruta);
                     $sheetCount = count($Reader->sheets());
-                    for($i=0;$i<$sheetCount;$i++){
-                        $Reader->ChangeSheet($i);
+
+                    for($j=0;$j<$sheetCount;$j++){
+                        $Reader->ChangeSheet($j);
                         $rowNumber = 0;
                         foreach ($Reader as $Row){
-                            // Espera columnas: Lote(2), Has(1), Cultivo(inferido del name), Cosecha(?, ex: columna 3), Rinde(?, ex: columna 4), Flete(?, ex: columna 5)
+
+                        // Espera columnas: Lote(2), Has(1), Cultivo(inferido del name), Cosecha(?, ex: columna 3), Rinde(?, ex: columna 4), Flete(?, ex: columna 5)
                             // Ajusta índices según tu planilla
-                            if($rowNumber > 0 && isset($Row[2]) && trim($Row[2]) !== ''){
-                                $lote = trim($Row[2]);
+
+                            if($rowNumber == 3 && isset($Row[1]) && trim($Row[1]) !== ''){
+
                                 $cultivo = isset($_POST[$key.'cultivo']) ? $_POST[$key.'cultivo'] : str_replace($lote.'_', '', $key);
-                                $campo = isset($_POST[$key.'campo']) ? $_POST[$key.'campo'] : '';
+
+                                preg_match('/Lote:\s+(.+?)\\\\(.+?)\s+Clase Labor:/', $Row[1], $matches);                
+                                $campo = trim($matches[1]); // 'EL PICHI'
+                                $lote  = trim($matches[2]); // 'Lote 7'
+
+                                $where = "WHERE campania = '$campania' AND lote = '$lote' AND etapa = '$etapa'";
+
+                                $cultivo = ModeloAgro::mdlConsultarEjecucion('ejecucionLotes', 'cultivo', $where);
+
+                                var_dump($cultivo);
+
+                            }
+                            
+
+                            if($rowNumber == 6){
+                                var_dump($lote,$cultivo,$campo);
+
                                 $has = isset($Row[1]) ? number_format(str_replace(',','',$Row[1]),0,'.','') : 0;
                                 $cosecha = isset($Row[3]) ? number_format(str_replace(',','',$Row[3]),2,'.','') : 0;
                                 $rinde = isset($Row[4]) ? number_format(str_replace(',','',$Row[4]),2,'.','') : 0;
                                 $flete = isset($Row[5]) ? number_format(str_replace(',','',$Row[5]),2,'.','') : 0;
-                                $rowsSql[] = "(".$idProduccion.",'".$lote."','".$cultivo."','".$has."',".$cosecha.",".$rinde.",".$flete.",'".$campo."','".$etapa."')";
+                                $rowsSql[] = "('".$lote."','".$cultivo."','".$has."',".$cosecha.",".$rinde.",".$flete.",'".$campo."','".$etapa."')";
                             }
                             $rowNumber++;
                         }
@@ -829,8 +841,11 @@ class ControladorAgro{
                 }
             }
 
+            var_dump($rowsSql);
+            die;
+
             if(!empty($rowsSql)){
-                $tablaLotes = 'produccionLotes';
+                $tablaLotes = 'produccion';
                 $resp = ModeloAgro::mdlCargarLotesProduccion($tablaLotes, implode(',', $rowsSql));
                 if($resp != 'ok'){
                     echo'<script>swal({type:"error",title:"Hubo un error al cargar Producción. Informar",showConfirmButton:true,confirmButtonText:"Cerrar"}).then(function(result){if(result.value){window.location = "index.php?ruta=agro/agro"}})</script>';

@@ -484,7 +484,7 @@ class ModeloAgro{
 	}
 
 
-		static public function mdlEliminarCampania($tabla){
+	static public function mdlEliminarCampania($tabla){
 
 		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla");
 		$stmt -> execute();
@@ -506,6 +506,14 @@ class ModeloAgro{
 
 	}
 
-	
+	static public function mdlConsultarEjecucion($tabla, $campo = '*', $where = ''){
+
+		$stmt = Conexion::conectar()->prepare("SELECT $campo FROM $tabla $where");
+
+		$stmt -> execute();
+		
+		return $stmt -> fetchAll();
+
+	}
 
 }

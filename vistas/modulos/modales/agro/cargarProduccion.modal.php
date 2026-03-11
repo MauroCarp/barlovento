@@ -24,13 +24,11 @@
 
         <div class="modal-body">
             
-          
           <div class="form-group">
 
-            <label for="selectEtapaProduccion">Etapa</label>
+            <label for="selectEtapaProduccionCarga">Etapa</label>
             <input type="hidden" name="campania" id="inputCampaniaProduccion" value="">
-            <input type="hidden" name="idPlanificacion" id="idPlanificacion" value="">
-            <select class="form-control" id="selectEtapaProduccion" name="etapaProduccion">
+            <select class="form-control" id="selectEtapaProduccionCarga" name="etapaProduccion">
               <option value="fina">Al 31 de Diciembre</option>
               <option value="gruesa">Al 31 de Mayo</option>
             </select>
