@@ -142,6 +142,12 @@ class AjaxAgro{
 		echo json_encode($data);
 	}
 
+	public function ajaxObtenerObjetoProduccion(){
+		$campania = $this->campania;
+		$data = ControladorAgro::ctrGenerarObjetoProduccion($campania);
+		echo json_encode($data);
+	}
+
 }
 
 
@@ -217,6 +223,12 @@ if(isset($_POST["accion"])){
 		$estadisticas->campania = $_POST['campania'];
 		if(isset($_POST['carga'])) $estadisticas->carga = $_POST['carga'];
 		$estadisticas->ajaxObtenerEstadisticas();
+	}
+
+	if($accion == 'objetoProduccion'){
+		$objetoProduccion = new AjaxAgro();
+		$objetoProduccion->campania = $_POST['campania'];
+		$objetoProduccion->ajaxObtenerObjetoProduccion();
 	}
 
 }

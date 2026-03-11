@@ -604,6 +604,105 @@ class ControladorAgro{
         return ModeloAgro::mdlMostrarDataProduccion($tabla, $item, $valor,$item2, $valor2);
     }
 
+    static public function ctrGenerarObjetoProduccion($campania){
+        $tabla = 'produccion';
+        $rows = ModeloAgro::mdlObtenerProduccionPorCampania($tabla, $campania);
+
+        $obj = array(
+            'bety' => array(
+                'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'lotesGruesa' => array(),
+                'lotesFina' => array()
+            ),
+            'pichi' => array(
+                'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'lotesGruesa' => array(),
+                'lotesFina' => array()
+            ),
+            'antony' => array(
+                'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'lotesGruesa' => array(),
+                'lotesFina' => array()
+            )
+        );
+
+        $acumRinde = array(
+            'bety' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0)),
+            'pichi' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0)),
+            'antony' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0))
+        );
+
+        $mapCampo = function($campo){
+            $campoNorm = mb_strtolower(trim($campo), 'UTF-8');
+            if(strpos($campoNorm, 'pichi') !== false) return 'pichi';
+            if(strpos($campoNorm, 'bety') !== false) return 'bety';
+            if(strpos($campoNorm, 'antony') !== false) return 'antony';
+            return $campoNorm;
+        };
+
+        foreach ($rows as $row) {
+            $campo = $mapCampo($row['campo']);
+            if(!isset($obj[$campo])) continue;
+
+            $cultivo = mb_strtolower(trim($row['cultivo']), 'UTF-8');
+            $tipo = tipoCultivo($cultivo);
+            if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
+                $tipo = $row['etapa'];
+            }
+            if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
+                $tipo = 'gruesa';
+            }
+
+            $has = floatval($row['has']);
+            $costo = floatval($row['costo']);
+            $kg = floatval($row['kg']);
+            $rinde = floatval($row['rinde']);
+            $flete = floatval($row['flete']);
+
+            $obj[$campo][$tipo]['cosecha'] += $has;
+            $obj[$campo][$tipo]['flete'] += $flete;
+            if($rinde > 0){
+                $acumRinde[$campo][$tipo]['suma'] += $rinde;
+                $acumRinde[$campo][$tipo]['count'] += 1;
+            }
+
+            $loteData = array(
+                'lote' => $row['lote'],
+                'cultivo' => $row['cultivo'],
+                'cosecha' => $has,
+                'costo' => $costo,
+                'kg' => $kg,
+                'kgtotal' => $kg * $has,
+                'rinde' => $rinde,
+                'flete' => $flete
+            );
+
+            if($tipo === 'gruesa'){
+                $obj[$campo]['lotesGruesa'][] = $loteData;
+            } else {
+                $obj[$campo]['lotesFina'][] = $loteData;
+            }
+        }
+
+        foreach ($obj as $campo => $dataCampo) {
+            foreach (array('fina','cobertura','gruesa') as $tipo) {
+                $count = $acumRinde[$campo][$tipo]['count'];
+                $suma = $acumRinde[$campo][$tipo]['suma'];
+                $obj[$campo][$tipo]['rinde'] = ($count > 0) ? round($suma / $count, 2) : 0;
+                $obj[$campo][$tipo]['cosecha'] = round($obj[$campo][$tipo]['cosecha'], 2);
+                $obj[$campo][$tipo]['flete'] = round($obj[$campo][$tipo]['flete'], 2);
+            }
+        }
+
+        return $obj;
+    }
+
     /*=============================================
 	ELIMINAR ARCHIVO
 	=============================================*/

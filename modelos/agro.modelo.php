@@ -390,6 +390,13 @@ class ModeloAgro{
 		return $stmt -> fetch();
 	}
 
+	static public function mdlObtenerProduccionPorCampania($tabla, $campania){
+		$stmt = Conexion::conectar()->prepare("SELECT campania,lote,cultivo,campo,etapa,has,costo,kg,rinde,flete FROM $tabla WHERE campania = :campania");
+		$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
+		$stmt -> execute();
+		return $stmt -> fetchAll();
+	}
+
 	static public function mdlCargarLotesProduccion($tabla,$data){
 		$conexion = Conexion::conectar();
 		

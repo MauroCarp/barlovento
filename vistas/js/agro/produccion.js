@@ -73,59 +73,29 @@ $('#selectEtapaProduccion, #etapaProduccion').on('change', function(){
 })
 
 function cargarInfoProduccion(campania){
+  const url = 'ajax/agro.ajax.php'
+  $.ajax({
+    method:'POST',
+    url,
+    data:{accion:'objetoProduccion',campania},
+    dataType:'json',
+    success:function(resp){
+      console.log(resp)
+      renderInfoProduccion(resp)
+    }
+  })
+}
+
+function renderInfoProduccion(){
+
   const etapa = $('#etapaProduccion').val() || 'gruesa'
   const calcularSuggestedMax = (datos,tipo)=>{
+    if(!Array.isArray(datos) || datos.length === 0) return 0
     const max = Math.max(...datos)
     const min = Math.min(...datos)
     const margen = (max * 0.05)
     if(tipo === 'min') return min - margen
     return max + margen
-  }
-  // Demo/harcodeo de datos para validar UI
-  const demo = {
-    bety: {
-      fina: { cosecha: 30, rinde: 70.24, flete: 0 },
-      cobertura: { cosecha: 0, rinde: 0, flete: 0 },
-      gruesa: { cosecha: 0, rinde: 0, flete: 0 },
-      lotesGruesa: [
-        { lote:'L1', cultivo:'soja1', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'L2', cultivo:'maiz1', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'L3', cultivo:'soja2', cosecha:0, rinde: 0, flete: 0 }
-      ],
-      lotesFina: [
-        { lote:'Lote 2', cultivo:'Trigo', cosecha:30, costo: 97.87, kg: 7023.66, kgtotal: 210719.8,rinde: 70.24, flete:0 },
-        { lote:'L3', cultivo:'vicia-triticale', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'L9', cultivo:'triticale', cosecha:0, rinde: 0, flete: 0 }
-      ]
-    },
-    pichi: {
-      fina: { cosecha: 131, rinde: 27.9, flete: 0 },
-      cobertura: { cosecha: 0, rinde: 0, flete: 0 },
-      gruesa: { cosecha: 0, rinde: 0, flete: 0 },
-      lotesGruesa: [
-        { lote:'P1', cultivo:'maiz1', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'P2', cultivo:'soja1', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'P3', cultivo:'soja2', cosecha:0, rinde: 0, flete: 0 }
-      ],
-      lotesFina: [
-        { lote:'Lote 9', cultivo:'Trigo', cosecha:69, costo: 87.6, kg: 6429.53, kgtotal: 443638, rinde: 64.29, flete: 0 },
-        { lote:'Lote 8B Sur', cultivo:'Trigo', cosecha:62, costo: 87.21, kg: 6486.2, kgtotal: 402145, rinde: 64.86, flete: 0 },
-        { lote:'P9', cultivo:'triticale', cosecha:0, rinde: 0, flete: 0 }
-      ]
-    },
-    antony: {
-      fina: { cosecha: 0, rinde: 0, flete: 0 },
-      cobertura: { cosecha: 0, rinde: 0, flete: 0 },
-      gruesa: { cosecha: 0, rinde: 0, flete: 0 },
-      lotesGruesa: [
-        { lote:'A1', cultivo:'soja1', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'A2', cultivo:'maiz2', cosecha:0, rinde: 0, flete: 0 }
-      ],
-      lotesFina: [
-        { lote:'A7', cultivo:'trigo', cosecha:0, rinde: 0, flete: 0 },
-        { lote:'A9', cultivo:'vicia', cosecha:0, rinde: 0, flete: 0 }
-      ]
-    }
   }
 
   const campos = ['bety','pichi','antony']
@@ -138,7 +108,7 @@ function cargarInfoProduccion(campania){
   let rindeCount = 0
 
   campos.forEach(c=>{
-    const d = demo[c]
+    const d = base[c] || obtenerObjetoBaseProduccion()[c]
     const finaCob = d.fina.cosecha + d.cobertura.cosecha
     const fleteFinaCob = d.fina.flete + d.cobertura.flete
     const rindeFina = d.fina.rinde
@@ -180,6 +150,7 @@ function cargarInfoProduccion(campania){
     $(`#rindeCoberturaProduccion${C(c)}`).html(Number(d.cobertura.rinde).toLocaleString('de-DE'))
     $(`#fleteCoberturaProduccion${C(c)}`).html(Number(d.cobertura.flete).toLocaleString('de-DE'))
 
+    return
     // Tablas
     const tbody = $(`#tablaProduccion${C(c)} tbody`)
     tbody.html('')
@@ -264,6 +235,7 @@ function cargarInfoProduccion(campania){
   $('#totalCosechaProduccion').html(Number(totalCosecha).toLocaleString('de-DE'))
   $('#totalFleteProduccion').html(Number(totalFlete).toLocaleString('de-DE'))
   $('#rindePromedioProduccion').html(rindeProm)
+
 }
 
 function actualizarVistaEtapaProduccion(){
