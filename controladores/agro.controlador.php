@@ -786,6 +786,7 @@ class ControladorAgro{
 
             $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
             $campania = $_POST['campania'];
+
             $etapa = $_POST['etapaProduccion'];
         
             $rowsSql = [];
@@ -817,12 +818,16 @@ class ControladorAgro{
                                 $campo = trim($matches[1]); // 'EL PICHI'
                                 $lote  = trim($matches[2]); // 'Lote 7'
 
-                                $where = "WHERE campania = '$campania' AND lote = '$lote' AND etapa = '$etapa'";
+                                $campoSql = explode(' ', strtolower($campo));
+                                
+                                if(count($campoSql) > 1){
+                                    $campoSql = $campoSql[1];
+                                } 
+
+                                $where = "WHERE campania = '$campania' AND lote = '$lote' AND etapa = '$etapa' AND campo = '$campoSql'";
 
                                 $cultivo = ModeloAgro::mdlConsultarEjecucion('ejecucionLotes', 'cultivo', $where);
-
-                                var_dump($cultivo);
-
+                                $cultivo = $cultivo[0][0];
                             }
                             
 
@@ -831,9 +836,10 @@ class ControladorAgro{
 
                                 $has = isset($Row[1]) ? number_format(str_replace(',','',$Row[1]),0,'.','') : 0;
                                 $cosecha = isset($Row[3]) ? number_format(str_replace(',','',$Row[3]),2,'.','') : 0;
-                                $rinde = isset($Row[4]) ? number_format(str_replace(',','',$Row[4]),2,'.','') : 0;
-                                $flete = isset($Row[5]) ? number_format(str_replace(',','',$Row[5]),2,'.','') : 0;
-                                $rowsSql[] = "('".$lote."','".$cultivo."','".$has."',".$cosecha.",".$rinde.",".$flete.",'".$campo."','".$etapa."')";
+                                $rinde = isset($Row[8]) ? number_format((float)$Row[8] /  100,2,'.','') : 0;
+                                $flete = 0;
+                                // $flete = isset($Row[5]) ? number_format(str_replace(',','',$Row[5]),2,'.','') : 0;
+                                $rowsSql[] = "('" . $campania . "','".$lote."','".$cultivo."','".$campo."','".$etapa."','".$has."',".$cosecha.",".$rinde.",".$flete.")";
                             }
                             $rowNumber++;
                         }
@@ -841,12 +847,10 @@ class ControladorAgro{
                 }
             }
 
-            var_dump($rowsSql);
-            die;
-
             if(!empty($rowsSql)){
                 $tablaLotes = 'produccion';
                 $resp = ModeloAgro::mdlCargarLotesProduccion($tablaLotes, implode(',', $rowsSql));
+             
                 if($resp != 'ok'){
                     echo'<script>swal({type:"error",title:"Hubo un error al cargar Producción. Informar",showConfirmButton:true,confirmButtonText:"Cerrar"}).then(function(result){if(result.value){window.location = "index.php?ruta=agro/agro"}})</script>';
                 } else {
