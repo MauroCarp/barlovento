@@ -673,6 +673,7 @@ class ControladorAgro{
             }
 
             $loteData = array(
+                'id' => $row['id'],
                 'lote' => $row['lote'],
                 'cultivo' => $row['cultivo'],
                 'cosecha' => $has,
@@ -701,6 +702,15 @@ class ControladorAgro{
         }
 
         return $obj;
+    }
+
+    /*=============================================
+	ELIMINAR REGISTRO DE PRODUCCION
+	=============================================*/
+    static public function ctrEliminarProduccion($id){
+        $tabla = 'produccion';
+        $respuesta = ModeloAgro::mdlEliminarProduccion($tabla, $id);
+        return $respuesta;
     }
 
     /*=============================================

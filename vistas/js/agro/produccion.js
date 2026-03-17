@@ -31,7 +31,7 @@ function cargarInfoProduccion(campania){
 }
 
 function renderInfoProduccion(resp){
-
+  console.log(resp)
   const etapa = $('#etapaProduccion').val() || 'gruesa'
 
   const calcularSuggestedMax = (datos,tipo)=>{
@@ -50,136 +50,146 @@ function renderInfoProduccion(resp){
   let totalFlete = 0
   let rindeAcum = 0
   let rindeCount = 0
-
   campos.forEach(campo=>{
-    const d = resp[campo] 
-    
-    // const finaCob = d.fina.cosecha + d.cobertura.cosecha
-    // const fleteFinaCob = d.fina.flete + d.cobertura.flete
-    // const rindeFina = d.fina.rinde
-    // const rindeGruesa = d.gruesa.rinde
-    // const cosecha = (etapa==='gruesa') ? d.gruesa.cosecha : finaCob
-    // const flete = (etapa==='gruesa') ? d.gruesa.flete : fleteFinaCob
-    // const rinde = (etapa==='gruesa') ? rindeGruesa : rindeFina // simplificado promedio
+    const infoCampo = resp[campo] 
 
-    // totalCosecha += cosecha
-    // totalFlete += flete
-    // if(rinde>0){ rindeAcum += rinde; rindeCount++ }
+    const finaCob = infoCampo.fina.cosecha + infoCampo.cobertura.cosecha
+    const fleteFinaCob = infoCampo.fina.flete + infoCampo.cobertura.flete
+    const rindeFina = infoCampo.fina.rinde
+    const rindeGruesa = infoCampo.gruesa.rinde
+    const cosecha = (etapa==='gruesa') ? infoCampo.gruesa.cosecha : finaCob
+    const flete = (etapa==='gruesa') ? infoCampo.gruesa.flete : fleteFinaCob
+    const rinde = (etapa==='gruesa') ? rindeGruesa : rindeFina // simplificado promedio
 
-  //   $(`#totalCosechaProduccion${C(c)}`).html(Number(cosecha).toLocaleString('de-DE'))
-  //   $(`#totalFleteProduccion${C(c)}`).html(Number(flete).toLocaleString('de-DE'))
+    totalCosecha += cosecha
+    totalFlete += flete
+    if(rinde>0){ rindeAcum += rinde; rindeCount++ }
 
-  //   // Header valores por tipo
-  //   $(`#cosechaGruesaProduccion${C(c)}`).html(Number(d.gruesa.cosecha).toLocaleString('de-DE'))
-  //   $(`#rindeGruesaProduccion${C(c)}`).html(Number(d.gruesa.rinde).toLocaleString('de-DE'))
-  //   $(`#fleteGruesaProduccion${C(c)}`).html(Number(d.gruesa.flete).toLocaleString('de-DE'))
+    $(`#totalCosechaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(cosecha).toLocaleString('de-DE'))
+    $(`#totalFleteProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(flete).toLocaleString('de-DE'))
 
-  //   $(`#cosechaFinaProduccion${C(c)}`).html(Number(d.fina.cosecha).toLocaleString('de-DE'))
-  //   $(`#rindeFinaProduccion${C(c)}`).html(Number(d.fina.rinde).toLocaleString('de-DE'))
-  //   $(`#fleteFinaProduccion${C(c)}`).html(Number(d.fina.flete).toLocaleString('de-DE'))
+    // Header valores por tipo
+    $(`#cosechaGruesaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.cosecha).toLocaleString('de-DE'))
+    $(`#rindeGruesaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.rinde).toLocaleString('de-DE'))
+    $(`#fleteGruesaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.flete).toLocaleString('de-DE'))
 
-  //   $(`#cosechaCoberturaProduccion${C(c)}`).html(Number(d.cobertura.cosecha).toLocaleString('de-DE'))
-  //   $(`#rindeCoberturaProduccion${C(c)}`).html(Number(d.cobertura.rinde).toLocaleString('de-DE'))
-  //   $(`#fleteCoberturaProduccion${C(c)}`).html(Number(d.cobertura.flete).toLocaleString('de-DE'))
+    $(`#cosechaFinaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.fina.cosecha).toLocaleString('de-DE'))
+    $(`#rindeFinaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.fina.rinde).toLocaleString('de-DE'))
+    $(`#fleteFinaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.fina.flete).toLocaleString('de-DE'))
 
-  //   // Detalles de cajas
-  //   $(`#cosechaGruesaProduccionDetalle${C(c)}`).html(Number(d.gruesa.cosecha).toLocaleString('de-DE'))
-  //   $(`#rindeGruesaProduccionDetalle${C(c)}`).html(Number(d.gruesa.rinde).toLocaleString('de-DE'))
-  //   $(`#fleteGruesaProduccionDetalle${C(c)}`).html(Number(d.gruesa.flete).toLocaleString('de-DE'))
+    $(`#cosechaCoberturaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.cosecha).toLocaleString('de-DE'))
+    $(`#rindeCoberturaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.rinde).toLocaleString('de-DE'))
+    $(`#fleteCoberturaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.flete).toLocaleString('de-DE'))
 
-  //   $(`#cosechaFinaProduccionDetalle${C(c)}`).html(Number(d.fina.cosecha).toLocaleString('de-DE'))
-  //   $(`#rindeFinaProduccionDetalle${C(c)}`).html(Number(d.fina.rinde).toLocaleString('de-DE'))
-  //   $(`#fleteFinaProduccionDetalle${C(c)}`).html(Number(d.fina.flete).toLocaleString('de-DE'))
+    // Detalles de cajas
+    $(`#cosechaGruesaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.cosecha).toLocaleString('de-DE'))
+    $(`#rindeGruesaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.rinde).toLocaleString('de-DE'))
+    $(`#fleteGruesaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.flete).toLocaleString('de-DE'))
 
-  //   $(`#cosechaCoberturaProduccion${C(c)}`).html(Number(d.cobertura.cosecha).toLocaleString('de-DE'))
-  //   $(`#rindeCoberturaProduccion${C(c)}`).html(Number(d.cobertura.rinde).toLocaleString('de-DE'))
-  //   $(`#fleteCoberturaProduccion${C(c)}`).html(Number(d.cobertura.flete).toLocaleString('de-DE'))
+    $(`#cosechaFinaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.fina.cosecha).toLocaleString('de-DE'))
+    $(`#rindeFinaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.fina.rinde).toLocaleString('de-DE'))
+    $(`#fleteFinaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.fina.flete).toLocaleString('de-DE'))
 
-  //   return
-  //   // Tablas
-  //   const tbody = $(`#tablaProduccion${C(c)} tbody`)
-  //   tbody.html('')
-  //   const rowsBase = (etapa==='gruesa') ? d.lotesGruesa : d.lotesFina
-  //   // Normalizar filas: asegurar propiedades costo, kg, kgtotal siempre presentes
-  //   const rows = rowsBase.map(r => Object.assign({ costo: 0, kg: 0, kgtotal: 0 }, r))
-  //   rows.forEach(item=>{
-  //     tbody.append($(`
-  //       <tr>
-  //         <td>${item.lote}</td>
-  //         <td>${item.cultivo}</td>
-  //         <td>${Number(item.cosecha).toLocaleString('de-DE')}</td>
-  //         <td>${Number(item.costo).toLocaleString('de-DE')}</td>
-  //         <td>${Number(item.kg).toLocaleString('de-DE')}</td>
-  //         <td>${Number(item.kgtotal).toLocaleString('de-DE')}</td>
-  //         <td>${Number(item.rinde).toLocaleString('de-DE')}</td>
-  //         <td>${Number(item.flete).toLocaleString('de-DE')}</td>
-  //       </tr>
-  //     `))
-  //   })
+    $(`#cosechaCoberturaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.cosecha).toLocaleString('de-DE'))
+    $(`#rindeCoberturaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.rinde).toLocaleString('de-DE'))
+    $(`#fleteCoberturaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.flete).toLocaleString('de-DE'))
 
-  //   // Gráfico: Has (barras) y Rinde (línea) por Lote/Cultivo
-  //   const labels = rows.map(r => `${r.cultivo} / ${r.lote}`)
-  //   const datosHas = rows.map(r => Number(r.cosecha))
-  //   const datosRinde = rows.map(r => Number(r.rinde))
+    // Tablas
+    const tbody = $(`#tablaProduccion${capitalizarPrimeraLetra(campo)} tbody`)
+    tbody.html('')
+    const rowsBase = (etapa==='gruesa') ? infoCampo.lotesGruesa : infoCampo.lotesFina
+    // Normalizar filas: asegurar propiedades costo, kg, kgtotal siempre presentes
+    const rows = rowsBase.map(r => Object.assign({ costo: 0, kg: 0, kgtotal: 0 }, r))
+    rows.forEach(item=>{
+      let kgHas = (Number(item.rinde) * 100)
+      let kgTotal = (kgHas * Number(item.cosecha)) 
+      tbody.append($(`
+        <tr>
+          <td>${item.lote}</td>
+          <td>${nombreCultivos[item.cultivo]}</td>
+          <td>${Number(item.cosecha).toLocaleString('de-DE')}</td>
+          <td>${Number(item.costo).toLocaleString('de-DE')}</td>
+          <td>${Number(kgHas).toLocaleString('de-DE')}</td>
+          <td>${Number(kgTotal).toLocaleString('de-DE')}</td>
+          <td>${Number(item.rinde).toLocaleString('de-DE')}</td>
+          <td>${Number(item.flete).toLocaleString('de-DE')}</td>
+          <td>
+            <button class="btn btn-danger btn-sm btnEliminarProduccion" 
+                    data-id="${item.id}" 
+                    data-lote="${item.lote}" 
+                    data-cultivo="${item.cultivo}" 
+                    data-campo="${capitalizarPrimeraLetra(campo)}" 
+                    title="Eliminar registro">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `))
+    })
 
-  //   const config = {
-  //     type: 'bar',
-  //     data: {
-  //       labels,
-  //       datasets: [
-  //         {
-  //           type: 'line',
-  //           label: 'Rinde',
-  //           borderColor: window.chartColors.red,
-  //           backgroundColor: window.chartColors.red,
-  //           fill: false,
-  //           yAxisID: 'A',
-  //           data: datosRinde
-  //         },
-  //         {
-  //           label: 'Has',
-  //           type: 'bar',
-  //           backgroundColor: window.chartColors.green,
-  //           borderColor: 'white',
-  //           borderWidth: 2,
-  //           yAxisID: 'B',
-  //           data: datosHas
-  //         }
-  //       ]
-  //     },
-  //     options: {
-  //       scales: {
-  //         xAxes: [{
-  //           display: true,
-  //           ticks: { autoSkip: false }
-  //         }],
-  //         yAxes: [
-  //           {
-  //             id: 'A', type: 'linear', position: 'left',
-  //             ticks: {
-  //               beginAtZero: true,
-  //               suggestedMax: calcularSuggestedMax(datosRinde,'max')
-  //             }
-  //           },
-  //           { id: 'B', type: 'linear', position: 'right', ticks: { beginAtZero: true } }
-  //         ]
-  //       },
-  //       plugins: { labels: { render: function(reg){ return Number(reg.value).toLocaleString('de-DE') } } },
-  //       legend: { labels: { boxWidth: 5 } }
-  //     }
-  //   }
+    // Gráfico: Has (barras) y Rinde (línea) por Lote/Cultivo
+    const labels = rows.map(r => `${nombreCultivos[r.cultivo]} / ${r.lote}`)
+    const datosHas = rows.map(r => Number(r.cosecha))
+    const datosRinde = rows.map(r => Number(r.rinde))
 
-  //   const canvasId = `graficoProduccion${C(c)}`
-  //   if(document.getElementById(canvasId)){
-  //     if(window[canvasId]){ try { window[canvasId].destroy() } catch(e){} }
-  //     generarGraficoBar(canvasId, config, 'noOption')
-  //   }
+    const config = {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            type: 'line',
+            label: 'Rinde',
+            borderColor: window.chartColors.red,
+            backgroundColor: window.chartColors.red,
+            fill: false,
+            yAxisID: 'A',
+            data: datosRinde
+          },
+          {
+            label: 'Has',
+            type: 'bar',
+            backgroundColor: window.chartColors.green,
+            borderColor: 'white',
+            borderWidth: 2,
+            yAxisID: 'B',
+            data: datosHas
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            display: true,
+            ticks: { autoSkip: false }
+          }],
+          yAxes: [
+            {
+              id: 'A', type: 'linear', position: 'left',
+              ticks: {
+                beginAtZero: true,
+                suggestedMax: calcularSuggestedMax(datosRinde,'max')
+              }
+            },
+            { id: 'B', type: 'linear', position: 'right', ticks: { beginAtZero: true } }
+          ]
+        },
+        plugins: { labels: { render: function(reg){ return Number(reg.value).toLocaleString('de-DE') } } },
+        legend: { labels: { boxWidth: 5 } }
+      }
+    }
+
+    const canvasId = `graficoProduccion${capitalizarPrimeraLetra(campo)}`
+    if(document.getElementById(canvasId)){
+      if(window[canvasId]){ try { window[canvasId].destroy() } catch(e){} }
+      generarGraficoBar(canvasId, config, 'noOption')
+    }
   })
 
-  // const rindeProm = (rindeCount>0) ? (rindeAcum/rindeCount).toFixed(2) : 0
-  // $('#totalCosechaProduccion').html(Number(totalCosecha).toLocaleString('de-DE'))
-  // $('#totalFleteProduccion').html(Number(totalFlete).toLocaleString('de-DE'))
-  // $('#rindePromedioProduccion').html(rindeProm)
+  const rindeProm = (rindeCount>0) ? (rindeAcum/rindeCount).toFixed(2) : 0
+  $('#totalCosechaProduccion').html(Number(totalCosecha).toLocaleString('de-DE'))
+  $('#totalFleteProduccion').html(Number(totalFlete).toLocaleString('de-DE'))
+  $('#rindePromedioProduccion').html(rindeProm)
 
 }
 
@@ -205,5 +215,106 @@ function actualizarVistaEtapaProduccion(){
     $("div[id$='Gruesa']").hide(250)
     $("div[id$='Fina']").show(250)
   }
+}
+
+// Event listener para botones de eliminar producción
+$(document).on('click', '.btnEliminarProduccion', function(){
+  const id = $(this).data('id')
+  const lote = $(this).data('lote')
+  const cultivo = $(this).data('cultivo')
+  const campo = $(this).data('campo')
+  
+  eliminarRegistroProduccion(id, lote, cultivo, campo)
+})
+
+function eliminarRegistroProduccion(id, lote, cultivo, campo){
+  
+  // Confirmación con SweetAlert
+  swal({
+    title: '¿Está seguro?',
+    text: `Se eliminará el registro del "${lote}" - cultivo "${nombreCultivos[cultivo]}" del campo "${campo}"`,
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then(function(result) {
+    if (result.value) {
+      
+      // Mostrar loading
+      swal({
+        title: 'Eliminando...',
+        text: 'Por favor espere',
+        type: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        onOpen: function() {
+          swal.showLoading()
+        }
+      })
+      
+      // Realizar petición AJAX
+      $.ajax({
+        method: 'POST',
+        url: 'ajax/agro.ajax.php',
+        data: {
+          accion: 'eliminarProduccion',
+          id: id
+        },
+        success: function(response) {
+          try {
+            const resp = JSON.parse(response)
+            
+            if (resp === 'ok' || (resp && resp.success)) {
+              swal({
+                title: '¡Eliminado!',
+                text: 'El registro ha sido eliminado correctamente.',
+                type: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              })
+              
+              // Recargar la información de producción
+              cargarInfoProduccion(campania)
+              
+            } else {
+              swal({
+                title: 'Error',
+                text: resp.message || 'No se pudo eliminar el registro',
+                type: 'error'
+              })
+            }
+          } catch (e) {
+            if (response === 'ok') {
+              swal({
+                title: '¡Eliminado!',
+                text: 'El registro ha sido eliminado correctamente.',
+                type: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              })
+              
+              // Recargar la información de producción
+              cargarInfoProduccion(campania)
+            } else {
+              swal({
+                title: 'Error',
+                text: 'Respuesta inesperada del servidor',
+                type: 'error'
+              })
+            }
+          }
+        },
+        error: function(xhr, status, error) {
+          swal({
+            title: 'Error de conexión',
+            text: 'No se pudo conectar con el servidor. Inténtelo nuevamente.',
+            type: 'error'
+          })
+        }
+      })
+    }
+  })
 }
 

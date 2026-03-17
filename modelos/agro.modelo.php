@@ -391,11 +391,25 @@ class ModeloAgro{
 	}
 
 	static public function mdlObtenerProduccionPorCampania($tabla, $campania){
-		$stmt = Conexion::conectar()->prepare("SELECT campania,lote,cultivo,campo,etapa,has,costo,rinde,flete FROM $tabla WHERE campania = :campania");
+		$stmt = Conexion::conectar()->prepare("SELECT id,campania,lote,cultivo,campo,etapa,has,costo,rinde,flete FROM $tabla WHERE campania = :campania");
 // return $stmt;
 		$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
 		$stmt -> execute();
 		return $stmt -> fetchAll();
+	}
+
+	/*=============================================
+	ELIMINAR REGISTRO DE PRODUCCION
+	=============================================*/
+	static public function mdlEliminarProduccion($tabla, $id){
+		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id = :id");
+		$stmt -> bindParam(":id", $id, PDO::PARAM_STR);
+
+		if($stmt -> execute()){
+			return "ok";
+		}else{
+			return $stmt -> errorInfo();
+		}
 	}
 
 	static public function mdlCargarLotesProduccion($tabla,$data){

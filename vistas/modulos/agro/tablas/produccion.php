@@ -22,6 +22,7 @@
                         <th>Kg Totales</th>
                         <th>Rinde QQ</th>
                         <th>Flete (U$D)</th>
+                        <th></th>
                     </thead>
                     <tbody>
 

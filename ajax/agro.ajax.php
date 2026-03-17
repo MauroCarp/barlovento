@@ -12,6 +12,8 @@ class AjaxAgro{
 	public $campania;
 	
 	public $idPlanificacion;
+	
+	public $idProduccion;
 
 	public $carga;
 
@@ -148,6 +150,13 @@ class AjaxAgro{
 		echo json_encode($data);
 	}
 
+	public function ajaxEliminarProduccion(){
+		$id = $this->idProduccion;
+
+		$respuesta = ControladorAgro::ctrEliminarProduccion($id);
+		echo json_encode($respuesta);
+	}
+
 }
 
 
@@ -229,6 +238,12 @@ if(isset($_POST["accion"])){
 		$objetoProduccion = new AjaxAgro();
 		$objetoProduccion->campania = $_POST['campania'];
 		$objetoProduccion->ajaxObtenerObjetoProduccion();
+	}
+
+	if($accion == 'eliminarProduccion'){
+		$eliminarProduccion = new AjaxAgro();
+		$eliminarProduccion->idProduccion = $_POST['id'];
+		$eliminarProduccion->ajaxEliminarProduccion();
 	}
 
 }
