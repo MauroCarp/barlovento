@@ -897,7 +897,7 @@ class ControladorAgro{
             $campania = $_POST['campania'];
 
             $etapa = $_POST['etapaProduccion'];
-        
+
             $rowsSql = [];
 
             $countFiles = count($_FILES['archivosProduccion']['name']);
@@ -910,6 +910,10 @@ class ControladorAgro{
                     move_uploaded_file($_FILES['archivosProduccion']['tmp_name'][$i], $ruta);
                     $Reader = new SpreadsheetReader($ruta);
                     $sheetCount = count($Reader->sheets());
+                    
+                    $lote = '';
+                    $cultivo = '';
+                    $campo = '';
 
                     for($j=0;$j<$sheetCount;$j++){
                         $Reader->ChangeSheet($j);
@@ -920,23 +924,14 @@ class ControladorAgro{
                             // Ajusta índices según tu planilla
 
                             if($rowNumber == 3 && isset($Row[1]) && trim($Row[1]) !== ''){
-
-                                $cultivo = isset($_POST[$key.'cultivo']) ? $_POST[$key.'cultivo'] : str_replace($lote.'_', '', $key);
-
-                                preg_match('/Lote:\s+(.+?)\\\\(.+?)\s+Clase Labor:/', $Row[1], $matches);                
+                                var_dump($Row[1]);
+                                preg_match('/Lote:\s+(.+?)\\\\(.+?)\s+Cultivo:\s+(.+?)\)/', $Row[1], $matches);
                                 $campo = trim($matches[1]); // 'EL PICHI'
-                                $lote  = trim($matches[2]); // 'Lote 7'
+                                $lote = trim($matches[2]); // 'Lote 9'
+                                $cultivo = limpiarTexto($matches[3]); // 'Trigo'
 
-                                $campoSql = explode(' ', strtolower($campo));
-                                
-                                if(count($campoSql) > 1){
-                                    $campoSql = $campoSql[1];
-                                } 
 
-                                $where = "WHERE campania = '$campania' AND lote = '$lote' AND etapa = '$etapa' AND campo = '$campoSql'";
 
-                                $cultivo = ModeloAgro::mdlConsultarEjecucion('ejecucionLotes', 'cultivo', $where);
-                                $cultivo = $cultivo[0][0];
                             }
                             
 
@@ -956,6 +951,7 @@ class ControladorAgro{
                 }
             }
 
+            die;
             if(!empty($rowsSql)){
                 $tablaLotes = 'produccion';
                 $resp = ModeloAgro::mdlCargarLotesProduccion($tablaLotes, implode(',', $rowsSql));
