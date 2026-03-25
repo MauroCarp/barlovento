@@ -924,7 +924,7 @@ class ControladorAgro{
                             // Ajusta índices según tu planilla
 
                             if($rowNumber == 3 && isset($Row[1]) && trim($Row[1]) !== ''){
-                                var_dump($Row[1]);
+
                                 preg_match('/Lote:\s+(.+?)\\\\(.+?)\s+Cultivo:\s+(.+?)\)/', $Row[1], $matches);
                                 $campo = trim($matches[1]); // 'EL PICHI'
                                 $lote = trim($matches[2]); // 'Lote 9'
@@ -951,7 +951,6 @@ class ControladorAgro{
                 }
             }
 
-            die;
             if(!empty($rowsSql)){
                 $tablaLotes = 'produccion';
                 $resp = ModeloAgro::mdlCargarLotesProduccion($tablaLotes, implode(',', $rowsSql));
