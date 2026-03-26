@@ -1152,6 +1152,26 @@ class ControladorAgro{
     
     }
 
+    /*=============================================
+    COMERCIALIZACIÓN - MOSTRAR CULTIVOS
+    =============================================*/
+    static public function ctrMostrarCultivosComercializacion($campania){
+        
+        $respuesta = ModeloAgro::mdlMostrarCultivosComercializacion($campania);
+        return $respuesta;
+    
+    }
+
+    /*=============================================
+    COMERCIALIZACIÓN - DETALLE DE CULTIVO
+    =============================================*/
+    static public function ctrMostrarDetalleCultivoComercializacion($campania, $cultivo){
+        
+        $respuesta = ModeloAgro::mdlMostrarDetalleCultivoComercializacion($campania, $cultivo);
+        return $respuesta;
+    
+    }
+
 }
 
 	

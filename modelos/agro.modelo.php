@@ -541,4 +541,116 @@ class ModeloAgro{
 
 	}
 
+        /*=============================================
+        COMERCIALIZACIÓN - MOSTRAR CULTIVOS
+        =============================================*/
+        static public function mdlMostrarCultivosComercializacion($campania){
+            
+            try {
+                $pdo = Conexion::conectar();
+                
+                // Consulta para obtener cultivos de la planificación con producción
+                $sql = "SELECT 
+                    cp.cultivo,
+                    SUM((p.rinde * 100) * p.has) as total_cosechado
+                FROM cultivosplanificacion cp
+                INNER JOIN planificaciones pl ON cp.idPlanificacion = pl.id
+                LEFT JOIN produccion p ON p.cultivo = cp.cultivo AND p.campania = pl.campania
+                WHERE pl.campania = ?
+                GROUP BY cp.cultivo
+                ORDER BY cp.cultivo";
+                
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(1, $campania, PDO::PARAM_STR);
+                $stmt->execute();
+                
+                $cultivos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Calcular resumen
+                $totalCultivos = count($cultivos);
+                $totalProducido = 0;
+                
+                foreach ($cultivos as $cultivo) {
+                    $totalProducido += floatval($cultivo['total_cosechado']);
+                }
+                
+                $resumen = [
+                    'total_cultivos' => $totalCultivos,
+                    'total_producido' => $totalProducido
+                ];
+                
+                return [
+                    'success' => true,
+                    'cultivos' => $cultivos,
+                    'resumen' => $resumen
+                ];
+                
+            } catch (Exception $e) {
+                return [
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+
+        /*=============================================
+        COMERCIALIZACIÓN - DETALLE DE CULTIVO
+        =============================================*/
+        static public function mdlMostrarDetalleCultivoComercializacion($campania, $cultivo){
+            
+            try {
+                $pdo = Conexion::conectar();
+                
+                // Consulta para obtener detalles del cultivo específico
+                $sql = "SELECT 
+                    p.lote,
+                    p.campo,
+                    p.has as hectareas,
+                    p.rinde as rendimiento,
+                    (p.rinde * 100) as total
+                FROM produccion p
+                WHERE p.campania = ? AND p.cultivo = ?
+                ORDER BY p.lote";
+                
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(1, $campania, PDO::PARAM_STR);
+                $stmt->bindParam(2, $cultivo, PDO::PARAM_STR);
+                $stmt->execute();
+                
+                $lotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Calcular totales
+                $hectareasTotal = 0;
+                $totalCosechado = 0;
+                $rendimientoPromedio = 0;
+                
+                if (!empty($lotes)) {
+                    foreach ($lotes as $lote) {
+                        $hectareasTotal += floatval($lote['hectareas']);
+                        $totalCosechado += floatval($lote['total']);
+                    }
+                    
+                    $rendimientoPromedio = $hectareasTotal > 0 ? ($totalCosechado / $hectareasTotal) : 0;
+                }
+                
+                $detalle = [
+                    'hectareas' => number_format($hectareasTotal, 2),
+                    'total_cosechado' => $totalCosechado,
+                    'rendimiento_promedio' => number_format($rendimientoPromedio, 2),
+                    'lotes' => $lotes
+                ];
+                
+                return [
+                    'success' => true,
+                    'detalle' => $detalle
+                ];
+                
+            } catch (Exception $e) {
+                return [
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+
 }

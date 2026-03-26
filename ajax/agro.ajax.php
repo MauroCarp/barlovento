@@ -25,6 +25,8 @@ class AjaxAgro{
 
 	public $data;
 
+	public $cultivo;
+
 	public function ajaxMostrarDataPlanificacion(){
 		
 		$cargaPlanificacion = $this->carga;
@@ -157,6 +159,27 @@ class AjaxAgro{
 		echo json_encode($respuesta);
 	}
 
+	/*=============================================
+	COMERCIALIZACIÓN - MOSTRAR CULTIVOS
+	=============================================*/
+	public function ajaxMostrarCultivosComercializacion(){
+		$campania = $this->campania;
+
+		$data = ControladorAgro::ctrMostrarCultivosComercializacion($campania);
+		echo json_encode($data);
+	}
+
+	/*=============================================
+	COMERCIALIZACIÓN - DETALLE DE CULTIVO
+	=============================================*/
+	public function ajaxMostrarDetalleCultivoComercializacion(){
+		$campania = $this->campania;
+		$cultivo = $this->cultivo;
+
+		$data = ControladorAgro::ctrMostrarDetalleCultivoComercializacion($campania, $cultivo);
+		echo json_encode($data);
+	}
+
 }
 
 
@@ -244,6 +267,19 @@ if(isset($_POST["accion"])){
 		$eliminarProduccion = new AjaxAgro();
 		$eliminarProduccion->idProduccion = $_POST['id'];
 		$eliminarProduccion->ajaxEliminarProduccion();
+	}
+
+	if($accion == 'mostrarCultivosComercializacion'){
+		$mostrarCultivos = new AjaxAgro();
+		$mostrarCultivos->campania = $_POST['campania'];
+		$mostrarCultivos->ajaxMostrarCultivosComercializacion();
+	}
+
+	if($accion == 'mostrarDetalleCultivoComercializacion'){
+		$mostrarDetalle = new AjaxAgro();
+		$mostrarDetalle->campania = $_POST['campania'];
+		$mostrarDetalle->cultivo = $_POST['cultivo'];
+		$mostrarDetalle->ajaxMostrarDetalleCultivoComercializacion();
 	}
 
 }

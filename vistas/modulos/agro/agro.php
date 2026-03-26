@@ -174,8 +174,8 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
                             </div>
                         
                             <div class='tab-pane' id='tab_4'>
-                              <h1>HOLA</h1>
-                              <?php //include 'comercializacion.php';?>
+                              
+                              <?php include 'comercializacion.php';?>
                         
                             </div>
 
