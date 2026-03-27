@@ -550,15 +550,7 @@ class ModeloAgro{
                 $pdo = Conexion::conectar();
                 
                 // Consulta para obtener cultivos de la planificación con producción
-                $sql = "SELECT 
-                    cp.cultivo,
-                    SUM((p.rinde * 100) * p.has) as total_cosechado
-                FROM cultivosplanificacion cp
-                INNER JOIN planificaciones pl ON cp.idPlanificacion = pl.id
-                LEFT JOIN produccion p ON p.cultivo = cp.cultivo AND p.campania = pl.campania
-                WHERE pl.campania = ?
-                GROUP BY cp.cultivo
-                ORDER BY cp.cultivo";
+                $sql = "SELECT cultivo, ((rinde * 100) * has) as total_cosechado FROM produccion WHERE campania = ? AND cultivo IS NOT NULL AND cultivo != '' GROUP by cultivo; ORDER BY cultivo";
                 
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindParam(1, $campania, PDO::PARAM_STR);
@@ -652,5 +644,23 @@ class ModeloAgro{
                 ];
             }
         }
+
+		static public function mdlNuevoContrato($tabla,$data){
+
+			$conexion = Conexion::conectar();
+
+			$stmt = $conexion->prepare("INSERT INTO $tabla(campania,cultivo,fecha,precio,kilos,corredor,comprador) VALUES $data");
+
+			if($stmt->execute()){ 
+				
+				return 'ok';
+				
+			}else{
+				
+				return $stmt->errorInfo();
+				
+			}
+		
+		}
 
 }

@@ -80,7 +80,9 @@
               <h3 class="box-title">Cargar Archivo</h3>
             </div>
             <div class="box-body">
-              <form id="formCargaArchivo" enctype="multipart/form-data">
+              <form id="formCargaArchivo" method='POST' enctype="multipart/form-data">
+                <input type="hidden" name="campaniaContrato" id="campaniaContrato">
+                <input type="hidden" name="cultivoContrato" id="cultivoContrato">
                 <div class="form-group">
                   <label for="archivoContrato">Seleccionar archivo</label>
                   <input type="file" id="archivoContrato" name="archivoContrato" class="form-control" required>
@@ -96,3 +98,6 @@
     </div>
   </div>
 </div>
+
+<?php
+$nuevoContrato = ControladorAgro::ctrNuevoContrato();

@@ -1158,6 +1158,8 @@ class ControladorAgro{
     static public function ctrMostrarCultivosComercializacion($campania){
         
         $respuesta = ModeloAgro::mdlMostrarCultivosComercializacion($campania);
+
+
         return $respuesta;
     
     }
@@ -1170,6 +1172,152 @@ class ControladorAgro{
         $respuesta = ModeloAgro::mdlMostrarDetalleCultivoComercializacion($campania, $cultivo);
         return $respuesta;
     
+    }
+
+   /*=============================================
+    COMERCIALIZACIÓN - CARGAR CONTRATOS
+    =============================================*/
+    
+	static public function ctrNuevoContrato(){
+
+        require_once('extensiones/excel/php-excel-reader/excel_reader2.php');
+        require_once('extensiones/excel/SpreadsheetReader.php');
+
+        if(isset($_POST['btnCargarContrato'])){
+
+            $error = false;
+        
+            $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            
+            $campania = $_POST['campaniaContrato'];
+            $cultivo = $_POST['cultivoContrato'];
+            foreach ($_FILES as $key => $file) {
+       
+                if($file['size'] > 0){
+
+                    if(in_array($file["type"],$allowedFileType)){
+                        
+                        $ruta = "carga/" . $file['name'];
+                        
+                        move_uploaded_file($file['tmp_name'], $ruta);
+                                                                
+                        $rowNumber = 0;
+
+                        $data = array();
+                        
+                        $Reader = new SpreadsheetReader($ruta);	
+                        
+                        $sheetCount = count($Reader->sheets());
+                
+                        $tabla = 'contratosproduccion';                        
+
+                        $rowValida = false;
+
+                        for($i=0;$i<$sheetCount;$i++){
+                
+                            $Reader->ChangeSheet($i);
+
+                            foreach ($Reader as $Row){     
+
+                                if($rowNumber > 4)
+                                    $rowValida = true;
+
+                                if($rowValida){
+
+                                    if($Row[2] == '' || $Row[7] == '' || $Row[8] == '' || $Row[9] == '' || $Row[10] == ''){
+                                        continue;
+                                    }   
+
+                                    // Formatear fecha de dd-mm-yy a YYYY-mm-dd usando DateTime
+                                    $fechaOriginal = $Row[2];
+                                    $fechaFormateada = '';
+                                    
+                                    if (!empty($fechaOriginal)) {
+                                        try {
+                                            // Crear objeto DateTime desde formato mm-dd-yy
+                                            $fecha = DateTime::createFromFormat('m-d-y', $fechaOriginal);
+                                            
+                                            if ($fecha !== false) {
+                                                // Convertir a formato YYYY-mm-dd
+                                                $fechaFormateada = $fecha->format('Y-m-d');
+                                            } else {
+                                                $fechaFormateada = $fechaOriginal; // Mantener original si falla
+                                            }
+                                        } catch (Exception $e) {
+                                            $fechaFormateada = $fechaOriginal; // Mantener original en caso de error
+                                        }
+                                    }
+
+                                    $arr = array(
+                                                'campania'=> "'" . $campania . "'",
+                                                'cultivo'=>"'" . $cultivo. "'",
+                                                'fecha'=>"'" . $fechaFormateada . "'",
+                                                'precio'=>"'" . $Row[7]. "'",
+                                                'kilos'=>"'" . $Row[10]. "'",
+                                                'corredor'=>"'" . $Row[8]. "'",
+                                                'comprador'=>"'" . $Row[9]. "'"
+                                    );
+
+
+                                    $data[] = "(" . implode(',',$arr) . ")";
+
+                                }
+
+                                $rowNumber++;
+                            }
+
+                                
+                        }
+                    
+                   
+                        $respuesta = ModeloAgro::mdlNuevoContrato($tabla,implode(',',$data));
+              
+                        if($respuesta != 'ok'){
+                           echo'<script>
+
+                            swal({
+                                    type: "error",
+                                    title: "Hubo un error al cargar el contrato.Informar",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "Cerrar"
+                                    }).then(function(result) {
+                                            if (result.value) {
+                                                window.location = "index.php?ruta=agro/agro"
+
+                                            }
+                                        })
+
+                            </script>';
+                            die();
+                        }
+
+                    
+
+                    }
+
+                }
+
+                echo'<script>
+
+                swal({
+                    type: "success",
+                    title: "Contrato cargado correctamente",
+                    showConfirmButton: true,
+                    confirmButtonText: "Cerrar",
+                    closeOnConfirm: false
+                    }).then(function(result) {
+                            if (result.value) {
+
+                                window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"
+                            }
+                        })
+
+                </script>';
+                die; 
+            }
+            
+        }  
+
     }
 
 }

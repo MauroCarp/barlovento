@@ -63,12 +63,12 @@ function cargarCultivosComercializacion() {
 function mostrarCardsCultivos(cultivos) {
     
     let html = '';
-    
+    console.log(cultivos)
     cultivos.forEach(function(cultivo, index) {
         
         // Formatear el total cosechado
         let totalCosechado = parseFloat(cultivo.total_cosechado) || 0;
-        let totalFormateado = totalCosechado.toLocaleString('es-AR');
+        let totalFormateado = totalCosechado.toLocaleString('es-AR',{minimumFractionDigits: 0, maximumFractionDigits: 0});
         
         html += `
             <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 15px;">
@@ -165,7 +165,7 @@ function abrirModalDetalleCultivo(cultivo, totalCosechado) {
     $('#nombreCultivoModal').html(nombreCultivos[cultivo] || cultivo);
     
     // Actualizar datos básicos
-    $('#totalCosechadoModal').html(parseFloat(totalCosechado).toLocaleString('es-AR'));
+    $('#totalCosechadoModal').html(parseFloat(totalCosechado).toLocaleString('es-AR',{minimumFractionDigits: 0, maximumFractionDigits: 0}));
     
     // Cargar detalle adicional del cultivo
     cargarDetalleCultivo(nombreCultivos[cultivo] || cultivo);
@@ -179,6 +179,9 @@ function cargarDetalleCultivo(cultivo) {
     
     let campania = $('#campania').html().trim();
     
+    $('#campaniaContrato').val(campania);
+    let cultivoKey = Object.entries(nombreCultivos).find(([key, value]) => value === cultivo);
+    $('#cultivoContrato').val(cultivoKey[0])
     // Mostrar loader en el modal
     $('#detalleProduccionModal').html(`
         <p class="text-center text-muted">
