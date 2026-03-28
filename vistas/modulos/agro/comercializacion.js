@@ -167,21 +167,23 @@ function abrirModalDetalleCultivo(cultivo, totalCosechado) {
     // Actualizar datos básicos
     $('#totalCosechadoModal').html(parseFloat(totalCosechado).toLocaleString('es-AR',{minimumFractionDigits: 0, maximumFractionDigits: 0}));
     
+    $('#remanenteTotalModal').html();
     // Cargar detalle adicional del cultivo
-    cargarDetalleCultivo(nombreCultivos[cultivo] || cultivo);
+    cargarDetalleCultivo(nombreCultivos[cultivo] || cultivo,totalCosechado);
     
     // Mostrar modal
     $('#modalDetalleCultivo').modal('show');
 }
 
 // Función para cargar detalle específico del cultivo
-function cargarDetalleCultivo(cultivo) {
+function cargarDetalleCultivo(cultivo,totalCosechado) {
     
     let campania = $('#campania').html().trim();
     
     $('#campaniaContrato').val(campania);
     let cultivoKey = Object.entries(nombreCultivos).find(([key, value]) => value === cultivo);
     $('#cultivoContrato').val(cultivoKey[0])
+
 
     // Mostrar loader en el modal
     $('#detalleProduccionModal').html(`
@@ -210,12 +212,8 @@ function cargarDetalleCultivo(cultivo) {
             
             try {
                 let data = JSON.parse(response);
-                console.log(data)
-                return
+                
                 if (data.success && data.detalle) {
-                    
-                    // Actualizar precio remanente
-                    $('#precioRemanenteModal').html(data.detalle.precioPizarra || '0');
                     
                     // Mostrar detalle de producción
                     mostrarDetalleProduccion(data.detalle);
@@ -250,7 +248,10 @@ function cargarDetalleCultivo(cultivo) {
     });
 
     // Cargar contratos del cultivo
-    cargarContratosCultivo(cultivoKey[0], campania);
+    cargarContratosCultivo(cultivoKey[0], campania, totalCosechado);
+    
+    // Cargar precio de pizarra desde Agrofy
+    obtenerPrecioPizarra(cultivoKey[0]);
 }
 
 $('#btnGestionarCultivo').on('click', function() {
@@ -259,7 +260,7 @@ $('#btnGestionarCultivo').on('click', function() {
 })
 
 // Función para cargar contratos del cultivo
-function cargarContratosCultivo(cultivo, campania) {
+function cargarContratosCultivo(cultivo, campania, totalCosechado) {
     
     $.ajax({
         method: 'POST',
@@ -275,9 +276,9 @@ function cargarContratosCultivo(cultivo, campania) {
                 let data = JSON.parse(response);
                 
                 if (data.success && data.contratos && data.contratos.length > 0) {
-                    mostrarTablaContratos(data.contratos, data.resumen);
+                    mostrarTablaContratos(data.contratos, data.resumen, totalCosechado);
                 } else {
-                    mostrarSinContratos();
+                    mostrarSinContratos(totalCosechado);
                 }
                 
             } catch (error) {
@@ -303,7 +304,15 @@ function cargarContratosCultivo(cultivo, campania) {
 }
 
 // Función para mostrar tabla de contratos
-function mostrarTablaContratos(contratos, resumen) {
+function mostrarTablaContratos(contratos, resumen, totalCosechado) {
+    
+    // Calcular remanente
+    let totalCosechadoNum = parseFloat(totalCosechado) || 0;
+    let totalKilosContratos = parseFloat(resumen.total_kilos) || 0;
+    let remanente = totalCosechadoNum - totalKilosContratos;
+    
+    // Actualizar remanente en el modal
+    $('#remanenteTotalModal').html(remanente.toLocaleString('es-AR', {minimumFractionDigits: 0, maximumFractionDigits: 0}));
     
     let html = `
         <!-- Resumen de contratos -->
@@ -374,7 +383,11 @@ function mostrarTablaContratos(contratos, resumen) {
 }
 
 // Función para mostrar mensaje cuando no hay contratos
-function mostrarSinContratos() {
+function mostrarSinContratos(totalCosechado) {
+    
+    // Si no hay contratos, el remanente es igual al total cosechado
+    let totalCosechadoNum = parseFloat(totalCosechado) || 0;
+    $('#remanenteTotalModal').html(totalCosechadoNum.toLocaleString('es-AR', {minimumFractionDigits: 0, maximumFractionDigits: 0}));
     $('#contratosModal').html(`
         <div class="text-center" style="padding: 30px;">
             <i class="fa fa-file-o fa-3x" style="color: #ccc;"></i>
@@ -394,4 +407,80 @@ function formatearFecha(fechaString) {
     } catch (error) {
         return fechaString;
     }
+}
+
+// Función para obtener precio de pizarra desde Agrofy
+function obtenerPrecioPizarra(cultivo) {
+    
+    // Calcular fecha del día anterior en formato YYYYmmdd
+    let fechaAyer = new Date();
+    fechaAyer.setDate(fechaAyer.getDate() - 1);
+    
+    let year = fechaAyer.getFullYear();
+    let month = String(fechaAyer.getMonth() + 1).padStart(2, '0');
+    let day = String(fechaAyer.getDate()).padStart(2, '0');
+    let dateString = `${year}/${month}/${day}`;
+    
+    // Mapeo de cultivos para Agrofy API
+    let cultivosAgrofy = {
+        'maiz': 'MZ',
+        'maiz1': 'M9', 
+        'maiz2': 'MZ',
+        'soja': 'SO',
+        'soja1': 'S9',
+        'soja2': 'SO', 
+        'girasol': 'GI',
+        'trigo': 'TR',
+        'avena': 'AV',
+        'cebada': 'CB',
+        'vicia': 'VI'
+    };
+    
+    let cultivoAgrofy = cultivosAgrofy[cultivo.toLowerCase()] || cultivo.toLowerCase();
+    
+    // URL del API de Agrofy
+    let apiUrl = `https://s1.dekagb.com/dkmserver.services/html/acabaseservice.aspx?mt=GetPizarras&appname=acabase&date=${dateString}&grano=${cultivoAgrofy}`;
+    
+    let api = 'https://s1.dekagb.com/dkmserver.services/html/acabaseservice.aspx?mt=GetPizarras&appname=acabase&date=2026/03/25&grano=GI'
+    console.log(api,apiUrl)
+    // Llamada AJAX al API de Agrofy
+    $.ajax({
+        method: 'GET',
+        url: api,
+        success: function(response) {
+            console.log('hola')
+            console.log(response)
+            try {
+                if (response && response.data && Array.isArray(response.data)) {
+                console.log(response)
+                return     
+                    // Buscar el cultivo específico en la respuesta
+                    let precioCultivo = response.data.find(item => 
+                        item.commodity && 
+                        item.commodity.toLowerCase().includes(cultivoAgrofy)
+                    );
+                    
+                    if (precioCultivo && precioCultivo.price) {
+                        // Actualizar precio remanente en el modal
+                        $('#precioRemanenteModal').html(parseFloat(precioCultivo.price).toLocaleString('es-AR'));
+                    } else {
+                        // Si no se encuentra el cultivo específico, mostrar precio general
+                        $('#precioRemanenteModal').html('No disponible');
+                    }
+                    
+                } else {
+                    $('#precioRemanenteModal').html('Sin datos');
+                }
+                
+            } catch (error) {
+                console.error('Error procesando respuesta de Agrofy:', error);
+                $('#precioRemanenteModal').html('Error');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error llamando API de Agrofy:', error);
+            // En caso de error, mostrar mensaje informativo
+            $('#precioRemanenteModal').html('No disponible');
+        }
+    });
 }
