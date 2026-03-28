@@ -586,55 +586,53 @@ class ModeloAgro{
         }
 
         /*=============================================
-        COMERCIALIZACIÓN - DETALLE DE CULTIVO
+        COMERCIALIZACIÓN - MOSTRAR CONTRATOS POR CULTIVO
         =============================================*/
-        static public function mdlMostrarDetalleCultivoComercializacion($campania, $cultivo){
+        static public function mdlMostrarContratosCultivo($campania, $cultivo){
             
             try {
                 $pdo = Conexion::conectar();
                 
-                // Consulta para obtener detalles del cultivo específico
+                // Consulta para obtener contratos del cultivo específico
                 $sql = "SELECT 
-                    p.lote,
-                    p.campo,
-                    p.has as hectareas,
-                    p.rinde as rendimiento,
-                    (p.rinde * 100) as total
-                FROM produccion p
-                WHERE p.campania = ? AND p.cultivo = ?
-                ORDER BY p.lote";
+                    fecha,
+                    precio,
+                    kilos,
+                    corredor,
+                    comprador
+                FROM contratosproduccion 
+                WHERE campania = ? AND cultivo = ?
+                ORDER BY fecha DESC";
                 
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindParam(1, $campania, PDO::PARAM_STR);
                 $stmt->bindParam(2, $cultivo, PDO::PARAM_STR);
                 $stmt->execute();
                 
-                $lotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $contratos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
                 // Calcular totales
-                $hectareasTotal = 0;
-                $totalCosechado = 0;
-                $rendimientoPromedio = 0;
+                $totalKilos = 0;
+                $precioPromedio = 0;
+                $totalContratos = count($contratos);
                 
-                if (!empty($lotes)) {
-                    foreach ($lotes as $lote) {
-                        $hectareasTotal += floatval($lote['hectareas']);
-                        $totalCosechado += floatval($lote['total']);
+                if (!empty($contratos)) {
+                    $sumaPrecios = 0;
+                    foreach ($contratos as $contrato) {
+                        $totalKilos += floatval($contrato['kilos']);
+                        $sumaPrecios += floatval($contrato['precio']);
                     }
-                    
-                    $rendimientoPromedio = $hectareasTotal > 0 ? ($totalCosechado / $hectareasTotal) : 0;
+                    $precioPromedio = $totalContratos > 0 ? ($sumaPrecios / $totalContratos) : 0;
                 }
-                
-                $detalle = [
-                    'hectareas' => number_format($hectareasTotal, 2),
-                    'total_cosechado' => $totalCosechado,
-                    'rendimiento_promedio' => number_format($rendimientoPromedio, 2),
-                    'lotes' => $lotes
-                ];
                 
                 return [
                     'success' => true,
-                    'detalle' => $detalle
+                    'contratos' => $contratos,
+                    'resumen' => [
+                        'total_contratos' => $totalContratos,
+                        'total_kilos' => $totalKilos,
+                        'precio_promedio' => round($precioPromedio, 2)
+                    ]
                 ];
                 
             } catch (Exception $e) {

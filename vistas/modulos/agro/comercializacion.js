@@ -182,19 +182,27 @@ function cargarDetalleCultivo(cultivo) {
     $('#campaniaContrato').val(campania);
     let cultivoKey = Object.entries(nombreCultivos).find(([key, value]) => value === cultivo);
     $('#cultivoContrato').val(cultivoKey[0])
+
     // Mostrar loader en el modal
     $('#detalleProduccionModal').html(`
         <p class="text-center text-muted">
             <i class="fa fa-spinner fa-spin"></i> Cargando detalles...
         </p>
     `);
+
+    // Mostrar loader en contratos también
+    $('#contratosModal').html(`
+        <p class="text-center text-muted">
+            <i class="fa fa-spinner fa-spin"></i> Cargando contratos...
+        </p>
+    `);
         
-    // Cargar detalle vía AJAX
+    // Cargar detalle del cultivo vía AJAX
     $.ajax({
         method: 'POST',
         url: 'ajax/agro.ajax.php',
         data: {
-            accion: 'mostrarDetalleCultivoComercializacion',
+            accion: 'mostrarContratosCultivo',
             cultivo: cultivo,
             campania: campania
         },
@@ -202,11 +210,12 @@ function cargarDetalleCultivo(cultivo) {
             
             try {
                 let data = JSON.parse(response);
-                
+                console.log(data)
+                return
                 if (data.success && data.detalle) {
                     
-                    // Actualizar precio pizarra
-                    $('#precioPizarraModal').html(data.detalle.precioPizarra || '0');
+                    // Actualizar precio remanente
+                    $('#precioRemanenteModal').html(data.detalle.precioPizarra || '0');
                     
                     // Mostrar detalle de producción
                     mostrarDetalleProduccion(data.detalle);
@@ -217,7 +226,6 @@ function cargarDetalleCultivo(cultivo) {
                             No se encontraron detalles para este cultivo.
                         </p>
                     `);
-                    $('#hectareasModal').html('0');
                 }
                 
             } catch (error) {
@@ -240,23 +248,150 @@ function cargarDetalleCultivo(cultivo) {
             `);
         }
     });
-}
 
-// Función para mostrar detalle de producción en el modal
-function mostrarDetalleProduccion(detalle) {
-    
-    let html = `
-        <div class="row">
-            <div class="col-lg-12">
-            </div>
-        </div>
-    `;
-
-    
-    $('#detalleProduccionModal').html(html);
+    // Cargar contratos del cultivo
+    cargarContratosCultivo(cultivoKey[0], campania);
 }
 
 $('#btnGestionarCultivo').on('click', function() {
 
     $('#formCargaContrato').toggle(200);
 })
+
+// Función para cargar contratos del cultivo
+function cargarContratosCultivo(cultivo, campania) {
+    
+    $.ajax({
+        method: 'POST',
+        url: 'ajax/agro.ajax.php',
+        data: {
+            accion: 'mostrarContratosCultivo',
+            cultivo: cultivo,
+            campania: campania
+        },
+        success: function(response) {
+            
+            try {
+                let data = JSON.parse(response);
+                
+                if (data.success && data.contratos && data.contratos.length > 0) {
+                    mostrarTablaContratos(data.contratos, data.resumen);
+                } else {
+                    mostrarSinContratos();
+                }
+                
+            } catch (error) {
+                console.error('Error parsing contracts JSON:', error);
+                $('#contratosModal').html(`
+                    <div class="alert alert-warning">
+                        <i class="fa fa-exclamation-triangle"></i> 
+                        Error al cargar los contratos.
+                    </div>
+                `);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Contracts Error:', error);
+            $('#contratosModal').html(`
+                <div class="alert alert-danger">
+                    <i class="fa fa-exclamation-circle"></i> 
+                    Error de conexión al cargar contratos.
+                </div>
+            `);
+        }
+    });
+}
+
+// Función para mostrar tabla de contratos
+function mostrarTablaContratos(contratos, resumen) {
+    
+    let html = `
+        <!-- Resumen de contratos -->
+        <div class="row" style="margin-bottom: 15px;">
+            <div class="col-md-4">
+                <div class="info-box bg-aqua">
+                    <span class="info-box-icon"><i class="fa fa-file-text"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total Contratos</span>
+                        <span class="info-box-number">${resumen.total_contratos}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-box bg-green">
+                    <span class="info-box-icon"><i class="fa fa-balance-scale"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total Kilos</span>
+                        <span class="info-box-number">${parseFloat(resumen.total_kilos).toLocaleString('es-AR')}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-box bg-yellow">
+                    <span class="info-box-icon"><i class="fa fa-dollar"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Precio Promedio</span>
+                        <span class="info-box-number">$${resumen.precio_promedio}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de contratos -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Precio ($/Tn)</th>
+                        <th>Kilos</th>
+                        <th>Corredor</th>
+                        <th>Comprador</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    contratos.forEach(function(contrato) {
+        html += `
+            <tr>
+                <td>${formatearFecha(contrato.fecha)}</td>
+                <td>$${parseFloat(contrato.precio).toLocaleString('es-AR')}</td>
+                <td>${parseFloat(contrato.kilos).toLocaleString('es-AR')} kg</td>
+                <td>${contrato.corredor}</td>
+                <td>${contrato.comprador}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    $('#contratosModal').html(html);
+}
+
+// Función para mostrar mensaje cuando no hay contratos
+function mostrarSinContratos() {
+    $('#contratosModal').html(`
+        <div class="text-center" style="padding: 30px;">
+            <i class="fa fa-file-o fa-3x" style="color: #ccc;"></i>
+            <h4 style="color: #999; margin-top: 15px;">No hay contratos cargados</h4>
+            <p style="color: #666;">
+                No se encontraron contratos para este cultivo y campaña.
+            </p>
+        </div>
+    `);
+}
+
+// Función auxiliar para formatear fecha
+function formatearFecha(fechaString) {
+    try {
+        let fecha = new Date(fechaString);
+        return fecha.toLocaleDateString('es-AR');
+    } catch (error) {
+        return fechaString;
+    }
+}

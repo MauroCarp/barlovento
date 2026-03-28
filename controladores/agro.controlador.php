@@ -1165,11 +1165,11 @@ class ControladorAgro{
     }
 
     /*=============================================
-    COMERCIALIZACIÓN - DETALLE DE CULTIVO
+    COMERCIALIZACIÓN - MOSTRAR CONTRATOS POR CULTIVO
     =============================================*/
-    static public function ctrMostrarDetalleCultivoComercializacion($campania, $cultivo){
+    static public function ctrMostrarContratosCultivo($campania, $cultivo){
         
-        $respuesta = ModeloAgro::mdlMostrarDetalleCultivoComercializacion($campania, $cultivo);
+        $respuesta = ModeloAgro::mdlMostrarContratosCultivo($campania, $cultivo);
         return $respuesta;
     
     }
