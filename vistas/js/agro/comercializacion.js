@@ -468,7 +468,7 @@ async function obtenerPrecioPizarra(cultivo, fechaAnterior = false) {
         $.ajax({
             method: 'GET',
             url: apiUrl,
-            timeout: 10000, // 10 segundos timeout
+            timeout: 15000, // 15 segundos timeout
             success: function(response) {
                 
                 try {
@@ -507,3 +507,8 @@ async function obtenerPrecioPizarra(cultivo, fechaAnterior = false) {
         });
     });
 }
+
+// Event listener para limpiar contenido cuando el modal se cierre
+$('#modalDetalleCultivo').on('hidden.bs.modal', function () {
+    $('#precioPizarra').html('');
+});
