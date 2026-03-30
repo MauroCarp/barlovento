@@ -402,6 +402,8 @@ if($_SESSION["perfil"] == 'Agro' OR $_SESSION["perfil"] == 'Administrador Agro')
 <script src="vistas/js/agro/planificacion.js"></script>
 <script src="vistas/js/agro/ejecucion.js"></script>
 <script src="vistas/js/agro/produccion.js"></script>
+<script src="vistas/js/agro/comercializacion.js"></script>
+
 
 <?php
 }

@@ -31,6 +31,3 @@
 include 'vistas/modulos/modales/agro/cultivoComercializacion.modal.php';
 ?>
 </section>
-
-
-<script src="vistas/modulos/agro/comercializacion.js"></script>
