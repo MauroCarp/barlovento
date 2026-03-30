@@ -40,7 +40,7 @@
               <span class="info-box-icon bg-blue"><i class="fa fa-dollar"></i></span>      
               <div class="info-box-content">
                 <span class="info-box-text">$ Remanente </span>
-                  <small>Seg&uacute;n pizarra del dia anterior.</small>
+                  <small>Seg&uacute;n pizarra del dia anterior.<span id="precioPizarra"></span></small>
                 <span class="info-box-number">$ <span id="precioRemanenteModal">0</span></span>
               </div>
             </div>

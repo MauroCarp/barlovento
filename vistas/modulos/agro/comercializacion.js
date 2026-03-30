@@ -176,7 +176,7 @@ function abrirModalDetalleCultivo(cultivo, totalCosechado) {
 }
 
 // Función para cargar detalle específico del cultivo
-function cargarDetalleCultivo(cultivo,totalCosechado) {
+async function cargarDetalleCultivo(cultivo,totalCosechado) {
     
     let campania = $('#campania').html().trim();
     
@@ -198,6 +198,9 @@ function cargarDetalleCultivo(cultivo,totalCosechado) {
             <i class="fa fa-spinner fa-spin"></i> Cargando contratos...
         </p>
     `);
+
+    // Mostrar loader en precio también
+    $('#precioRemanenteModal').html('<i class="fa fa-spinner fa-spin"></i>');
         
     // Cargar detalle del cultivo vía AJAX
     $.ajax({
@@ -250,8 +253,27 @@ function cargarDetalleCultivo(cultivo,totalCosechado) {
     // Cargar contratos del cultivo
     cargarContratosCultivo(cultivoKey[0], campania, totalCosechado);
     
-    // Cargar precio de pizarra desde Agrofy
-    obtenerPrecioPizarra(cultivoKey[0]);
+    // Cargar precio de pizarra desde Agrofy y obtener el valor
+    try {
+        let precioPizarra = await obtenerPrecioPizarra(cultivoKey[0]);
+        
+        // Ahora puedes usar la variable precioPizarra
+        console.log('Precio obtenido:', precioPizarra);
+
+        // Usar el precio para calcular algo más si necesitas
+        let remanente = parseFloat($('#remanenteTotalModal').text().replace(/\./g, '')) || 0;
+
+        let valorRemanente = (remanente/1000) * precioPizarra; // Ejemplo de uso
+        $('#precioPizarra').html(' $/tn ' + precioPizarra.toLocaleString('es-AR'));
+        // Actualizar el DOM con formato
+        $('#precioRemanenteModal').html(valorRemanente.toLocaleString('es-AR'));
+        
+        
+    } catch (error) {
+        console.error('Error obteniendo precio:', error);
+        $('#precioRemanenteModal').html('Error');
+    }
+
 }
 
 $('#btnGestionarCultivo').on('click', function() {
@@ -410,77 +432,78 @@ function formatearFecha(fechaString) {
 }
 
 // Función para obtener precio de pizarra desde Agrofy
-function obtenerPrecioPizarra(cultivo) {
+async function obtenerPrecioPizarra(cultivo, fechaAnterior = false) {
     
-    // Calcular fecha del día anterior en formato YYYYmmdd
-    let fechaAyer = new Date();
-    fechaAyer.setDate(fechaAyer.getDate() - 1);
-    
-    let year = fechaAyer.getFullYear();
-    let month = String(fechaAyer.getMonth() + 1).padStart(2, '0');
-    let day = String(fechaAyer.getDate()).padStart(2, '0');
-    let dateString = `${year}/${month}/${day}`;
-    
-    // Mapeo de cultivos para Agrofy API
-    let cultivosAgrofy = {
-        'maiz': 'MZ',
-        'maiz1': 'M9', 
-        'maiz2': 'MZ',
-        'soja': 'SO',
-        'soja1': 'S9',
-        'soja2': 'SO', 
-        'girasol': 'GI',
-        'trigo': 'TR',
-        'avena': 'AV',
-        'cebada': 'CB',
-        'vicia': 'VI'
-    };
-    
-    let cultivoAgrofy = cultivosAgrofy[cultivo.toLowerCase()] || cultivo.toLowerCase();
-    
-    // URL del API de Agrofy
-    let apiUrl = `https://s1.dekagb.com/dkmserver.services/html/acabaseservice.aspx?mt=GetPizarras&appname=acabase&date=${dateString}&grano=${cultivoAgrofy}`;
-    
-    let api = 'https://s1.dekagb.com/dkmserver.services/html/acabaseservice.aspx?mt=GetPizarras&appname=acabase&date=2026/03/25&grano=GI'
-    console.log(api,apiUrl)
-    // Llamada AJAX al API de Agrofy
-    $.ajax({
-        method: 'GET',
-        url: api,
-        success: function(response) {
-            console.log('hola')
-            console.log(response)
-            try {
-                if (response && response.data && Array.isArray(response.data)) {
-                console.log(response)
-                return     
-                    // Buscar el cultivo específico en la respuesta
-                    let precioCultivo = response.data.find(item => 
-                        item.commodity && 
-                        item.commodity.toLowerCase().includes(cultivoAgrofy)
-                    );
+    return new Promise((resolve, reject) => {
+        // Calcular fecha del día anterior en formato YYYY/mm/dd
+        let fechaAyer = (!fechaAnterior) ? new Date() : new Date(fechaAnterior);
+        fechaAyer.setDate(fechaAyer.getDate() - 1);
+        
+        let year = fechaAyer.getFullYear();
+        let month = String(fechaAyer.getMonth() + 1).padStart(2, '0');
+        let day = String(fechaAyer.getDate()).padStart(2, '0');
+        let dateString = `${year}/${month}/${day}`;
+        
+        // Mapeo de cultivos para Agrofy API
+        let cultivosAgrofy = {
+            'maiz': 'MZ',
+            'maiz1': 'MZ', 
+            'maiz2': 'MZ',
+            'soja': 'SO',
+            'soja1': 'SO',
+            'soja2': 'SO', 
+            'girasol': 'GI',
+            'trigo': 'TR',
+            'avena': 'AV',
+            'cebada': 'CB',
+            'vicia': 'VI'
+        };
+        
+        let cultivoAgrofy = cultivosAgrofy[cultivo.toLowerCase()] || cultivo.toLowerCase();
+        
+        // URL del API de Agrofy
+        let apiUrl = `https://s1.dekagb.com/dkmserver.services/html/acabaseservice.aspx?mt=GetPizarras&appname=acabase&date=${dateString}&grano=${cultivoAgrofy}`;
+        
+        // Llamada AJAX al API de Agrofy
+        $.ajax({
+            method: 'GET',
+            url: apiUrl,
+            timeout: 10000, // 10 segundos timeout
+            success: function(response) {
+                
+                try {
+                    let data = JSON.parse(response);
                     
-                    if (precioCultivo && precioCultivo.price) {
-                        // Actualizar precio remanente en el modal
-                        $('#precioRemanenteModal').html(parseFloat(precioCultivo.price).toLocaleString('es-AR'));
+                    if (data.result && data.result.value && data.result.value.length > 0) {
+                        
+                        let precio = parseFloat(data.result.value[0].importe);
+                        
+                        // Resolver la Promise con el precio (sin actualizar DOM aquí)
+                        resolve(precio);
+                        
                     } else {
-                        // Si no se encuentra el cultivo específico, mostrar precio general
-                        $('#precioRemanenteModal').html('No disponible');
+                        // Si no hay datos para esta fecha, intentar con día anterior
+                        console.log('No hay datos para la fecha, intentando día anterior...');
+                        
+                        // Llamada recursiva con fecha anterior
+                        setTimeout(() => {
+                            obtenerPrecioPizarra(cultivo, dateString)
+                                .then(resolve)
+                                .catch(reject);
+                        }, 1000);
                     }
                     
-                } else {
-                    $('#precioRemanenteModal').html('Sin datos');
+                } catch (error) {
+                    console.error('Error procesando respuesta de API:', error);
+                    $('#precioRemanenteModal').html('Error');
+                    reject(error);
                 }
-                
-            } catch (error) {
-                console.error('Error procesando respuesta de Agrofy:', error);
-                $('#precioRemanenteModal').html('Error');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error llamando API:', error);
+                $('#precioRemanenteModal').html('No disponible');
+                reject(new Error(`Error API: ${error}`));
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error llamando API de Agrofy:', error);
-            // En caso de error, mostrar mensaje informativo
-            $('#precioRemanenteModal').html('No disponible');
-        }
+        });
     });
 }
