@@ -550,14 +550,34 @@ class ModeloAgro{
                 $pdo = Conexion::conectar();
                 
                 // Consulta para obtener cultivos de la planificación con producción
-                $sql = "SELECT cultivo, ((rinde * 100) * has) as total_cosechado FROM produccion WHERE campania = ? AND cultivo IS NOT NULL AND cultivo != '' GROUP by cultivo; ORDER BY cultivo";
+                $sql = "SELECT 
+                    CASE 
+                        WHEN cultivo LIKE 'maiz%' THEN 'maiz'
+                        WHEN cultivo LIKE 'soja%' THEN 'soja' 
+                        WHEN cultivo LIKE 'trigo%' THEN 'trigo'
+                        WHEN cultivo LIKE 'sorgo%' THEN 'sorgo'
+                        WHEN cultivo LIKE 'girasol%' THEN 'girasol'
+                        ELSE cultivo 
+                    END as cultivo, 
+                    SUM((rinde * 100) * has) as total_cosechado 
+                FROM produccion 
+                WHERE campania = ? AND cultivo IS NOT NULL AND cultivo != '' 
+                GROUP BY CASE 
+                    WHEN cultivo LIKE 'maiz%' THEN 'maiz'
+                    WHEN cultivo LIKE 'soja%' THEN 'soja' 
+                    WHEN cultivo LIKE 'trigo%' THEN 'trigo'
+                    WHEN cultivo LIKE 'sorgo%' THEN 'sorgo'
+                    WHEN cultivo LIKE 'girasol%' THEN 'girasol'
+                    ELSE cultivo 
+                END 
+                ORDER BY cultivo";
                 
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindParam(1, $campania, PDO::PARAM_STR);
                 $stmt->execute();
                 
                 $cultivos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                
+				
                 // Calcular resumen
                 $totalCultivos = count($cultivos);
                 $totalProducido = 0;

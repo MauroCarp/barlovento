@@ -63,7 +63,7 @@ function cargarCultivosComercializacion() {
 function mostrarCardsCultivos(cultivos) {
     
     let html = '';
-    console.log(cultivos)
+
     cultivos.forEach(function(cultivo, index) {
         
         // Formatear el total cosechado

@@ -38,6 +38,7 @@ $('#ejecucionTab').on('click',function(){
 const nombreCultivos = {
   'soja1': 'Soja 1°',
   'soja2': 'Soja 2°',
+  'maiz': 'Maíz',
   'maiz1': 'Maíz 1°',
   'maiz2': 'Maíz 2°',
   'trigo': 'Trigo',
