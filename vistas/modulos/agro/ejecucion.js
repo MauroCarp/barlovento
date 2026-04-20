@@ -1,5 +1,3 @@
-
-
 $('#ejecucionTab').on('click',function(){
   
   let url = 'ajax/agro.ajax.php'
@@ -36,13 +34,15 @@ $('#ejecucionTab').on('click',function(){
 })
 
 const generarInputFile = (lotes) => {
-  console.log('chay')
+  console.log('mauro')
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
   
   let pichiGruesa = []
   let pichiFina = []
   let betyGruesa = []
   let betyFina = []
+  let antonyGruesa = []
+  let antonyFina = []
 
   $('#formEjecucion').append($('<div class="bg-success" style="font-size:1.8em"><b>Pichi</b></div>'))
   
@@ -136,6 +136,50 @@ const generarInputFile = (lotes) => {
 
     }
 
+    if(lotes[key]['campo'] == 'antony'){
+
+      if(lotes[key]['etapa'] == 'gruesa'){
+
+        betyGruesa.push(`<div class="form-group">
+
+            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
+
+            <div class="input-group">
+
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
+
+              </div>
+              
+            </div>
+
+          </div>`)
+
+      }
+
+      if(lotes[key]['etapa'] == 'fina'){
+
+        betyFina.push(`<div class="form-group">
+
+            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
+
+            <div class="input-group">
+
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
+
+              </div>
+              
+            </div>
+
+          </div>`)
+
+      }
+
+    }
+
   }
 
   if(pichiGruesa != undefined){
@@ -171,97 +215,22 @@ const generarInputFile = (lotes) => {
     $('#inputBetyFina').append($(`${betyFina.join('')}`))
 
   }
-/*
-  if(lotes.pichi.gruesa != undefined){
 
-    $('#formEjecucion').append($('<div id="inputPichiGruesa" style="display:none"></div>'))
-    $('#inputPichiGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))
-    
-    lotes.pichi.gruesa.forEach(element => {
+  if(antonyGruesa != undefined){
 
-      $('#inputPichiGruesa').append($(`
-    
-      <div class="form-group">
-    
-        <label for="${element.lote.split(' ').join('')}">${element.lote} - ${element.cultivo}</label>
-    
-        <div class="input-group">
-    
-            <div class="custom-file">
-    
-                <input type="file" class="custom-file-input" name="${element.lote.split(' ').join('')}_${element.cultivo}">
-                <input type="hidden" name="${element['lote'].split(' ').join('')}_${element['cultivo']}campo" value="pichi">
-
-    
-            </div>
-    
-        </div>
-    
-      </div>`))
-
-    });
-
-  } 
-    if(lotes.bety.fina != undefined){
-
-    $('#formEjecucion').append($('<div id="inputBetyFina"></div>'))
-    $('#inputBetyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))
-    
-    for (const key in lotes.bety.fina) {
-
-      $('#inputBetyFina').append($(`
-    
-      <div class="form-group">
-    
-        <label for="${lotes.bety.fina[key]['lote'].split(' ').join('')}">${lotes.bety.fina[key]['lote']} - ${lotes.bety.fina[key]['cultivo']}</label>
-    
-        <div class="input-group">
-    
-            <div class="custom-file">
-    
-                <input type="file" class="custom-file-input" name="${lotes.bety.fina[key]['lote'].split(' ').join('')}_${lotes.bety.fina[key]['cultivo']}">
-                <input type="hidden" name="${lotes.bety.fina[key]['lote'].split(' ').join('')}_${lotes.bety.fina[key]['cultivo']}campo" value="bety">
-
-            </div>
-    
-        </div>
-    
-      </div>`))
-    
-    }
+    $('#formEjecucion').append($('<div id="inputAntonyGruesa" style="display:none"></div>'))
+    $('#inputAntonyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
+    $('#inputAntonyGruesa').append($(`${antonyGruesa.join('')}`))
 
   }
 
-  if(lotes.bety.gruesa != undefined){
+  if(antonyFina != undefined){
 
-    $('#formEjecucion').append($('<div id="inputBetyGruesa" style="display:none"></div>'))
-    $('#inputBetyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))
-    
-    for (const key in lotes.bety.gruesa) {
+    $('#formEjecucion').append($('<div id="inputAntonyFina"></div>'))
+    $('#inputAntonyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
+    $('#inputAntonyFina').append($(`${antonyFina.join('')}`))
 
-      $('#inputBetyGruesa').append($(`
-    
-      <div class="form-group">
-    
-        <label for="${lotes.bety.gruesa[key]['lote'].split(' ').join('')}">${lotes.bety.gruesa[key]['lote']} - ${lotes.bety.gruesa[key]['cultivo']}</label>
-    
-        <div class="input-group">
-    
-            <div class="custom-file">
-    
-                <input type="file" class="custom-file-input" name="${lotes.bety.gruesa[key]['lote'].split(' ').join('')}_${lotes.bety.gruesa[key]['cultivo']}">
-                <input type="hidden" name="${lotes.bety.gruesa[key]['lote'].split(' ').join('')}_${lotes.bety.gruesa[key]['cultivo']}campo" value="bety">
-
-    
-            </div>
-    
-        </div>
-    
-      </div>`))
-    
-    }
-
-  } */
+  }
 
 }
 
@@ -272,13 +241,17 @@ $('#selectEtapa').on('change',function(){
   if(value == 'gruesa'){
     $('#inputPichiGruesa').show(250)
     $('#inputBetyGruesa').show(250)
+    $('#inputAntonyGruesa').show(250)
     $('#inputPichiFina').hide(250)
     $('#inputBetyFina').hide(250)
+    $('#inputAntonyFina').hide(250)
   } else {
     $('#inputPichiGruesa').hide(250)
     $('#inputBetyGruesa').hide(250)
+    $('#inputAntonyGruesa').hide(250)
     $('#inputPichiFina').show(250)
     $('#inputBetyFina').show(250)
+    $('#inputAntonyFina').show(250)
 
   }
 
@@ -548,7 +521,6 @@ const cargarInfoEjecucion = (campania)=>{
     document.getElementById(`totalHasEjecutadas`).innerText = Number(info.bety.hasFina) + Number(info.bety.hasGruesa) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasCobertura) 
     
     let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura)
-    console.log(totalInversion)
     document.getElementById(`totalInversionEjecutada`).innerText = totalInversion.toLocaleString('de-DE')
 
     document.getElementById(`hasInvEjecucionBety`).innerText = info.bety.hasFina

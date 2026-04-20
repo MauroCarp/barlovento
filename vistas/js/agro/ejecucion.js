@@ -38,7 +38,7 @@ $('#ejecucionTab').on('click',function(){
 const nombreCultivos = {
   'soja1': 'Soja 1°',
   'soja2': 'Soja 2°',
-  'maiz': 'Maíz',
+  'maiz': 'Maíz 1°',
   'maiz1': 'Maíz 1°',
   'maiz2': 'Maíz 2°',
   'trigo': 'Trigo',
@@ -59,7 +59,7 @@ const nombreCultivos = {
   'carinata': 'Carinata',
 }
 
-const generarInputFile = (lotes,tipo = 'Ejecucion') => {
+const generarInputFile = (lotes) => {
 
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
   
@@ -67,8 +67,10 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
   let pichiFina = []
   let betyGruesa = []
   let betyFina = []
+  let antonyGruesa = []
+  let antonyFina = []
 
-  $(`#form${tipo}`).append($(`
+  $('#formEjecucion').append($(`
                               <div class="box box-success">
       
                                   <div class="box-header with-border">
@@ -77,7 +79,7 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
                               
                                   </div>
                             
-                                  <div class="box-body" id="inputPichi${tipo}">
+                                  <div class="box-body" id="inputPichi">
                             
                                   </div>
 
@@ -90,15 +92,29 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
                               
                                   </div>
                             
-                                  <div class="box-body" id="inputBety${tipo}">
+                                  <div class="box-body" id="inputBety">
+                            
+                                  </div>
+
+                              </div>
+
+                              <div class="box box-success">
+      
+                                  <div class="box-header with-border">
+                              
+                                  <h3 class="box-title">Antony</h3>
+                              
+                                  </div>
+                            
+                                  <div class="box-body" id="inputAntony">
                             
                                   </div>
 
                               </div>
   `))
-  
-  for (const key in lotes) {
 
+  for (const key in lotes) {
+    console.log(lotes[key]['campo'])
     if(lotes[key]['campo'] == 'pichi'){
 
       if(lotes[key]['etapa'] == 'gruesa'){
@@ -111,7 +127,7 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
 
               <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${lotes[key]['campo']}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
 
               </div>
               
@@ -129,9 +145,9 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
 
             <div class="input-group">
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}${tipo}">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${lotes[key]['campo']}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
 
               </div>
               
@@ -155,9 +171,9 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
 
             <div class="input-group">
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}${tipo}">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${campo}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
 
               </div>
               
@@ -177,9 +193,57 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
 
             <div class="input-group">
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}${tipo}">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
 
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo${tipo}" value="${campo}"/>
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
+
+              </div>
+              
+            </div>
+
+          </div>`)
+
+      }
+
+    }
+
+    if(lotes[key]['campo'] == 'antony'){
+
+      if(lotes[key]['etapa'] == 'gruesa'){
+        
+        let campo = lotes[key]['campo']
+        console.log(lotes[key]['cultivo'])
+        antonyGruesa.push(`<div class="form-group">
+
+            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
+
+            <div class="input-group">
+
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
+
+              </div>
+              
+            </div>
+
+          </div>`)
+
+      }
+
+      if(lotes[key]['etapa'] == 'fina'){
+
+        let campo = lotes[key]['campo']
+
+        antonyFina.push(`<div class="form-group">
+
+            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
+
+            <div class="input-group">
+
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
+
+                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
 
               </div>
               
@@ -195,54 +259,77 @@ const generarInputFile = (lotes,tipo = 'Ejecucion') => {
 
   if(pichiGruesa != undefined){
     
-    $(`#inputPichi${tipo}`).append($(`<div id="inputPichiGruesa${tipo}" style="display:none"></div>`))
-    $(`#inputPichiGruesa${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $(`#inputPichiGruesa${tipo}`).append($(`${pichiGruesa.join('')}`))
+    $('#inputPichi').append($('<div id="inputPichiGruesa" style="display:none"></div>'))
+    $('#inputPichiGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
+    $('#inputPichiGruesa').append($(`${pichiGruesa.join('')}`))
 
   }
 
   if(pichiFina != undefined){
 
-    $(`#inputPichi${tipo}`).append($(`<div id="inputPichiFina${tipo}"></div>`))
-    $(`#inputPichiFina${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $(`#inputPichiFina${tipo}`).append($(`${pichiFina.join('')}`))
+    $('#inputPichi').append($('<div id="inputPichiFina"></div>'))
+    $('#inputPichiFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
+    $('#inputPichiFina').append($(`${pichiFina.join('')}`))
 
   }
 
   if(betyGruesa != undefined){
 
-    $(`#inputBety${tipo}`).append($(`<div id="inputBetyGruesa${tipo}" style="display:none"></div>`))
-    $(`#inputBetyGruesa${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $(`#inputBetyGruesa${tipo}`).append($(`${betyGruesa.join('')}`))
+    $('#inputBety').append($('<div id="inputBetyGruesa" style="display:none"></div>'))
+    $('#inputBetyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
+    $('#inputBetyGruesa').append($(`${betyGruesa.join('')}`))
 
   }
 
   if(betyFina != undefined){
 
-    $(`#inputBety${tipo}`).append($(`<div id="inputBetyFina${tipo}"></div>`))
-    $(`#inputBetyFina${tipo}`).append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $(`#inputBetyFina${tipo}`).append($(`${betyFina.join('')}`))
+    $('#inputBety').append($('<div id="inputBetyFina"></div>'))
+    $('#inputBetyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
+    $('#inputBetyFina').append($(`${betyFina.join('')}`))
+
+  }
+
+  if(antonyGruesa != undefined){
+
+    $('#inputAntony').append($('<div id="inputAntonyGruesa"></div>'))
+    $('#inputAntonyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
+    $('#inputAntonyGruesa').append($(`${antonyGruesa.join('')}`))
+console.log(antonyGruesa)
+  }
+
+  if(antonyFina != undefined){
+    
+    $('#inputAntony').append($('<div id="inputAntonyFina" style="display:none"></div>'))
+    $('#inputAntonyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
+    $('#inputAntonyFina').append($(`${antonyFina.join('')}`))
 
   }
 
 }
 
 
-const toggleEtapaInputs = (tipo, value) => {
-  const isGruesa = value === 'gruesa';
-  $(`#inputPichiGruesa${tipo}`).toggle(isGruesa ? 250 : 0);
-  $(`#inputBetyGruesa${tipo}`).toggle(isGruesa ? 250 : 0);
-  $(`#inputPichiFina${tipo}`).toggle(!isGruesa ? 250 : 0);
-  $(`#inputBetyFina${tipo}`).toggle(!isGruesa ? 250 : 0);
-};
+$('#selectEtapa').on('change',function(){
+  
+  let value = $(this).val()
 
-$('#selectEtapaProduccion').on('change', function () {
-  toggleEtapaInputs('Produccion', $(this).val());
-});
+  if(value == 'gruesa'){
+    $('#inputPichiGruesa').show(250)
+    $('#inputBetyGruesa').show(250)
+    $('#inputAntonyGruesa').show(250)
+    $('#inputPichiFina').hide(250)
+    $('#inputAntonyFina').hide(250)
+    $('#inputBetyFina').hide(250)
+  } else {
+    $('#inputPichiGruesa').hide(250)
+    $('#inputBetyGruesa').hide(250)
+    $('#inputAntonyGruesa').hide(250)
+    $('#inputPichiFina').show(250)
+    $('#inputBetyFina').show(250)
+    $('#inputAntonyFina').show(250)
 
-$('#selectEtapaEjecucion').on('change', function () {
-  toggleEtapaInputs('Ejecucion', $(this).val());
-});
+  }
+
+})
 
 
 const tipoCultivo = (cultivo)=>{
@@ -251,24 +338,27 @@ const tipoCultivo = (cultivo)=>{
       // case 'carinata':
       // case 'vicia':
       // case 'triticale':
+      // case 'vicia+triticale':
       // case 'vicia-triticale':
       // case 'triticale-vicia':
       // case 'avena':
       case 'trigo':
-          $tipo = 'Invernal';
+          tipo = 'Invernal';
           break;
       case 'carinata':
       case 'vicia':
       case 'triticale':
       case 'vicia-triticale':
+      case 'vicia+triticale':
       case 'triticale-vicia':
+      case 'Vicia-Triticale':
       case 'avena':
       case 'avena cobertura':
       case 'cebada':
       case 'cebadilla':
       case 'triticale espinillo':
       case 'camelina':
-          $tipo = 'Cobertura';
+          tipo = 'Cobertura';
           break;
 
       case 'maiz':
@@ -282,11 +372,11 @@ const tipoCultivo = (cultivo)=>{
       case 'maiz1':
       case 'maiz1era':
       case 'maiz2da':
-          $tipo = 'Estival';
+          tipo = 'Estival';
           break;
   }
 
-  return $tipo;
+  return tipo;
 
 }
 
@@ -437,6 +527,7 @@ const cargarInfoEjecucion = (campania)=>{
         } else {
 
           if(tipoCultivo(lote.cultivo) == 'Cobertura'){
+
             info[lote['campo']]['hasCobertura'] += Number(lote.has)
             info[lote['campo']]['costoCobertura'] += (Number(lote['costoLabor']) + Number(lote['costoInsumo']))
 
@@ -525,6 +616,10 @@ const cargarInfoEjecucion = (campania)=>{
   
             <td>
               ${nombreCultivos[data[campo][key].cultivo]}
+            </td>
+         
+            <td>
+              ${data[campo][key].has}
             </td>
   
             <td>
@@ -702,36 +797,15 @@ $('#btnCargaLotes').on('click',function(){
   $('#selectEtapa').val(etapa)
 
   if(etapa == 'gruesa'){
-    $('#inputPichiGruesaEjecucion').show(250)
-    $('#inputBetyGruesaEjecucion').show(250)
-    $('#inputPichiFinaEjecucion').hide(250)
-    $('#inputBetyFinaEjecucion').hide(250)
+    $('#inputPichiGruesa').show(250)
+    $('#inputBetyGruesa').show(250)
+    $('#inputPichiFina').hide(250)
+    $('#inputBetyFina').hide(250)
   } else {
-    $('#inputPichiGruesaEjecucion').hide(250)
-    $('#inputBetyGruesaEjecucion').hide(250)
-    $('#inputPichiFinaEjecucion').show(250)
-    $('#inputBetyFinaEjecucion').show(250)
-
-  }
-
-})
-
-$('#btnCargaLotesProduccion').on('click',function(){
-
-  let etapa = $('#etapaProduccion').val()
-
-  $('#selectEtapa').val(etapa)
-
-  if(etapa == 'gruesa'){
-    $('#inputPichiGruesaProduccion').show(250)
-    $('#inputBetyGruesaProduccion').show(250)
-    $('#inputPichiFinaProduccion').hide(250)
-    $('#inputBetyFinaProduccion').hide(250)
-  } else {
-    $('#inputPichiGruesaProduccion').hide(250)
-    $('#inputBetyGruesaProduccion').hide(250)
-    $('#inputPichiFinaProduccion').show(250)
-    $('#inputBetyFinaProduccion').show(250)
+    $('#inputPichiGruesa').hide(250)
+    $('#inputBetyGruesa').hide(250)
+    $('#inputPichiFina').show(250)
+    $('#inputBetyFina').show(250)
 
   }
 

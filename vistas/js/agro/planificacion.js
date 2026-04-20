@@ -31,32 +31,32 @@ const cargarInfoPlanificacion = (campania,carga)=>{
   .then(respuesta=>{
 
       $('#idPlanificacion').val(respuesta.idPlanificacion)
-
       generarInputFile(respuesta.lotes)
-      // generarInputFile(respuesta.lotes,'produccion')
 
+    
       cultivosActuales = Object.keys(respuesta.costos)
       cultivosNoCobertura = [...new Set(cultivosActuales
         .filter(cultivo => !cobertura.includes(cultivo.toLowerCase()))
         .map(cultivo => cultivo.replace(/\d+$/, '')))]
 
-      cultivosNoCobertura.forEach(cultivo => {
 
-        $('#formEjecucionRindes').append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(cultivo)}</b></div><br>
-        <div class="form-group">
+      // cultivosNoCobertura.forEach(cultivo => {
 
-            <label for="rinde${capitalizarPrimeraLetra(cultivo)}"</label>
+      //   $('#formEjecucionRindes').append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(cultivo)}</b></div><br>
+      //   <div class="form-group">
 
-            <div class="input-group">
+      //       <label for="rinde${capitalizarPrimeraLetra(cultivo)}"</label>
 
-              <div class="custom-file"><input type="file" class="custom-file-input" name="rindes_${cultivo}">
+      //       <div class="input-group">
 
-              </div>
+      //         <div class="custom-file"><input type="file" class="custom-file-input" name="rindes_${cultivo}">
+
+      //         </div>
               
-            </div>
+      //       </div>
 
-          </div>`))
-      });  
+      //     </div>`))
+      // });  
 
 
       let data = {
@@ -497,7 +497,6 @@ if(btnCostosPlanificacion != null){
           }
 
         } else { 
-          console.log('btnCostosPlanificacion', reg.cultivo);
           tdCultivo.innerText = (reg.cultivo == 'pasturaconsociada') ? 'Pastura Consociada' : capitalizarPrimeraLetra(reg.cultivo)
         }
 
