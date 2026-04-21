@@ -112,9 +112,8 @@ const generarInputFile = (lotes) => {
 
                               </div>
   `))
-
   for (const key in lotes) {
-    console.log(lotes[key]['campo'])
+
     if(lotes[key]['campo'] == 'pichi'){
 
       if(lotes[key]['etapa'] == 'gruesa'){
@@ -160,6 +159,7 @@ const generarInputFile = (lotes) => {
     }
    
     if(lotes[key]['campo'] == 'bety'){
+
 
       if(lotes[key]['etapa'] == 'gruesa'){
         
@@ -212,7 +212,7 @@ const generarInputFile = (lotes) => {
       if(lotes[key]['etapa'] == 'gruesa'){
         
         let campo = lotes[key]['campo']
-        console.log(lotes[key]['cultivo'])
+
         antonyGruesa.push(`<div class="form-group">
 
             <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
@@ -294,7 +294,7 @@ const generarInputFile = (lotes) => {
     $('#inputAntony').append($('<div id="inputAntonyGruesa"></div>'))
     $('#inputAntonyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
     $('#inputAntonyGruesa').append($(`${antonyGruesa.join('')}`))
-console.log(antonyGruesa)
+
   }
 
   if(antonyFina != undefined){
@@ -342,16 +342,20 @@ const tipoCultivo = (cultivo)=>{
       // case 'vicia-triticale':
       // case 'triticale-vicia':
       // case 'avena':
+      case 'vicia-triticale':
+      case 'vicia+triticale':
+      case 'triticale-vicia':
+      case 'Vicia-Triticale':
       case 'trigo':
           tipo = 'Invernal';
           break;
       case 'carinata':
       case 'vicia':
       case 'triticale':
-      case 'vicia-triticale':
-      case 'vicia+triticale':
-      case 'triticale-vicia':
-      case 'Vicia-Triticale':
+      // // case 'vicia-triticale':
+      // // case 'vicia+triticale':
+      // // case 'triticale-vicia':
+      // case 'Vicia-Triticale':
       case 'avena':
       case 'avena cobertura':
       case 'cebada':
@@ -401,7 +405,7 @@ const cargarInfoEjecucion = (campania)=>{
       body:data
   }).then(resp=>resp.json())
   .then(respuesta=>{
-   
+    console.log(respuesta)
     // setTimeout(() => {
     //   $('#idEjecucionRindes').val(respuesta['data'][0].idEjecucion);
     // }, 600);
@@ -600,7 +604,7 @@ const cargarInfoEjecucion = (campania)=>{
         }
 
         let totalEjecucion = (Number(data[campo][key].costoInsumo) + Number(data[campo][key].costoLabor) + Number(data[campo][key].costoFertilizacion))
-
+        console.log(totalEjecucion,data[campo][key].has)
         let diferencia = ((totalEjecucion - data[campo][key].costoPlanificacion) * 100) / data[campo][key].costoPlanificacion
 
         $(`#tablaEjecucion${capitalizarPrimeraLetra(campo)} tbody`).append($(`

@@ -59,6 +59,9 @@ function tipoCultivo($cultivo){
         case 'trigo':
         case 'camelina':
         case 'carinata':
+        case 'vicia-triticale':
+        case 'vicia+triticale':
+        case 'triticale-vicia':
             $tipo = 'fina';
             break;
 
@@ -74,9 +77,6 @@ function tipoCultivo($cultivo){
         case 'triticale':
         case 'sevadilla':
         case 'vicia':
-        case 'vicia-triticale':
-        case 'vicia+triticale':
-        case 'triticale-vicia':
         case 'avena':
         case 'pasturaconsociada':
             $tipo = 'cobertura';

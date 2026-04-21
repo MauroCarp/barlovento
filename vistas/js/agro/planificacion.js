@@ -1,4 +1,4 @@
-const cobertura = ['vicia','triticale','avena','avena cobertura','cebada','vicia-triticale','cebadilla','triticale espinillo','camelina']
+const cobertura = ['vicia','triticale','avena','avena cobertura','cebada','cebadilla','triticale espinillo','camelina']
 
 function calcularSuggestedMax(datos,tipo) {
 
@@ -57,7 +57,6 @@ const cargarInfoPlanificacion = (campania,carga)=>{
 
       //     </div>`))
       // });  
-
 
       let data = {
         'pichi':{
@@ -145,7 +144,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       }
 
       respuesta['cultivos'].forEach(cultivo => {
-        //console.log(cultivo)
+
         let costo = (parseInt(cultivo.has) * parseInt(respuesta['costos'][cultivo.cultivo]))
         let has = parseInt(cultivo.has)
         data[cultivo.campo].hasTotal += has

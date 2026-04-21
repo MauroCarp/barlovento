@@ -18,6 +18,7 @@
                     <thead>
                         <th>Lote</th>
                         <th>Cultivo</th>
+                        <th>Has</th>
                         <th>u$s Insumos</th>
                         <th>u$s Labores</th>
                         <th>u$s Fertilizaci&oacute;n</th>

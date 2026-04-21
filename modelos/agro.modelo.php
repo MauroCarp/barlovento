@@ -441,9 +441,9 @@ class ModeloAgro{
 
 		if($valor2){
 			if($valor2 == 'cobertura'){
-				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = 'fina' AND el.cultivo != 'trigo' ");
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = 'fina' AND el.cultivo != 'trigo' AND el.cultivo != 'vicia+triticale' AND el.cultivo != 'vicia-triticale' AND el.cultivo != 'triticale-vicia' AND el.cultivo != 'Vicia-Triticale' ");
 				}else if($valor2 == 'fina'){
-				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2 AND el.cultivo = 'trigo' ");
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2 AND (el.cultivo = 'trigo' OR el.cultivo = 'vicia+triticale' OR el.cultivo = 'vicia-triticale' OR el.cultivo = 'triticale-vicia' OR el.cultivo = 'Vicia-Triticale')");
 				$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
 			}else{
 				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2");
@@ -577,7 +577,7 @@ class ModeloAgro{
                 $stmt->execute();
                 
                 $cultivos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-				
+
                 // Calcular resumen
                 $totalCultivos = count($cultivos);
                 $totalProducido = 0;
