@@ -293,10 +293,10 @@ function cargarContratosCultivo(cultivo, campania, totalCosechado) {
             campania: campania
         },
         success: function(response) {
-
+            
             try {
                 let data = JSON.parse(response);
-                console.log(data)    
+
                 if (data.success && data.contratos && data.contratos.length > 0) {
                     mostrarTablaContratos(data.contratos, data.resumen, totalCosechado);
                 } else {

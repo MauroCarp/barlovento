@@ -84,10 +84,15 @@
                 <input type="hidden" name="campaniaContrato" id="campaniaContrato">
                 <input type="hidden" name="cultivoContrato" id="cultivoContrato">
                 <div class="form-group">
-                  <label for="archivoContrato">Seleccionar archivo</label>
-                  <input type="file" id="archivoContrato" name="archivoContrato" class="form-control" required>
+                  <label for="archivoContrato">Seleccionar archivos</label>
+                  <input type="file" id="archivoContrato" name="archivoContrato[]" class="form-control" required multiple>
                 </div>
-                <button type="submit" class="btn btn-success" name="btnCargarContrato">
+                <!-- Vista previa de archivos seleccionados -->
+                <div class="form-group" id="vistaArchivosContrato" style="display:none;">
+                  <label>Archivos Seleccionados:</label>
+                  <div id="listaArchivosContrato" class="list-group"></div>
+                </div>
+                <button type="submit" class="btn btn-success" id="btnCargarContrato" name="btnCargarContrato">
                   <i class="fa fa-upload"></i> Cargar
                 </button>
               </form>
@@ -98,6 +103,90 @@
     </div>
   </div>
 </div>
+
+<script>
+$(document).ready(function() {
+
+    function formatFileSizeContrato(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    $('#archivoContrato').on('change', function() {
+        const archivos = this.files;
+        const listaArchivos = $('#listaArchivosContrato');
+        const vistaArchivos = $('#vistaArchivosContrato');
+
+        listaArchivos.empty();
+
+        if (archivos.length > 0) {
+            let totalSize = 0;
+            const maxSize = 50 * 1024 * 1024; // 50MB
+
+            $.each(archivos, function(index, archivo) {
+                totalSize += archivo.size;
+                const item = $(`
+                    <div class="list-group-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px;" data-index="${index}">
+                        <div>
+                            <i class="fa fa-file-o text-primary"></i>
+                            <span>${archivo.name}</span>
+                            <small class="text-muted"> (${formatFileSizeContrato(archivo.size)})</small>
+                        </div>
+                        <button type="button" class="btn btn-xs btn-danger eliminar-archivo-contrato" data-index="${index}" style="margin-left:10px;">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                `);
+                listaArchivos.append(item);
+            });
+
+            const infoTotal = $(`
+                <div class="alert alert-info" style="margin-top:10px; margin-bottom:5px;">
+                    <strong>${archivos.length}</strong> archivo(s) seleccionado(s) &mdash;
+                    Tama&ntilde;o total: <strong>${formatFileSizeContrato(totalSize)}</strong>
+                </div>
+            `);
+            listaArchivos.append(infoTotal);
+
+            if (totalSize > maxSize) {
+                listaArchivos.append(`
+                    <div class="alert alert-danger" style="margin-top:5px;">
+                        <i class="fa fa-warning"></i> El tama&ntilde;o total supera los 50MB permitidos.
+                    </div>
+                `);
+                $('#btnCargarContrato').prop('disabled', true);
+            } else {
+                $('#btnCargarContrato').prop('disabled', false);
+            }
+
+            vistaArchivos.show();
+        } else {
+            vistaArchivos.hide();
+            $('#btnCargarContrato').prop('disabled', false);
+        }
+    });
+
+    $(document).on('click', '.eliminar-archivo-contrato', function() {
+        $(this).closest('.list-group-item').remove();
+        const restantes = $('#listaArchivosContrato .list-group-item:not(.alert)').length;
+        if (restantes === 0) {
+            $('#vistaArchivosContrato').hide();
+            $('#archivoContrato').val('');
+        }
+    });
+
+    $('#modalDetalleCultivo').on('hidden.bs.modal', function() {
+        $('#archivoContrato').val('');
+        $('#listaArchivosContrato').empty();
+        $('#vistaArchivosContrato').hide();
+        $('#btnCargarContrato').prop('disabled', false);
+    });
+
+});
+</script>
 
 <?php
 $nuevoContrato = ControladorAgro::ctrNuevoContrato();

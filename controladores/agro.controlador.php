@@ -1191,15 +1191,19 @@ class ControladorAgro{
             
             $campania = $_POST['campaniaContrato'];
             $cultivo = $_POST['cultivoContrato'];
-            foreach ($_FILES as $key => $file) {
-       
-                if($file['size'] > 0){
 
-                    if(in_array($file["type"],$allowedFileType)){
+            $countFiles = count($_FILES['archivoContrato']['name']);
+
+            for ($j=0; $j < $countFiles; $j++) { 
+                
+                if($_FILES['archivoContrato']['size'][$j] > 0){
+                    $file = $_FILES['archivoContrato'];
+
+                    if(in_array($file['type'][$j],$allowedFileType)){
+
+                    $ruta = "carga/" . $file['name'][$j];
                         
-                        $ruta = "carga/" . $file['name'];
-                        
-                        move_uploaded_file($file['tmp_name'], $ruta);
+                        move_uploaded_file($file['tmp_name'][$j], $ruta);
                                                                 
                         $rowNumber = 0;
 
@@ -1270,9 +1274,9 @@ class ControladorAgro{
                                 
                         }
                     
-                   
+
                         $respuesta = ModeloAgro::mdlNuevoContrato($tabla,implode(',',$data));
-              
+
                         if($respuesta != 'ok'){
                            echo'<script>
 
@@ -1290,32 +1294,32 @@ class ControladorAgro{
 
                             </script>';
                             die();
-                        }
-
-                    
+                        }                   
 
                     }
 
                 }
-
-                echo'<script>
-
-                swal({
-                    type: "success",
-                    title: "Contrato cargado correctamente",
-                    showConfirmButton: true,
-                    confirmButtonText: "Cerrar",
-                    closeOnConfirm: false
-                    }).then(function(result) {
-                            if (result.value) {
-
-                                window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"
-                            }
-                        })
-
-                </script>';
-                die; 
+                $fileNumber++;
             }
+
+
+            echo'<script>
+
+            swal({
+                type: "success",
+                title: "Contrato cargado correctamente",
+                showConfirmButton: true,
+                confirmButtonText: "Cerrar",
+                closeOnConfirm: false
+                }).then(function(result) {
+                        if (result.value) {
+
+                            window.location = "index.php?ruta=agro/agro&campania=' . $campania . '"
+                        }
+                    })
+
+            </script>';
+            die; 
             
         }  
 
