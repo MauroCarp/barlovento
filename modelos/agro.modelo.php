@@ -619,7 +619,8 @@ class ModeloAgro{
                     precio,
                     kilos,
                     corredor,
-                    comprador
+                    comprador,
+					moneda
                 FROM contratosproduccion 
                 WHERE campania = ? AND (
                     CASE 
@@ -676,7 +677,7 @@ class ModeloAgro{
 
 			$conexion = Conexion::conectar();
 
-			$stmt = $conexion->prepare("INSERT INTO $tabla(campania,cultivo,fecha,precio,kilos,corredor,comprador) VALUES $data");
+			$stmt = $conexion->prepare("INSERT INTO $tabla(campania,cultivo,fecha,precio,kilos,corredor,comprador,moneda) VALUES $data");
 
 			if($stmt->execute()){ 
 				

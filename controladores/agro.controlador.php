@@ -1255,7 +1255,8 @@ class ControladorAgro{
                                                 'precio'=>"'" . $Row[7]. "'",
                                                 'kilos'=>"'" . $Row[10]. "'",
                                                 'corredor'=>"'" . $Row[8]. "'",
-                                                'comprador'=>"'" . $Row[9]. "'"
+                                                'comprador'=>"'" . $Row[9]. "'",
+                                                'moneda'=>"'" . $Row[6]. "'"
                                     );
 
 

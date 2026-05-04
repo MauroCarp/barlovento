@@ -293,10 +293,10 @@ function cargarContratosCultivo(cultivo, campania, totalCosechado) {
             campania: campania
         },
         success: function(response) {
-            
+
             try {
                 let data = JSON.parse(response);
-                
+                console.log(data)    
                 if (data.success && data.contratos && data.contratos.length > 0) {
                     mostrarTablaContratos(data.contratos, data.resumen, totalCosechado);
                 } else {
@@ -362,7 +362,7 @@ function mostrarTablaContratos(contratos, resumen, totalCosechado) {
                     <span class="info-box-icon"><i class="fa fa-dollar"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Precio Promedio</span>
-                        <span class="info-box-number">$${resumen.precio_promedio}</span>
+                        <span class="info-box-number">$ ${Number(resumen.precio_promedio).toLocaleString('es-AR')}</span>
                     </div>
                 </div>
             </div>
@@ -387,7 +387,7 @@ function mostrarTablaContratos(contratos, resumen, totalCosechado) {
         html += `
             <tr>
                 <td>${formatearFecha(contrato.fecha)}</td>
-                <td>$${parseFloat(contrato.precio).toLocaleString('es-AR')}</td>
+                <td>${(contrato.moneda == 'DOL') ? 'U$S' : '$'} ${parseFloat(contrato.precio).toLocaleString('es-AR')}</td>
                 <td>${parseFloat(contrato.kilos).toLocaleString('es-AR')} kg</td>
                 <td>${contrato.corredor}</td>
                 <td>${contrato.comprador}</td>
