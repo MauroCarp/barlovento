@@ -613,7 +613,7 @@ class ModeloAgro{
             try {
                 $pdo = Conexion::conectar();
                 
-                // Consulta para obtener contratos del cultivo específico
+                // Consulta para obtener contratos del cultivo específico usando la misma lógica CASE
                 $sql = "SELECT 
                     fecha,
                     precio,
@@ -621,7 +621,16 @@ class ModeloAgro{
                     corredor,
                     comprador
                 FROM contratosproduccion 
-                WHERE campania = ? AND cultivo = ?
+                WHERE campania = ? AND (
+                    CASE 
+                        WHEN cultivo LIKE 'maiz%' THEN 'maiz'
+                        WHEN cultivo LIKE 'soja%' THEN 'soja' 
+                        WHEN cultivo LIKE 'trigo%' THEN 'trigo'
+                        WHEN cultivo LIKE 'sorgo%' THEN 'sorgo'
+                        WHEN cultivo LIKE 'girasol%' THEN 'girasol'
+                        ELSE cultivo 
+                    END
+                ) = ?
                 ORDER BY fecha DESC";
                 
                 $stmt = $pdo->prepare($sql);
