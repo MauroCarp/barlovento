@@ -423,8 +423,28 @@ function mostrarSinContratos(totalCosechado) {
 
 // Función auxiliar para formatear fecha
 function formatearFecha(fechaString) {
+    console.log(fechaString)
     try {
-        let fecha = new Date(fechaString);
+        let fecha;
+        let fechaTexto = (fechaString || '').toString().trim();
+
+        // Evita corrimiento de zona horaria cuando llega YYYY-MM-DD
+        let soloFechaMatch = fechaTexto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+        if (soloFechaMatch) {
+            let year = parseInt(soloFechaMatch[1], 10);
+            let month = parseInt(soloFechaMatch[2], 10);
+            let day = parseInt(soloFechaMatch[3], 10);
+            fecha = new Date(year, month - 1, day);
+        } else {
+            fecha = new Date(fechaTexto);
+        }
+
+        if (isNaN(fecha.getTime())) {
+            return fechaString;
+        }
+
+        console.log(fecha.toLocaleDateString('es-AR'))
         return fecha.toLocaleDateString('es-AR');
     } catch (error) {
         return fechaString;
