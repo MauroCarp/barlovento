@@ -281,6 +281,54 @@ $('#btnGestionarCultivo').on('click', function() {
     $('#formCargaContrato').toggle(200);
 })
 
+// Eliminar contrato
+$(document).on('click', '.btn-eliminar-contrato', function() {
+
+    let id = $(this).data('id');
+    let fila = $(this).closest('tr');
+
+    swal({
+        title: '¿Eliminar contrato?',
+        text: 'Esta acción no se puede deshacer.',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(function(result) {
+        if (!result.value) return;
+
+        $.ajax({
+            method: 'POST',
+            url: 'ajax/agro.ajax.php',
+            data: { accion: 'eliminarContrato', id: id },
+            success: function(response) {
+                try {
+                    let data = JSON.parse(response);
+                    if (data.success) {
+                        fila.fadeOut(300, function() { $(this).remove(); });
+                        swal({
+                            title: '¡Eliminado!',
+                            text: 'El contrato fue eliminado correctamente.',
+                            type: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        swal({ title: 'Error', text: 'No se pudo eliminar el contrato.', type: 'error' });
+                    }
+                } catch (e) {
+                    swal({ title: 'Error', text: 'Error al procesar la respuesta.', type: 'error' });
+                }
+            },
+            error: function() {
+                swal({ title: 'Error de conexión', text: 'No se pudo conectar con el servidor.', type: 'error' });
+            }
+        });
+    });
+});
+
 // Función para cargar contratos del cultivo
 function cargarContratosCultivo(cultivo, campania, totalCosechado) {
     
@@ -378,6 +426,7 @@ function mostrarTablaContratos(contratos, resumen, totalCosechado) {
                         <th>Kilos</th>
                         <th>Corredor</th>
                         <th>Comprador</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -385,12 +434,17 @@ function mostrarTablaContratos(contratos, resumen, totalCosechado) {
     
     contratos.forEach(function(contrato) {
         html += `
-            <tr>
+            <tr data-id="${contrato.id}">
                 <td>${formatearFecha(contrato.fecha)}</td>
                 <td>${(contrato.moneda == 'DOL') ? 'U$S' : '$'} ${parseFloat(contrato.precio).toLocaleString('es-AR')}</td>
                 <td>${parseFloat(contrato.kilos).toLocaleString('es-AR')} kg</td>
                 <td>${contrato.corredor}</td>
                 <td>${contrato.comprador}</td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-xs btn-danger btn-eliminar-contrato" data-id="${contrato.id}" title="Eliminar contrato">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
             </tr>
         `;
     });

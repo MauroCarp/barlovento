@@ -1174,6 +1174,14 @@ class ControladorAgro{
     
     }
 
+    /*=============================================
+    COMERCIALIZACIÓN - ELIMINAR CONTRATO
+    =============================================*/
+    static public function ctrEliminarContrato($id){
+        $respuesta = ModeloAgro::mdlEliminarContrato($id);
+        return $respuesta;
+    }
+
    /*=============================================
     COMERCIALIZACIÓN - CARGAR CONTRATOS
     =============================================*/

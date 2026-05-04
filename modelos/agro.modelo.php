@@ -615,6 +615,7 @@ class ModeloAgro{
                 
                 // Consulta para obtener contratos del cultivo específico usando la misma lógica CASE
                 $sql = "SELECT 
+                    id,
                     fecha,
                     precio,
                     kilos,
@@ -672,6 +673,17 @@ class ModeloAgro{
                 ];
             }
         }
+
+		static public function mdlEliminarContrato($id){
+			$conexion = Conexion::conectar();
+			$stmt = $conexion->prepare("DELETE FROM contratosproduccion WHERE id = ?");
+			$stmt->bindParam(1, $id, PDO::PARAM_INT);
+			if($stmt->execute()){
+				return 'ok';
+			} else {
+				return $stmt->errorInfo();
+			}
+		}
 
 		static public function mdlNuevoContrato($tabla,$data){
 

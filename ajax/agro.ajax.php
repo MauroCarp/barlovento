@@ -280,5 +280,15 @@ if(isset($_POST["accion"])){
 		$mostrarDetalle->ajaxMostrarContratosCultivo();
 	}
 
+	if($accion == 'eliminarContrato'){
+		$id = intval($_POST['id']);
+		$resultado = ControladorAgro::ctrEliminarContrato($id);
+		if($resultado === 'ok'){
+			echo json_encode(['success' => true]);
+		} else {
+			echo json_encode(['success' => false, 'error' => $resultado]);
+		}
+	}
+
 }
 
