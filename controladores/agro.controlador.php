@@ -985,7 +985,8 @@ class ControladorAgro{
 
         $mapDisplay = function($cultivo){
             switch ($cultivo) {
-                case 'soja1': return 'Soja 1ra';
+                case 'soja': return 'Soja';
+                case 'soja1': return 'Soja';
                 case 'soja2': return 'Soja 2da';
                 case 'maiz1': return 'Maíz';
                 case 'maiz2': return 'Maíz 2da';
