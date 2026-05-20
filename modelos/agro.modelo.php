@@ -412,6 +412,33 @@ class ModeloAgro{
 		}
 	}
 
+	/*=============================================
+	ELIMINAR LOTE DE EJECUCION
+	=============================================*/
+	static public function mdlEliminarEjecucionLote($lote, $campo, $etapa, $idEjecucion){
+		$conexion = Conexion::conectar();
+
+		// 1) Eliminar de ejecucionLabores donde coincide lote, campo y etapa
+		$stmt1 = $conexion->prepare("DELETE FROM ejecucionLabores WHERE lote = :lote AND campo = :campo AND etapa = :etapa");
+		$stmt1->bindParam(":lote",  $lote,  PDO::PARAM_STR);
+		$stmt1->bindParam(":campo", $campo, PDO::PARAM_STR);
+		$stmt1->bindParam(":etapa", $etapa, PDO::PARAM_STR);
+
+		if(!$stmt1->execute()){
+			return $stmt1->errorInfo();
+		}
+
+		// 2) Marcar el lote como no cargado en ejecucionlotes
+		$stmt2 = $conexion->prepare("UPDATE ejecucionlotes SET cargado = 0 WHERE id = :id");
+		$stmt2->bindParam(":id", $idEjecucion, PDO::PARAM_INT);
+
+		if($stmt2->execute()){
+			return "ok";
+		}else{
+			return $stmt2->errorInfo();
+		}
+	}
+
 	static public function mdlCargarLotesProduccion($tabla,$data){
 		$conexion = Conexion::conectar();
 		

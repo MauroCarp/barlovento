@@ -65,6 +65,7 @@ function tipoCultivo($cultivo){
             $tipo = 'fina';
             break;
 
+        case 'maiz':
         case 'maiz1':
         case 'maiz2':
         case 'soja1':
@@ -77,6 +78,9 @@ function tipoCultivo($cultivo){
         case 'triticale':
         case 'sevadilla':
         case 'vicia':
+        case 'vicia-triticale':
+        case 'vicia+triticale':
+        case 'triticale-vicia':
         case 'avena':
         case 'pasturaconsociada':
             $tipo = 'cobertura';
@@ -714,6 +718,14 @@ class ControladorAgro{
     }
 
     /*=============================================
+	ELIMINAR LOTE DE EJECUCION
+	=============================================*/
+    static public function ctrEliminarEjecucionLote($lote, $campo, $etapa, $idEjecucion){
+        $respuesta = ModeloAgro::mdlEliminarEjecucionLote($lote, $campo, $etapa, $idEjecucion);
+        return $respuesta;
+    }
+
+    /*=============================================
 	ELIMINAR ARCHIVO
 	=============================================*/
     
@@ -988,6 +1000,7 @@ class ControladorAgro{
                 case 'soja': return 'Soja';
                 case 'soja1': return 'Soja';
                 case 'soja2': return 'Soja 2da';
+                case 'maiz': return 'Maíz';
                 case 'maiz1': return 'Maíz';
                 case 'maiz2': return 'Maíz 2da';
                 case 'avena': return 'Avena Cobertura';

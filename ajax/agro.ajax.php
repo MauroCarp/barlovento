@@ -27,6 +27,10 @@ class AjaxAgro{
 
 	public $cultivo;
 
+	public $lote;
+
+	public $idEjecucion;
+
 	public function ajaxMostrarDataPlanificacion(){
 		
 		$cargaPlanificacion = $this->carga;
@@ -178,6 +182,19 @@ class AjaxAgro{
 		$data = ControladorAgro::ctrMostrarContratosCultivo($campania, $cultivo);
 		echo json_encode($data);
 	}
+
+	/*=============================================
+	ELIMINAR LOTE DE EJECUCION
+	=============================================*/
+	public function ajaxEliminarEjecucionLote(){
+		$lote        = $this->lote;
+		$campo       = $this->campo;
+		$etapa       = $this->etapa;
+		$idEjecucion = $this->idEjecucion;
+
+		$respuesta = ControladorAgro::ctrEliminarEjecucionLote($lote, $campo, $etapa, $idEjecucion);
+		echo json_encode($respuesta);
+	}
 }
 
 
@@ -278,6 +295,15 @@ if(isset($_POST["accion"])){
 		$mostrarDetalle->campania = $_POST['campania'];
 		$mostrarDetalle->cultivo = $_POST['cultivo'];
 		$mostrarDetalle->ajaxMostrarContratosCultivo();
+	}
+
+	if($accion == 'eliminarEjecucionLote'){
+		$eliminarLote = new AjaxAgro();
+		$eliminarLote->lote        = $_POST['lote'];
+		$eliminarLote->campo       = $_POST['campo'];
+		$eliminarLote->etapa       = $_POST['etapa'];
+		$eliminarLote->idEjecucion = $_POST['idEjecucion'];
+		$eliminarLote->ajaxEliminarEjecucionLote();
 	}
 
 	if($accion == 'eliminarContrato'){

@@ -523,6 +523,8 @@ const cargarInfoEjecucion = (campania)=>{
         data[lote['campo']][lote['lote']].costoPlanificacion = lote['costoPlanificacion']
 
         data[lote['campo']][lote['lote']].has = lote['has']
+
+        data[lote['campo']][lote['lote']].idEjecucion = lote['idEjecucion']
         
         if(lote.etapa == 'gruesa'){
 
@@ -658,9 +660,16 @@ const cargarInfoEjecucion = (campania)=>{
             <td>
               ${(Number(totalEjecucion) - Number(data[campo][key].costoPlanificacion)).toLocaleString('de-DE')}
             </td>
-  
-          <tr>
-  
+
+            <td>
+              <button class="btn btn-danger btn-xs btn-eliminar-ejecucion-lote"
+                data-lote="${key}"
+                data-campo="${campo}"
+                data-etapa="${etapa}"
+                data-idejecucion="${data[campo][key].idEjecucion}">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
         `))
   
       }
@@ -813,5 +822,55 @@ $('#btnCargaLotes').on('click',function(){
     $('#inputBetyFina').show(250)
 
   }
+
+})
+
+$(document).on('click', '.btn-eliminar-ejecucion-lote', function(){
+
+  let lote        = $(this).data('lote')
+  let campo       = $(this).data('campo')
+  let etapa       = $(this).data('etapa')
+  let idEjecucion = $(this).data('idejecucion')
+
+  swal({
+    title: '¿Eliminar registro?',
+    text: `¿Desea eliminar el lote "${lote}" del campo "${campo}"? Esta acción no se puede deshacer.`,
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+
+    if (result.value) {
+
+      $.ajax({
+        method: 'POST',
+        url: 'ajax/agro.ajax.php',
+        data: {
+          accion: 'eliminarEjecucionLote',
+          lote,
+          campo,
+          etapa,
+          idEjecucion
+        },
+        success: function(respuesta) {
+          console.log('se ejecuto la eliminacion')
+          console.log(respuesta == '\"ok\"')
+          if (respuesta == '\"ok\"') {
+            console.log('correctamente')
+            swal({ type: 'success', title: 'Eliminado correctamente', showConfirmButton: false, timer: 1500 })
+            let campania = $('#campania').html()
+            cargarInfoEjecucion(campania)
+          } else {
+            console.log('hubo un error')
+            swal({ type: 'error', title: 'Error al eliminar', text: 'Informar al administrador.', showConfirmButton: true })
+          }
+        }
+      })
+    }
+
+  })
 
 })

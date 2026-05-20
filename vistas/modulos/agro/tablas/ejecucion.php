@@ -27,6 +27,7 @@
                         <th>u$s Planificaci&oacute;n</th>
                         <th>% Dif.</th>
                         <th>u$s Dif.</th>
+                        <th>Acciones</th>
                     </thead>
                     <tbody>
 
