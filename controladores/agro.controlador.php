@@ -1051,8 +1051,6 @@ class ControladorAgro{
         foreach ($etapas as $etapa) {
             $rows = ModeloAgro::mdlMostrarDataEjecucion('ejecucion','campania',$campania,'etapa',$etapa);
 
-            
-
             foreach ($rows as $r) {
                 $cultivo = $r['cultivo'];
                 $lote = trim($r['lote']);
@@ -1064,20 +1062,28 @@ class ControladorAgro{
                 } 
 
                 if(isset($ejecPorTipo[$etapa])){
+                    
                     $key = $lote.'|'.$cultivo;
+                    
                     if(!isset($ejecPorCultivoHasMax[$key])) $ejecPorCultivoHasMax[$key] = 0;
+                    
                     if($has > $ejecPorCultivoHasMax[$key]){
-                        $ejecPorTipo[$etapa]['has'] += ($has - $ejecPorCultivoHasMax[$key]);
+                        
+                    $etapaTemp = $etapa;
+
+                        if($cultivo != 'trigo' && $etapa == 'fina'){
+                            $etapaTemp = 'cobertura';
+                        }
+
+                        $ejecPorTipo[$etapaTemp]['has'] += ($has - $ejecPorCultivoHasMax[$key]);
                         $ejecPorCultivoHasMax[$key] = $has;
+
                     }
-                    $ejecPorTipo[$etapa]['dolares'] += $cost;
+
+                    $ejecPorTipo[$etapaTemp]['dolares'] += $cost;
+
                 }
                 
-                if($etapa == 'cobertura'){
-                // var_dump($ejecPorTipo);
-                } 
-
-
                 $tipoEI = $tipoPlural(tipoEstInv($cultivo));
                 if(isset($ejecPorTipo[$tipoEI])){
                     $keyEI = $lote.'|'.$cultivo.'|'.$tipoEI;
