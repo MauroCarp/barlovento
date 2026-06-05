@@ -301,6 +301,16 @@
 
 							</ul>
 
+						</li>
+						<li class="treeview">
+
+							<a href="controlPastoril">
+
+								<i class="icon-fardo"></i>
+								
+								<span>Control Pastoril</span>
+								
+							</a>
 						</li>';
 
 					if($_SESSION['usuario'] == 'tecnicoGanadero'){

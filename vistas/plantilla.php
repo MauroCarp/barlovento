@@ -201,6 +201,7 @@ CUERPO DOCUMENTO
           $_GET["ruta"] == "datos-muertes" ||
           $_GET["ruta"] == "panelControl" ||
           $_GET["ruta"] == "resumenConversion" ||
+          $_GET["ruta"] == "controlPastoril" ||
           $_GET["ruta"] == "panelGordos" ||
           $_GET["ruta"] == "resumen" ||
           $_GET["ruta"] == "piri" ||
