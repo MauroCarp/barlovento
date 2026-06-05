@@ -1029,9 +1029,15 @@ class ControladorAgro{
             $tipoEI = $tipoPlural(tipoEstInv($cultivo));
 
             if(isset($planPorTipo[$tipo])){
-                $planPorTipo[$tipo]['has'] += $has;
-                $planPorTipo[$tipo]['dolares'] += $dolares;
+                // PARCHE PARA QUE NO CUENTE LA PASTURA COMO COBERTURA
+                if($cultivo != 'pasturaconsociada'){
+                    
+                    $planPorTipo[$tipo]['has'] += $has;
+                    $planPorTipo[$tipo]['dolares'] += $dolares;
+                }
+
             }
+            
             if(isset($planPorTipo[$tipoEI])){
                 $planPorTipo[$tipoEI]['has'] += $has;
                 $planPorTipo[$tipoEI]['dolares'] += $dolares;
@@ -1061,6 +1067,8 @@ class ControladorAgro{
                 // var_dump($cultivo,$lote,$has,$cost);
                 } 
 
+                $etapaTemp = $etapa;
+
                 if(isset($ejecPorTipo[$etapa])){
                     
                     $key = $lote.'|'.$cultivo;
@@ -1069,7 +1077,6 @@ class ControladorAgro{
                     
                     if($has > $ejecPorCultivoHasMax[$key]){
                         
-                    $etapaTemp = $etapa;
 
                         if($cultivo != 'trigo' && $etapa == 'fina'){
                             $etapaTemp = 'cobertura';

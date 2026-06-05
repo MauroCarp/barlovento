@@ -242,8 +242,8 @@ $(document).ready(function() {
     function calcularResumenes(datos) {
         const totalHasPlan = datos.planificacion.fina.has + datos.planificacion.gruesa.has + datos.planificacion.cobertura.has;
         const totalHasEjec = datos.ejecucion.fina.has + datos.ejecucion.gruesa.has + datos.ejecucion.cobertura.has;
-        const totalDolaresPlan = datos.planificacion.fina.dolares + datos.planificacion.gruesa.dolares;
-        const totalDolaresEjec = datos.ejecucion.fina.dolares + datos.ejecucion.gruesa.dolares;
+        const totalDolaresPlan = datos.planificacion.fina.dolares + datos.planificacion.gruesa.dolares + datos.planificacion.cobertura.dolares;
+        const totalDolaresEjec = datos.ejecucion.fina.dolares + datos.ejecucion.gruesa.dolares + datos.ejecucion.cobertura.dolares;
 
         const eficienciaHas = `${totalHasPlan.toLocaleString()} | ${totalHasEjec.toLocaleString()}`;
         const variacionInversion = 'U$S ' + totalDolaresPlan.toLocaleString('DE-de') + '  |  U$S ' + totalDolaresEjec.toLocaleString('DE-de');
