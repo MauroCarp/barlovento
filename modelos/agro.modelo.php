@@ -429,7 +429,7 @@ class ModeloAgro{
 		}
 
 		// 2) Marcar el lote como no cargado en ejecucionlotes
-		$stmt2 = $conexion->prepare("UPDATE ejecucionlotes SET cargado = 0 WHERE id = :id");
+		$stmt2 = $conexion->prepare("UPDATE ejecucionLotes SET cargado = 0 WHERE id = :id");
 		$stmt2->bindParam(":id", $idEjecucion, PDO::PARAM_INT);
 
 		if($stmt2->execute()){
@@ -544,10 +544,10 @@ class ModeloAgro{
 		$stmt2 = Conexion::conectar()->prepare("DELETE FROM cultivosplanificacion");
 		$stmt2 -> execute();
 
-		$stmt3 = Conexion::conectar()->prepare("DELETE FROM ejecucionlabores");
+		$stmt3 = Conexion::conectar()->prepare("DELETE FROM ejecucionLabores");
 		$stmt3 -> execute();
 
-		$stmt4 = Conexion::conectar()->prepare("DELETE FROM ejecucionlotes");
+		$stmt4 = Conexion::conectar()->prepare("DELETE FROM ejecucionLotes");
 		$stmt4 -> execute();
 
 		$stmt5 = Conexion::conectar()->prepare("DELETE FROM costocultivos");

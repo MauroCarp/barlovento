@@ -858,6 +858,7 @@ $(document).on('click', '.btn-eliminar-ejecucion-lote', function(){
         success: function(respuesta) {
           console.log('se ejecuto la eliminacion')
           console.log(respuesta == '\"ok\"')
+          console.log(respuesta)
           if (respuesta == '\"ok\"') {
             console.log('correctamente')
             swal({ type: 'success', title: 'Eliminado correctamente', showConfirmButton: false, timer: 1500 })
