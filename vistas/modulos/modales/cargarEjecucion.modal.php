@@ -4,7 +4,7 @@
 
     <div class="modal-content">
 
-      <form role="form" method="post" enctype="multipart/form-data" id="formCarga">
+      <form role="form" method="post" enctype="multipart/form-data" id="formCargaEjecucion">
 
         <!--=====================================
         CABEZA DEL MODAL
