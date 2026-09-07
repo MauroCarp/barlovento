@@ -1197,6 +1197,55 @@ class ControladorAgro{
     static public function ctrMostrarContratosCultivo($campania, $cultivo){
         
         $respuesta = ModeloAgro::mdlMostrarContratosCultivo($campania, $cultivo);
+
+        if (empty($respuesta['success']) || empty($respuesta['contratos'])) {
+            return $respuesta;
+        }
+
+        if (!class_exists('ControladorContable')) {
+            require_once dirname(__FILE__) . '/contable.controlador.php';
+        }
+
+        $cotizaciones = array();
+        $fechasDolar = array();
+
+        foreach ($respuesta['contratos'] as $contrato) {
+            if (strtoupper(trim($contrato['moneda'])) === 'DOL' && !empty($contrato['fecha'])) {
+                $fechasDolar[] = $contrato['fecha'];
+            }
+        }
+
+        if (!empty($fechasDolar)) {
+            try {
+                $desde = date('Y-m-d', strtotime(min($fechasDolar) . ' -10 days'));
+                $hasta = max($fechasDolar);
+                $valoresDiarios = ControladorContable::ctrObtenerValoresDiariosDolarRango($desde, $hasta);
+                $cotizaciones = ControladorContable::ctrIndexarCotizacionesDolar($valoresDiarios);
+            } catch (Exception $e) {
+                $cotizaciones = array();
+            }
+        }
+
+        $sumaPreciosPesos = 0;
+
+        foreach ($respuesta['contratos'] as $contrato) {
+            $precio = floatval($contrato['precio']);
+
+            if (strtoupper(trim($contrato['moneda'])) === 'DOL') {
+                $dolar = ControladorContable::ctrCotizacionDolarEnFecha($cotizaciones, $contrato['fecha']);
+                if ($dolar > 0) {
+                    $precio = $precio * $dolar;
+                }
+            }
+
+            $sumaPreciosPesos += $precio;
+        }
+
+        $totalContratos = count($respuesta['contratos']);
+        $respuesta['resumen']['precio_promedio'] = $totalContratos > 0
+            ? round($sumaPreciosPesos / $totalContratos, 2)
+            : 0;
+
         return $respuesta;
     
     }

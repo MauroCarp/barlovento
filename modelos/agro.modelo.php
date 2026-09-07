@@ -669,18 +669,11 @@ class ModeloAgro{
                 
                 $contratos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
-                // Calcular totales
                 $totalKilos = 0;
-                $precioPromedio = 0;
                 $totalContratos = count($contratos);
                 
-                if (!empty($contratos)) {
-                    $sumaPrecios = 0;
-                    foreach ($contratos as $contrato) {
-                        $totalKilos += floatval($contrato['kilos']);
-                        $sumaPrecios += floatval($contrato['precio']);
-                    }
-                    $precioPromedio = $totalContratos > 0 ? ($sumaPrecios / $totalContratos) : 0;
+                foreach ($contratos as $contrato) {
+                    $totalKilos += floatval($contrato['kilos']);
                 }
                 
                 return [
@@ -689,7 +682,7 @@ class ModeloAgro{
                     'resumen' => [
                         'total_contratos' => $totalContratos,
                         'total_kilos' => $totalKilos,
-                        'precio_promedio' => round($precioPromedio, 2)
+                        'precio_promedio' => 0
                     ]
                 ];
                 

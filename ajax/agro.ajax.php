@@ -1,6 +1,7 @@
 <?php
 
 require_once "../controladores/agro.controlador.php";
+require_once "../controladores/contable.controlador.php";
 require_once "../modelos/agro.modelo.php";
 
 class AjaxAgro{

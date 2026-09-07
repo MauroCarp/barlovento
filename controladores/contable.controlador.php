@@ -1074,56 +1074,119 @@ class ControladorContable{
 
     static public function ctrObtenerValoresDiariosDolar($periodo) {
         $date = new DateTime($periodo);
-        
-        // Modificar la fecha al último día del mes
         $date->modify('last day of this month');
-        
-        // Formatear la fecha para obtener solo el día
         $hasta = $date->format('Y-m-d');
-        
-        // URL para obtener valores diarios
-        $url = "https://mercados.ambito.com/dolarrava/cl/grafico/$periodo/$hasta";
 
-        // Inicializar cURL
+        return self::ctrObtenerValoresDiariosDolarRango($periodo, $hasta);
+    }
+
+    static public function ctrObtenerValoresDiariosDolarRango($desde, $hasta) {
+        $url = "https://mercados.ambito.com/dolarrava/cl/grafico/$desde/$hasta";
+
         $ch = curl_init();
-
-        // Configurar opciones de cURL
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPGET, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 
-        // Ejecutar la solicitud
         $response = curl_exec($ch);
-
         $valoresDiarios = [];
-       
-        // Verificar si hubo errores
+
         if ($response === false) {
-            throw new Exception(curl_error($ch));
-        } else {
-            // Decodificar la respuesta JSON
-            $data = json_decode($response, true);
-            
-            // Recorrer el array de resultados
-            foreach ($data as $key => $result) {
-                if($key != 0) { // Omitir el primer elemento que suele ser el encabezado
-                    $valor = floatval(str_replace(',', '.', $result[1]));
-                    // Solo incluir días con valor mayor a 0
-                    if ($valor > 0) {
-                        $valoresDiarios[] = [
-                            'fecha' => $result[0],
-                            'valor' => $valor
-                        ];
-                    }
-                }
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new Exception($error);
+        }
+
+        curl_close($ch);
+
+        $data = json_decode($response, true);
+        if (!is_array($data)) {
+            return $valoresDiarios;
+        }
+
+        foreach ($data as $key => $result) {
+            if ($key == 0 || !is_array($result) || !isset($result[1])) {
+                continue;
+            }
+
+            $valor = floatval(str_replace(',', '.', $result[1]));
+            if ($valor > 0) {
+                $valoresDiarios[] = [
+                    'fecha' => $result[0],
+                    'valor' => $valor
+                ];
             }
         }
 
-        // Cerrar cURL
-        curl_close($ch); 
-
         return $valoresDiarios;
+    }
+
+    static public function normalizarFechaDolar($fecha) {
+        if (empty($fecha)) {
+            return null;
+        }
+
+        $fecha = trim(str_replace('\\', '', $fecha));
+
+        if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $fecha, $m)) {
+            return $m[3] . '-' . $m[2] . '-' . $m[1];
+        }
+
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})/', $fecha, $m)) {
+            return $m[1] . '-' . $m[2] . '-' . $m[3];
+        }
+
+        if (preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $fecha, $m)) {
+            return $m[3] . '-' . $m[2] . '-' . $m[1];
+        }
+
+        try {
+            $dt = new DateTime($fecha);
+            return $dt->format('Y-m-d');
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    static public function ctrIndexarCotizacionesDolar($valoresDiarios) {
+        $mapa = [];
+
+        foreach ($valoresDiarios as $item) {
+            $fechaKey = self::normalizarFechaDolar($item['fecha']);
+            $valor = floatval($item['valor']);
+
+            if ($fechaKey && $valor > 0) {
+                $mapa[$fechaKey] = $valor;
+            }
+        }
+
+        ksort($mapa);
+        return $mapa;
+    }
+
+    static public function ctrCotizacionDolarEnFecha($mapa, $fecha) {
+        $fechaKey = self::normalizarFechaDolar($fecha);
+
+        if (!$fechaKey || empty($mapa)) {
+            return 0;
+        }
+
+        if (isset($mapa[$fechaKey])) {
+            return $mapa[$fechaKey];
+        }
+
+        $cotizacionAnterior = 0;
+        foreach ($mapa as $fechaCotizacion => $valor) {
+            if ($fechaCotizacion > $fechaKey) {
+                break;
+            }
+            $cotizacionAnterior = $valor;
+        }
+
+        return $cotizacionAnterior;
     }
 
     
