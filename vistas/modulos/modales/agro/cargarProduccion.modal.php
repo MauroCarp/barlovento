@@ -4,7 +4,7 @@
 
     <div class="modal-content">
 
-      <form role="form" method="post" enctype="multipart/form-data" id="formCarga">
+      <form role="form" method="post" enctype="multipart/form-data" id="formCargaProduccion">
 
         <!--=====================================
         CABEZA DEL MODAL
@@ -168,7 +168,7 @@ $(document).ready(function() {
     });
     
     // Validación adicional al submit
-    $('#formCarga').on('submit', function(e) {
+    $('#formCargaProduccion').on('submit', function(e) {
         const archivos = $('#archivosProduccion')[0].files;
         
         if (archivos.length === 0) {
