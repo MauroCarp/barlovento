@@ -317,5 +317,20 @@ if(isset($_POST["accion"])){
 		}
 	}
 
+	if($accion == 'actualizarContratoProduccion'){
+		$id = intval($_POST['id']);
+		$contrato = trim($_POST['contrato'] ?? '');
+		if($id <= 0 || $contrato === ''){
+			echo json_encode(['success' => false, 'error' => 'Datos inválidos']);
+			exit;
+		}
+		$resultado = ControladorAgro::ctrActualizarContratoProduccion($id, $contrato);
+		if($resultado === 'ok'){
+			echo json_encode(['success' => true, 'contrato' => $contrato]);
+		} else {
+			echo json_encode(['success' => false, 'error' => $resultado]);
+		}
+	}
+
 }
 

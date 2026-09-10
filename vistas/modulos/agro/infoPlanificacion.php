@@ -10,9 +10,9 @@
 
                 <h2 class="widget-user-username">
                     | <b> <?php echo $campo;?></b><br>
-                    | Cultivos Invernales: <span id="hasInvPlanificacion<?php echo $campoId;?>"></span> Has.<br>
-                    | Cultivos Cobertura: <span id="hasCobPlanificacion<?php echo $campoId;?>"></span>  Has.<br>
-                    | Cultivos Estivales: <span id="hasEstPlanificacion<?php echo $campoId;?>"></span>  Has.<br>
+                    <!-- | Cultivos Invernales: <span id="hasInvPlanificacion<?php// echo $campoId;?>"></span> Has.<br>
+                    | Cultivos Cobertura: <span id="hasCobPlanificacion<?php// echo $campoId;?>"></span>  Has.<br>
+                    | Cultivos Estivales: <span id="hasEstPlanificacion<?php// echo $campoId;?>"></span>  Has.<br> -->
                     | Ratio de Cultivo: <span id="ratioPlanificacion<?php echo $campoId;?>"></span>  %.
                 </h2>
             
