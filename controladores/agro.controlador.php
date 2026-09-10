@@ -1016,7 +1016,7 @@ class ControladorAgro{
             return $tipo;
         };
 
-        $planPorTipo = ['fina'=>['has'=>0,'dolares'=>0],'gruesa'=>['has'=>0,'dolares'=>0],'cobertura'=>['has'=>0,'dolares'=>0],'invernales'=>['has'=>0,'dolares'=>0],'estivales'=>['has'=>0,'dolares'=>0]];
+        $planPorTipo = ['fina'=>['has'=>0,'dolares'=>0],'gruesa'=>['has'=>0,'dolares'=>0],'cobertura'=>['has'=>0,'dolares'=>0],'pastura'=>['has'=>0,'dolares'=>0],'invernales'=>['has'=>0,'dolares'=>0],'estivales'=>['has'=>0,'dolares'=>0]];
         $planPorCultivo = [];
 
         foreach ($cultivosPlan as $row) {
@@ -1034,6 +1034,9 @@ class ControladorAgro{
                     
                     $planPorTipo[$tipo]['has'] += $has;
                     $planPorTipo[$tipo]['dolares'] += $dolares;
+                }else{
+                    $planPorTipo['pastura']['has'] += $has;
+                    $planPorTipo['pastura']['dolares'] += $dolares;
                 }
 
             }
@@ -1154,6 +1157,7 @@ class ControladorAgro{
                 'fina' => $planPorTipo['fina'],
                 'gruesa' => $planPorTipo['gruesa'],
                 'cobertura' => $planPorTipo['cobertura'],
+                'pastura' => $planPorTipo['pastura'],
                 'invernales' => $planPorTipo['invernales'],
                 'estivales' => $planPorTipo['estivales']
             ],
@@ -1206,6 +1210,14 @@ class ControladorAgro{
     =============================================*/
     static public function ctrEliminarContrato($id){
         $respuesta = ModeloAgro::mdlEliminarContrato($id);
+        return $respuesta;
+    }
+
+    /*=============================================
+    COMERCIALIZACIÓN - ACTUALIZAR CONTRATO
+    =============================================*/
+    static public function ctrActualizarContratoProduccion($id, $contrato){
+        $respuesta = ModeloAgro::mdlActualizarContratoProduccion($id, $contrato);
         return $respuesta;
     }
 
@@ -1289,6 +1301,7 @@ class ControladorAgro{
 
                                     $arr = array(
                                                 'campania'=> "'" . $campania . "'",
+                                                'contrato'=> "'" . $Row[1] . "'",
                                                 'cultivo'=>"'" . $cultivo. "'",
                                                 'fecha'=>"'" . $fechaFormateada . "'",
                                                 'precio'=>"'" . $Row[7]. "'",
@@ -1334,7 +1347,6 @@ class ControladorAgro{
                     }
 
                 }
-                $fileNumber++;
             }
 
 

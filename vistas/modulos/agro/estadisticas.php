@@ -180,7 +180,7 @@ $(document).ready(function() {
     
     function llenarTablaPorTipo(datos) {
         const tipos = ['fina', 'gruesa', 'cobertura', 'invernales', 'estivales'];
-        console.log(datos)
+        // console.log(datos)
         tipos.forEach(tipo => {
             const plan = datos.planificacion[tipo];
             const ejec = datos.ejecucion[tipo];
@@ -240,8 +240,9 @@ $(document).ready(function() {
     }
     
     function calcularResumenes(datos) {
-    console.log(datos.planificacion)
-        const totalHasPlan = datos.planificacion.fina.has + datos.planificacion.gruesa.has + datos.planificacion.cobertura.has + datos.planificacion.pasturas.has;
+
+        const totalHasPlan = datos.planificacion.fina.has + datos.planificacion.gruesa.has + datos.planificacion.cobertura.has + datos.planificacion.pastura.has;
+        
         const totalHasEjec = datos.ejecucion.fina.has + datos.ejecucion.gruesa.has + datos.ejecucion.cobertura.has;
         const totalDolaresPlan = datos.planificacion.fina.dolares + datos.planificacion.gruesa.dolares + datos.planificacion.cobertura.dolares;
         const totalDolaresEjec = datos.ejecucion.fina.dolares + datos.ejecucion.gruesa.dolares + datos.ejecucion.cobertura.dolares;

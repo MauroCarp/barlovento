@@ -329,6 +329,58 @@ $(document).on('click', '.btn-eliminar-contrato', function() {
     });
 });
 
+// Guardar contrato faltante
+$(document).on('click', '.btn-guardar-contrato', function() {
+    let id = $(this).data('id');
+    let fila = $(this).closest('tr');
+    let input = fila.find('.input-contrato-faltante');
+    let contrato = (input.val() || '').trim();
+    let btn = $(this);
+
+    if (!contrato) {
+        swal({ title: 'Atención', text: 'Ingrese un número de contrato.', type: 'warning' });
+        input.focus();
+        return;
+    }
+
+    btn.prop('disabled', true);
+
+    $.ajax({
+        method: 'POST',
+        url: 'ajax/agro.ajax.php',
+        data: {
+            accion: 'actualizarContratoProduccion',
+            id: id,
+            contrato: contrato
+        },
+        success: function(response) {
+            try {
+                let data = JSON.parse(response);
+                if (data.success) {
+                    fila.find('.celda-contrato').html(data.contrato);
+                    swal({
+                        title: '¡Guardado!',
+                        text: 'El contrato fue cargado correctamente.',
+                        type: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    swal({ title: 'Error', text: 'No se pudo guardar el contrato.', type: 'error' });
+                    btn.prop('disabled', false);
+                }
+            } catch (e) {
+                swal({ title: 'Error', text: 'Error al procesar la respuesta.', type: 'error' });
+                btn.prop('disabled', false);
+            }
+        },
+        error: function() {
+            swal({ title: 'Error de conexión', text: 'No se pudo conectar con el servidor.', type: 'error' });
+            btn.prop('disabled', false);
+        }
+    });
+});
+
 // Función para cargar contratos del cultivo
 function cargarContratosCultivo(cultivo, campania, totalCosechado) {
     
@@ -421,6 +473,7 @@ function mostrarTablaContratos(contratos, resumen, totalCosechado) {
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th>Contrato</th>
                         <th>Fecha</th>
                         <th>Precio ($/Tn)</th>
                         <th>Kilos</th>
@@ -433,8 +486,23 @@ function mostrarTablaContratos(contratos, resumen, totalCosechado) {
     `;
     
     contratos.forEach(function(contrato) {
+        let contratoValor = (contrato.contrato === null || contrato.contrato === undefined) ? '' : String(contrato.contrato).trim();
+        let celdaContrato = contratoValor
+            ? `<td class="celda-contrato">${contratoValor}</td>`
+            : `<td class="celda-contrato">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control input-contrato-faltante" placeholder="N° contrato" data-id="${contrato.id}">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-success btn-guardar-contrato" data-id="${contrato.id}" title="Guardar contrato">
+                                <i class="fa fa-check"></i>
+                            </button>
+                        </span>
+                    </div>
+               </td>`;
+
         html += `
             <tr data-id="${contrato.id}">
+                ${celdaContrato}
                 <td>${formatearFecha(contrato.fecha)}</td>
                 <td>${(contrato.moneda == 'DOL') ? 'U$S' : '$'} ${parseFloat(contrato.precio).toLocaleString('es-AR')}</td>
                 <td>${parseFloat(contrato.kilos).toLocaleString('es-AR')} kg</td>

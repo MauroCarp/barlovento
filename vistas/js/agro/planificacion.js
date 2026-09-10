@@ -1,4 +1,4 @@
-const cobertura = ['vicia','triticale','avena','avena cobertura','cebada','cebadilla','triticale espinillo','camelina']
+const cobertura = ['vicia','triticale','avena','avena cobertura','cebada','vicia-triticale','cebadilla','triticale espinillo','camelina']
 
 function calcularSuggestedMax(datos,tipo) {
 
@@ -30,7 +30,9 @@ const cargarInfoPlanificacion = (campania,carga)=>{
   }).then(resp=>resp.json())
   .then(respuesta=>{
 
+    console.log(respuesta)
       $('#idPlanificacion').val(respuesta.idPlanificacion)
+
       generarInputFile(respuesta.lotes)
 
     
@@ -39,24 +41,24 @@ const cargarInfoPlanificacion = (campania,carga)=>{
         .filter(cultivo => !cobertura.includes(cultivo.toLowerCase()))
         .map(cultivo => cultivo.replace(/\d+$/, '')))]
 
+      cultivosNoCobertura.forEach(cultivo => {
 
-      // cultivosNoCobertura.forEach(cultivo => {
+        $('#formEjecucionRindes').append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(cultivo)}</b></div><br>
+        <div class="form-group">
 
-      //   $('#formEjecucionRindes').append($(`<div class="bg-success" style="font-size:1.8em"><b>${capitalizarPrimeraLetra(cultivo)}</b></div><br>
-      //   <div class="form-group">
+            <label for="rinde${capitalizarPrimeraLetra(cultivo)}"</label>
 
-      //       <label for="rinde${capitalizarPrimeraLetra(cultivo)}"</label>
+            <div class="input-group">
 
-      //       <div class="input-group">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="rindes_${cultivo}">
 
-      //         <div class="custom-file"><input type="file" class="custom-file-input" name="rindes_${cultivo}">
-
-      //         </div>
+              </div>
               
-      //       </div>
+            </div>
 
-      //     </div>`))
-      // });  
+          </div>`))
+      });  
+
 
       let data = {
         'pichi':{
@@ -143,9 +145,12 @@ const cargarInfoPlanificacion = (campania,carga)=>{
 
       }
 
+      console.log(respuesta['cultivos'])
       respuesta['cultivos'].forEach(cultivo => {
-
+        //console.log(cultivo)
         let costo = (parseInt(cultivo.has) * parseInt(respuesta['costos'][cultivo.cultivo]))
+        console.log('cultivo= ' + respuesta['costos'][cultivo.cultivo])
+        console.log('costo= ' + costo)
         let has = parseInt(cultivo.has)
         data[cultivo.campo].hasTotal += has
 
@@ -205,6 +210,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
       //console.log(data)
       // PINTAR DATOS
       $('#totalHasPlanificadas').text(data.bety.hasTotal + data.pichi.hasTotal + data.antony.hasTotal)
+      // console.log(data.bety)
       $('#totalInversionPlanificada').text((data.bety.costoTotal + data.pichi.costoTotal + data.antony.costoTotal).toLocaleString('de-DE'))
 
       let arr = ['bety','pichi','antony']
@@ -291,7 +297,7 @@ const cargarInfoPlanificacion = (campania,carga)=>{
             plugins:{
               labels:{                  
                   render:function(reg){
-                    console.log(reg.value)
+
                       return (reg.value != undefined) ? reg.value.toLocaleString('de-DE') : ''
                   },
               }

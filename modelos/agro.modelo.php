@@ -643,6 +643,7 @@ class ModeloAgro{
                 // Consulta para obtener contratos del cultivo específico usando la misma lógica CASE
                 $sql = "SELECT 
                     id,
+                    contrato,
                     fecha,
                     precio,
                     kilos,
@@ -705,6 +706,18 @@ class ModeloAgro{
 			$conexion = Conexion::conectar();
 			$stmt = $conexion->prepare("DELETE FROM contratosproduccion WHERE id = ?");
 			$stmt->bindParam(1, $id, PDO::PARAM_INT);
+			if($stmt->execute()){
+				return 'ok';
+			} else {
+				return $stmt->errorInfo();
+			}
+		}
+
+		static public function mdlActualizarContratoProduccion($id, $contrato){
+			$conexion = Conexion::conectar();
+			$stmt = $conexion->prepare("UPDATE contratosproduccion SET contrato = ? WHERE id = ?");
+			$stmt->bindParam(1, $contrato, PDO::PARAM_STR);
+			$stmt->bindParam(2, $id, PDO::PARAM_INT);
 			if($stmt->execute()){
 				return 'ok';
 			} else {
