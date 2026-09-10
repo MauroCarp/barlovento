@@ -70,7 +70,7 @@
                                                 <td class="text-right" id="dolareGruesaDiferencia">-</td>
                                                 <td class="text-right" id="porcentajeGruesaCombinado">-</td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td><strong>Cobertura</strong></td>
                                                 <td class="text-right" id="hasCoberturaCombinado">-</td>
                                                 <td class="text-right" id="dolareCoberturaCombinado">-</td>
@@ -93,7 +93,7 @@
                                                 <td class="text-right" id="hasEstivalesDiferencia">-</td>
                                                 <td class="text-right" id="dolareEstivalesDiferencia">-</td>
                                                 <td class="text-right" id="porcentajeEstivalesCombinado">-</td>
-                                            </tr>
+                                            </tr> -->
                                         </tbody>
                                         
                                     </table>

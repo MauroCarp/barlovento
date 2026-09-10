@@ -291,7 +291,8 @@ const cargarInfoPlanificacion = (campania,carga)=>{
             plugins:{
               labels:{                  
                   render:function(reg){
-                      return reg.value.toLocaleString('de-DE')
+                    console.log(reg.value)
+                      return (reg.value != undefined) ? reg.value.toLocaleString('de-DE') : ''
                   },
               }
             },
