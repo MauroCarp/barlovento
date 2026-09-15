@@ -33,6 +33,7 @@
             <select class="form-control" id="selectEtapa" name="etapaEjecucion">
               <option value="fina">Al 31 de Diciembre</option>
               <option value="gruesa">Al 31 de Mayo</option>
+              <option value="tardio">Maíz Tardío</option>
             </select>
 
           </div>

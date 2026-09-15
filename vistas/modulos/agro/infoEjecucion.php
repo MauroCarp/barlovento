@@ -71,6 +71,22 @@
                                 </div>
         
                             </div>
+
+                            <div class="col-sm-4 border-right info-tardio hide">
+        
+                                <div class="description-block">
+
+                                    <span class="description-text">MAÍZ TARDÍO</span>
+
+                                    <h4 class="description-text">
+                                        <span id="hasTardioEjecucion<?php echo $campoId;?>"></span> Has. <br>
+                                        <span id="totalCostoTardioEjecucion<?php echo $campoId;?>"></span> U$D <br>
+                                        <span id="costoTardioEjecucionHas<?php echo $campoId;?>"></span> U$D/Has <br>
+                                    </h4>
+
+                                </div>
+        
+                            </div>
         
                         </div>
         

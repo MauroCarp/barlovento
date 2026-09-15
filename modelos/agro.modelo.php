@@ -472,8 +472,10 @@ class ModeloAgro{
 				}else if($valor2 == 'fina'){
 				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2 AND (el.cultivo = 'trigo' OR el.cultivo = 'vicia+triticale' OR el.cultivo = 'vicia-triticale' OR el.cultivo = 'triticale-vicia' OR el.cultivo = 'Vicia-Triticale')");
 				$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
+			}else if($valor2 == 'tardio'){
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND (el.cultivo = 'maiz2' OR el.cultivo = 'maiz2da')");
 			}else{
-				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2");
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla e INNER JOIN ejecucionLabores el ON e.id = el.idEjecucion WHERE e.$item = :$item AND el.$item2 = :$item2 AND el.cultivo != 'maiz2' AND el.cultivo != 'maiz2da'");
 				$stmt -> bindParam(":".$item2, $valor2, PDO::PARAM_STR);
 			}
 			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
@@ -515,12 +517,19 @@ class ModeloAgro{
 	static public function mdlValidarLotes($tabla,$campania,$lote,$campo,$etapa){
 
 		$conexion = Conexion::conectar();
-		$stmt = $conexion->prepare("UPDATE $tabla SET cargado = 1 WHERE campania = :campania AND REPLACE(TRIM(lote), ' ', '') = :lote AND campo = :campo AND etapa = :etapa");
 
-		$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
-		$stmt -> bindParam(":lote", $lote, PDO::PARAM_STR);
-		$stmt -> bindParam(":campo", $campo, PDO::PARAM_STR);
-		$stmt -> bindParam(":etapa", $etapa, PDO::PARAM_STR);
+		if($etapa == 'tardio'){
+			$stmt = $conexion->prepare("UPDATE $tabla SET cargado = 1 WHERE campania = :campania AND REPLACE(TRIM(lote), ' ', '') = :lote AND campo = :campo AND (cultivo = 'maiz2' OR cultivo = 'maiz2da')");
+			$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
+			$stmt -> bindParam(":lote", $lote, PDO::PARAM_STR);
+			$stmt -> bindParam(":campo", $campo, PDO::PARAM_STR);
+		} else {
+			$stmt = $conexion->prepare("UPDATE $tabla SET cargado = 1 WHERE campania = :campania AND REPLACE(TRIM(lote), ' ', '') = :lote AND campo = :campo AND etapa = :etapa");
+			$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
+			$stmt -> bindParam(":lote", $lote, PDO::PARAM_STR);
+			$stmt -> bindParam(":campo", $campo, PDO::PARAM_STR);
+			$stmt -> bindParam(":etapa", $etapa, PDO::PARAM_STR);
+		}
 
 		if($stmt->execute()){ 
 			

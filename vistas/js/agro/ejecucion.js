@@ -60,16 +60,51 @@ const nombreCultivos = {
   'carinata': 'Carinata',
 }
 
+const esMaizTardio = (cultivo) => {
+  let c = (cultivo || '').toLowerCase().trim()
+  return c === 'maiz2' || c === 'maiz2da'
+}
+
+const htmlInputLote = (lote) => {
+  let loteId = lote['lote'].split(' ').join('')
+  return `<div class="form-group">
+            <label for="${loteId}">${lote['lote']} - ${capitalizarPrimeraLetra(lote['cultivo'])}</label>
+            <div class="input-group">
+              <div class="custom-file"><input type="file" class="custom-file-input" name="${loteId}_${lote['cultivo']}">
+                <input type="hidden" name="${loteId}_${lote['cultivo']}campo" value="${lote['campo']}"/>
+              </div>
+            </div>
+          </div>`
+}
+
+const setText = (id, value) => {
+  const el = document.getElementById(id)
+  if (el) el.innerText = value
+}
+
+const mostrarGruposCargaEtapa = (etapa) => {
+  $('#inputPichiGruesa, #inputBetyGruesa, #inputAntonyGruesa').hide(250)
+  $('#inputPichiFina, #inputBetyFina, #inputAntonyFina').hide(250)
+  $('#inputPichiTardio, #inputBetyTardio, #inputAntonyTardio').hide(250)
+
+  if (etapa == 'gruesa') {
+    $('#inputPichiGruesa, #inputBetyGruesa, #inputAntonyGruesa').show(250)
+  } else if (etapa == 'tardio') {
+    $('#inputPichiTardio, #inputBetyTardio, #inputAntonyTardio').show(250)
+  } else {
+    $('#inputPichiFina, #inputBetyFina, #inputAntonyFina').show(250)
+  }
+}
+
 const generarInputFile = (lotes) => {
 
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
   
-  let pichiGruesa = []
-  let pichiFina = []
-  let betyGruesa = []
-  let betyFina = []
-  let antonyGruesa = []
-  let antonyFina = []
+  let grupos = {
+    pichi: { gruesa: [], fina: [], tardio: [] },
+    bety: { gruesa: [], fina: [], tardio: [] },
+    antony: { gruesa: [], fina: [], tardio: [] }
+  }
 
   $('#formEjecucion').append($(`
                               <div class="box box-success">
@@ -115,221 +150,35 @@ const generarInputFile = (lotes) => {
   `))
   for (const key in lotes) {
 
-    if(lotes[key]['campo'] == 'pichi'){
+    let campo = lotes[key]['campo']
+    if (!grupos[campo]) continue
 
-      if(lotes[key]['etapa'] == 'gruesa'){
-
-        pichiGruesa.push(`<div class="form-group">
-
-            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
-
-            <div class="input-group">
-
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
-
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
-
-              </div>
-              
-            </div>
-
-          </div>`)
-
-      }
-
-      if(lotes[key]['etapa'] == 'fina'){
-
-        pichiFina.push(`<div class="form-group">
-
-            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
-
-            <div class="input-group">
-
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
-
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${lotes[key]['campo']}"/>
-
-              </div>
-              
-            </div>
-
-          </div>`)
-
-      }
-
-    }
-   
-    if(lotes[key]['campo'] == 'bety'){
-
-
-      if(lotes[key]['etapa'] == 'gruesa'){
-        
-        let campo = lotes[key]['campo']
-
-        betyGruesa.push(`<div class="form-group">
-
-            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
-
-            <div class="input-group">
-
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
-
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
-
-              </div>
-              
-            </div>
-
-          </div>`)
-
-      }
-
-      if(lotes[key]['etapa'] == 'fina'){
-
-        let campo = lotes[key]['campo']
-
-        betyFina.push(`<div class="form-group">
-
-            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
-
-            <div class="input-group">
-
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
-
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
-
-              </div>
-              
-            </div>
-
-          </div>`)
-
-      }
-
-    }
-
-    if(lotes[key]['campo'] == 'antony'){
-
-      if(lotes[key]['etapa'] == 'gruesa'){
-        
-        let campo = lotes[key]['campo']
-
-        antonyGruesa.push(`<div class="form-group">
-
-            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
-
-            <div class="input-group">
-
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
-
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
-
-              </div>
-              
-            </div>
-
-          </div>`)
-
-      }
-
-      if(lotes[key]['etapa'] == 'fina'){
-
-        let campo = lotes[key]['campo']
-
-        antonyFina.push(`<div class="form-group">
-
-            <label for="${lotes[key]['lote'].split(' ').join('')}">${lotes[key]['lote']} - ${capitalizarPrimeraLetra(lotes[key]['cultivo'])}</label>
-
-            <div class="input-group">
-
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}">
-
-                <input type="hidden" name="${lotes[key]['lote'].split(' ').join('')}_${lotes[key]['cultivo']}campo" value="${campo}"/>
-
-              </div>
-              
-            </div>
-
-          </div>`)
-
-      }
-
+    if (esMaizTardio(lotes[key]['cultivo'])) {
+      grupos[campo].tardio.push(htmlInputLote(lotes[key]))
+    } else if (lotes[key]['etapa'] == 'gruesa') {
+      grupos[campo].gruesa.push(htmlInputLote(lotes[key]))
+    } else if (lotes[key]['etapa'] == 'fina') {
+      grupos[campo].fina.push(htmlInputLote(lotes[key]))
     }
 
   }
 
-  if(pichiGruesa != undefined){
-    
-    $('#inputPichi').append($('<div id="inputPichiGruesa" style="display:none"></div>'))
-    $('#inputPichiGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $('#inputPichiGruesa').append($(`${pichiGruesa.join('')}`))
+  const titulos = { gruesa: 'Gruesa', fina: 'Fina', tardio: 'Maíz Tardío' }
+  const displayInicial = { gruesa: 'none', fina: '', tardio: 'none' }
 
-  }
-
-  if(pichiFina != undefined){
-
-    $('#inputPichi').append($('<div id="inputPichiFina"></div>'))
-    $('#inputPichiFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $('#inputPichiFina').append($(`${pichiFina.join('')}`))
-
-  }
-
-  if(betyGruesa != undefined){
-
-    $('#inputBety').append($('<div id="inputBetyGruesa" style="display:none"></div>'))
-    $('#inputBetyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $('#inputBetyGruesa').append($(`${betyGruesa.join('')}`))
-
-  }
-
-  if(betyFina != undefined){
-
-    $('#inputBety').append($('<div id="inputBetyFina"></div>'))
-    $('#inputBetyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $('#inputBetyFina').append($(`${betyFina.join('')}`))
-
-  }
-
-  if(antonyGruesa != undefined){
-
-    $('#inputAntony').append($('<div id="inputAntonyGruesa"></div>'))
-    $('#inputAntonyGruesa').append($('<div class="bg-info" style="font-size:1.5em"><b>Gruesa</b></div>'))  
-    $('#inputAntonyGruesa').append($(`${antonyGruesa.join('')}`))
-
-  }
-
-  if(antonyFina != undefined){
-    
-    $('#inputAntony').append($('<div id="inputAntonyFina" style="display:none"></div>'))
-    $('#inputAntonyFina').append($('<div class="bg-info" style="font-size:1.5em"><b>Fina</b></div>'))  
-    $('#inputAntonyFina').append($(`${antonyFina.join('')}`))
-
-  }
+  ;['pichi','bety','antony'].forEach(campo => {
+    ;['gruesa','fina','tardio'].forEach(tipo => {
+      let id = `input${capitalizarPrimeraLetra(campo)}${capitalizarPrimeraLetra(tipo)}`
+      $(`#input${capitalizarPrimeraLetra(campo)}`).append($(`<div id="${id}" style="display:${displayInicial[tipo]}"></div>`))
+      $(`#${id}`).append($(`<div class="bg-info" style="font-size:1.5em"><b>${titulos[tipo]}</b></div>`))
+      $(`#${id}`).append($(`${grupos[campo][tipo].join('')}`))
+    })
+  })
 
 }
 
-
 $('#selectEtapa').on('change',function(){
-  
-  let value = $(this).val()
-
-  if(value == 'gruesa'){
-    $('#inputPichiGruesa').show(250)
-    $('#inputBetyGruesa').show(250)
-    $('#inputAntonyGruesa').show(250)
-    $('#inputPichiFina').hide(250)
-    $('#inputAntonyFina').hide(250)
-    $('#inputBetyFina').hide(250)
-  } else {
-    $('#inputPichiGruesa').hide(250)
-    $('#inputBetyGruesa').hide(250)
-    $('#inputAntonyGruesa').hide(250)
-    $('#inputPichiFina').show(250)
-    $('#inputBetyFina').show(250)
-    $('#inputAntonyFina').show(250)
-
-  }
-
+  mostrarGruposCargaEtapa($(this).val())
 })
 
 
@@ -415,58 +264,39 @@ const cargarInfoEjecucion = (campania)=>{
     $('#costoTotalEjecutado').text(Number(respuesta['totales'][0]['totalCosto']).toLocaleString('de-DE'))
 
     if(respuesta['data'].length == 0){
-          
-    document.getElementById(`totalHasEjecutadas`).innerText = 0
-    document.getElementById(`totalInversionEjecutada`).innerText = 0
-    
-      document.getElementById(`hasInvEjecucionBety`).innerText = '-'
-      document.getElementById(`hasInvEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`hasInvEjecucionAntony`)) document.getElementById(`hasInvEjecucionAntony`).innerText = '-'
-      
-      document.getElementById(`hasCobEjecucionBety`).innerText = '-'
-      document.getElementById(`hasCobEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`hasCobEjecucionAntony`)) document.getElementById(`hasCobEjecucionAntony`).innerText = '-'
-      
-      document.getElementById(`hasEstEjecucionBety`).innerText = '-'
-      document.getElementById(`hasEstEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`hasEstEjecucionAntony`)) document.getElementById(`hasEstEjecucionAntony`).innerText = '-'
-  
-      // document.getElementById(`hasTrigoEjecucionBety`).innerText = '-'
-      // document.getElementById(`hasTrigoEjecucionPichi`).innerText = '-'
-  
-      document.getElementById(`hasCoberturaEjecucionBety`).innerText = '-'
-      document.getElementById(`hasCoberturaEjecucionPichi`).innerText = '-'
-      
-      // document.getElementById(`hasCarinataEjecucionBety`).innerText = '-'
-      // document.getElementById(`hasCarinataEjecucionPichi`).innerText = '-'
-  
-      // document.getElementById(`hasRestoEjecucionBety`).innerText = '-'
-      // document.getElementById(`hasRestoEjecucionPichi`).innerText = '-'
 
-      // document.getElementById(`totalCostoTrigoEjecucionBety`).innerText = '-'
-      // document.getElementById(`totalCostoTrigoEjecucionPichi`).innerText = '-'
-
-      document.getElementById(`totalCostoCoberturaEjecucionBety`).innerText = '-'
-      document.getElementById(`totalCostoCoberturaEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`totalCostoCoberturaEjecucionAntony`)) document.getElementById(`totalCostoCoberturaEjecucionAntony`).innerText = '-'
-      
-      // document.getElementById(`totalCostoCarinataEjecucionBety`).innerText = '-'
-      // document.getElementById(`totalCostoCarinataEjecucionPichi`).innerText = '-'
-
-      // document.getElementById(`totalCostoRestoEjecucionBety`).innerText = '-'
-      // document.getElementById(`totalCostoRestoEjecucionPichi`).innerText = '-'
-      
-      document.getElementById(`totalHasEjecucionBety`).innerText = '-'
-      document.getElementById(`totalHasEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`totalHasEjecucionAntony`)) document.getElementById(`totalHasEjecucionAntony`).innerText = '-'
-
-      document.getElementById(`totalInversionEjecucionBety`).innerText = '-'
-      document.getElementById(`totalInversionEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`totalInversionEjecucionAntony`)) document.getElementById(`totalInversionEjecucionAntony`).innerText = '-'
-
-      document.getElementById(`ratioEjecucionBety`).innerText = '-'
-      document.getElementById(`ratioEjecucionPichi`).innerText = '-'
-      if (document.getElementById(`ratioEjecucionAntony`)) document.getElementById(`ratioEjecucionAntony`).innerText = '-'
+      setText('totalHasEjecutadas', 0)
+      setText('totalInversionEjecutada', 0)
+      setText('hasInvEjecucionBety', '-')
+      setText('hasInvEjecucionPichi', '-')
+      setText('hasInvEjecucionAntony', '-')
+      setText('hasCobEjecucionBety', '-')
+      setText('hasCobEjecucionPichi', '-')
+      setText('hasCobEjecucionAntony', '-')
+      setText('hasEstEjecucionBety', '-')
+      setText('hasEstEjecucionPichi', '-')
+      setText('hasEstEjecucionAntony', '-')
+      setText('hasCoberturaEjecucionBety', '-')
+      setText('hasCoberturaEjecucionPichi', '-')
+      setText('hasCoberturaEjecucionAntony', '-')
+      setText('totalCostoCoberturaEjecucionBety', '-')
+      setText('totalCostoCoberturaEjecucionPichi', '-')
+      setText('totalCostoCoberturaEjecucionAntony', '-')
+      setText('totalHasEjecucionBety', '-')
+      setText('totalHasEjecucionPichi', '-')
+      setText('totalHasEjecucionAntony', '-')
+      setText('totalInversionEjecucionBety', '-')
+      setText('totalInversionEjecucionPichi', '-')
+      setText('totalInversionEjecucionAntony', '-')
+      setText('ratioEjecucionBety', '-')
+      setText('ratioEjecucionPichi', '-')
+      setText('ratioEjecucionAntony', '-')
+      setText('hasTardioEjecucionBety', '-')
+      setText('hasTardioEjecucionPichi', '-')
+      setText('hasTardioEjecucionAntony', '-')
+      setText('totalCostoTardioEjecucionBety', '-')
+      setText('totalCostoTardioEjecucionPichi', '-')
+      setText('totalCostoTardioEjecucionAntony', '-')
 
       return
     }
@@ -478,29 +308,37 @@ const cargarInfoEjecucion = (campania)=>{
         'hasFina':0,
         'hasCobertura':0,
         'hasGruesa':0,
+        'hasTardio':0,
         'costoFina':0,
         'costoGruesa':0,
-        'costoCobertura':0
+        'costoCobertura':0,
+        'costoTardio':0
       },
       'pichi':{
         'hasFina':0,
         'hasCobertura':0,
         'hasGruesa':0,
+        'hasTardio':0,
         'costoFina':0,
         'costoGruesa':0,
-        'costoCobertura':0
+        'costoCobertura':0,
+        'costoTardio':0
       },
       'antony':{
         'hasFina':0,
         'hasCobertura':0,
         'hasGruesa':0,
+        'hasTardio':0,
         'costoFina':0,
         'costoGruesa':0,
-        'costoCobertura':0
+        'costoCobertura':0,
+        'costoTardio':0
       }
     }
    
     respuesta['data'].forEach(lote => {
+
+      if(!data[lote['campo']] || !info[lote['campo']]) return;
 
       if(data[lote['campo']][lote['lote']] == undefined){
 
@@ -525,8 +363,15 @@ const cargarInfoEjecucion = (campania)=>{
         data[lote['campo']][lote['lote']].has = lote['has']
 
         data[lote['campo']][lote['lote']].idEjecucion = lote['idEjecucion']
+
+        data[lote['campo']][lote['lote']].etapa = lote['etapa']
         
-        if(lote.etapa == 'gruesa'){
+        if(esMaizTardio(lote.cultivo) || lote.etapa == 'tardio'){
+
+          info[lote['campo']]['hasTardio'] += Number(lote.has)
+          info[lote['campo']]['costoTardio'] += (Number(lote['costoLabor']) + Number(lote['costoInsumo']))
+
+        } else if(lote.etapa == 'gruesa'){
 
           info[lote['campo']]['hasGruesa'] += Number(lote.has)
           info[lote['campo']]['costoGruesa'] += (Number(lote['costoLabor']) + Number(lote['costoInsumo']))
@@ -559,7 +404,11 @@ const cargarInfoEjecucion = (campania)=>{
 
         data[lote['campo']][lote['lote']].costoCosecha += (lote['labor'] == 'Cosecha') ? Number(lote['costoLabor']) : 0
 
-        if(lote.etapa == 'gruesa'){
+        if(esMaizTardio(lote.cultivo) || lote.etapa == 'tardio'){
+
+          info[lote['campo']]['costoTardio'] += (Number(lote['costoLabor']) + Number(lote['costoInsumo']))
+
+        } else if(lote.etapa == 'gruesa'){
 
           info[lote['campo']]['costoGruesa'] += (Number(lote['costoLabor']) + Number(lote['costoInsumo']))
 
@@ -665,7 +514,7 @@ const cargarInfoEjecucion = (campania)=>{
               <button class="btn btn-danger btn-xs btn-eliminar-ejecucion-lote"
                 data-lote="${key}"
                 data-campo="${campo}"
-                data-etapa="${etapa}"
+                data-etapa="${data[campo][key].etapa || etapa}"
                 data-idejecucion="${data[campo][key].idEjecucion}">
                 <i class="fa fa-trash"></i>
               </button>
@@ -679,90 +528,85 @@ const cargarInfoEjecucion = (campania)=>{
 
     // HAS INFO
     //varia segun etapa
-    let totalHasEjecutadas = (etapa == 'fina') ? Number(info.bety.hasFina) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura) + Number(info.antony.hasFina) + Number(info.antony.hasCobertura) : Number(info.bety.hasGruesa) + Number(info.pichi.hasGruesa) + Number(info.antony.hasGruesa)
-    
-    document.getElementById(`totalHasEjecutadas`).innerText = totalHasEjecutadas
-    
-    let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa) + Number(info.antony.costoCobertura)
-
-    document.getElementById(`totalInversionEjecutada`).innerText = totalInversion.toLocaleString('de-DE')
-
-    document.getElementById(`hasInvEjecucionBety`).innerText = info.bety.hasFina
-    document.getElementById(`hasInvEjecucionPichi`).innerText = info.pichi.hasFina
-    if (document.getElementById(`hasInvEjecucionAntony`)) document.getElementById(`hasInvEjecucionAntony`).innerText = info.antony.hasFina
-    
-    document.getElementById(`hasCobEjecucionBety`).innerText = info.bety.hasCobertura
-    document.getElementById(`hasCobEjecucionPichi`).innerText = info.pichi.hasCobertura
-    
-    document.getElementById(`hasEstEjecucionBety`).innerText = info.bety.hasGruesa
-    document.getElementById(`hasEstEjecucionPichi`).innerText = info.pichi.hasGruesa
-
-
-    document.getElementById(`totalCostoGruesaEjecucionPichi`).innerText = info.pichi.costoGruesa.toLocaleString('de-DE')
-    document.getElementById(`totalCostoGruesaEjecucionBety`).innerText = info.bety.costoGruesa.toLocaleString('de-DE')
-    if (document.getElementById(`totalCostoGruesaEjecucionAntony`)) {
-      document.getElementById(`totalCostoGruesaEjecucionAntony`).innerText = info.antony.costoGruesa.toLocaleString('de-DE')
-      document.getElementById(`costoGruesaEjecucionHasAntony`).innerText = (Number(info.antony.hasGruesa) > 0) ? (Number(info.antony.costoGruesa) / Number(info.antony.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
+    let totalHasEjecutadas
+    if (etapa == 'fina') {
+      totalHasEjecutadas = Number(info.bety.hasFina) + Number(info.bety.hasCobertura) + Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura) + Number(info.antony.hasFina) + Number(info.antony.hasCobertura)
+    } else if (etapa == 'tardio') {
+      totalHasEjecutadas = Number(info.bety.hasTardio) + Number(info.pichi.hasTardio) + Number(info.antony.hasTardio)
+    } else {
+      totalHasEjecutadas = Number(info.bety.hasGruesa) + Number(info.pichi.hasGruesa) + Number(info.antony.hasGruesa)
     }
     
-    document.getElementById(`costoGruesaEjecucionHasPichi`).innerText = (Number(info.pichi.hasGruesa) > 0) ? (Number(info.pichi.costoGruesa) / Number(info.pichi.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
-    document.getElementById(`costoGruesaEjecucionHasBety`).innerText = (Number(info.bety.hasGruesa) > 0) ? (Number(info.bety.costoGruesa) / Number(info.bety.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
-
-    document.getElementById(`totalCostoCoberturaEjecucionPichi`).innerText = info.pichi.costoCobertura.toLocaleString('de-DE')
-    document.getElementById(`totalCostoCoberturaEjecucionBety`).innerText = info.bety.costoCobertura.toLocaleString('de-DE')
-    if (document.getElementById(`totalCostoCoberturaEjecucionAntony`)) {
-      document.getElementById(`totalCostoCoberturaEjecucionAntony`).innerText = info.antony.costoCobertura.toLocaleString('de-DE')
-      document.getElementById(`costoCoberturaEjecucionHasAntony`).innerText = (Number(info.antony.hasCobertura) > 0) ? (Number(info.antony.costoCobertura) / Number(info.antony.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
-    }
+    setText('totalHasEjecutadas', totalHasEjecutadas)
     
-    document.getElementById(`costoCoberturaEjecucionHasPichi`).innerText = (Number(info.pichi.hasCobertura) > 0) ? (Number(info.pichi.costoCobertura) / Number(info.pichi.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
-    document.getElementById(`costoCoberturaEjecucionHasBety`).innerText = (Number(info.bety.hasCobertura) > 0) ? (Number(info.bety.costoCobertura) / Number(info.bety.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
+    let totalInversion = Number(info.bety.costoFina) + Number(info.bety.costoGruesa) + Number(info.bety.costoCobertura) + Number(info.bety.costoTardio) + Number(info.pichi.costoFina) + Number(info.pichi.costoGruesa) + Number(info.pichi.costoCobertura) + Number(info.pichi.costoTardio) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa) + Number(info.antony.costoCobertura) + Number(info.antony.costoTardio)
 
-    document.getElementById(`totalCostoFinaEjecucionPichi`).innerText = info.pichi.costoFina.toLocaleString('de-DE')
-    document.getElementById(`totalCostoFinaEjecucionBety`).innerText = info.bety.costoFina.toLocaleString('de-DE')
-    if (document.getElementById(`totalCostoFinaEjecucionAntony`)) {
-      document.getElementById(`totalCostoFinaEjecucionAntony`).innerText = info.antony.costoFina.toLocaleString('de-DE')
-      document.getElementById(`costoFinaEjecucionHasAntony`).innerText = (Number(info.antony.hasFina) > 0) ? (Number(info.antony.costoFina) / Number(info.antony.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
-    }
+    setText('totalInversionEjecutada', totalInversion.toLocaleString('de-DE'))
 
-    document.getElementById(`costoFinaEjecucionHasPichi`).innerText = (Number(info.pichi.hasFina) > 0) ? (Number(info.pichi.costoFina) / Number(info.pichi.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
-    document.getElementById(`costoFinaEjecucionHasBety`).innerText = (Number(info.bety.hasFina) > 0) ? (Number(info.bety.costoFina) / Number(info.bety.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0
+    setText('hasInvEjecucionBety', info.bety.hasFina)
+    setText('hasInvEjecucionPichi', info.pichi.hasFina)
+    setText('hasInvEjecucionAntony', info.antony.hasFina)
+    setText('hasCobEjecucionBety', info.bety.hasCobertura)
+    setText('hasCobEjecucionPichi', info.pichi.hasCobertura)
+    setText('hasEstEjecucionBety', info.bety.hasGruesa)
+    setText('hasEstEjecucionPichi', info.pichi.hasGruesa)
 
+    setText('totalCostoGruesaEjecucionPichi', info.pichi.costoGruesa.toLocaleString('de-DE'))
+    setText('totalCostoGruesaEjecucionBety', info.bety.costoGruesa.toLocaleString('de-DE'))
+    setText('totalCostoGruesaEjecucionAntony', info.antony.costoGruesa.toLocaleString('de-DE'))
+    setText('costoGruesaEjecucionHasAntony', (Number(info.antony.hasGruesa) > 0) ? (Number(info.antony.costoGruesa) / Number(info.antony.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+    setText('costoGruesaEjecucionHasPichi', (Number(info.pichi.hasGruesa) > 0) ? (Number(info.pichi.costoGruesa) / Number(info.pichi.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+    setText('costoGruesaEjecucionHasBety', (Number(info.bety.hasGruesa) > 0) ? (Number(info.bety.costoGruesa) / Number(info.bety.hasGruesa)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
 
-    
+    setText('totalCostoCoberturaEjecucionPichi', info.pichi.costoCobertura.toLocaleString('de-DE'))
+    setText('totalCostoCoberturaEjecucionBety', info.bety.costoCobertura.toLocaleString('de-DE'))
+    setText('totalCostoCoberturaEjecucionAntony', info.antony.costoCobertura.toLocaleString('de-DE'))
+    setText('costoCoberturaEjecucionHasAntony', (Number(info.antony.hasCobertura) > 0) ? (Number(info.antony.costoCobertura) / Number(info.antony.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+    setText('costoCoberturaEjecucionHasPichi', (Number(info.pichi.hasCobertura) > 0) ? (Number(info.pichi.costoCobertura) / Number(info.pichi.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+    setText('costoCoberturaEjecucionHasBety', (Number(info.bety.hasCobertura) > 0) ? (Number(info.bety.costoCobertura) / Number(info.bety.hasCobertura)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+
+    setText('totalCostoFinaEjecucionPichi', info.pichi.costoFina.toLocaleString('de-DE'))
+    setText('totalCostoFinaEjecucionBety', info.bety.costoFina.toLocaleString('de-DE'))
+    setText('totalCostoFinaEjecucionAntony', info.antony.costoFina.toLocaleString('de-DE'))
+    setText('costoFinaEjecucionHasAntony', (Number(info.antony.hasFina) > 0) ? (Number(info.antony.costoFina) / Number(info.antony.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+    setText('costoFinaEjecucionHasPichi', (Number(info.pichi.hasFina) > 0) ? (Number(info.pichi.costoFina) / Number(info.pichi.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+    setText('costoFinaEjecucionHasBety', (Number(info.bety.hasFina) > 0) ? (Number(info.bety.costoFina) / Number(info.bety.hasFina)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0)
+
     // CAJAS HAS
+    setText('hasCoberturaEjecucionBety', info.bety.hasCobertura)
+    setText('hasCoberturaEjecucionPichi', info.pichi.hasCobertura)
+    setText('hasCoberturaEjecucionAntony', info.antony.hasCobertura)
+    setText('hasFinaEjecucionBety', info.bety.hasFina)
+    setText('hasFinaEjecucionPichi', info.pichi.hasFina)
+    setText('hasFinaEjecucionAntony', info.antony.hasFina)
+    setText('hasGruesaEjecucionBety', info.bety.hasGruesa)
+    setText('hasGruesaEjecucionPichi', info.pichi.hasGruesa)
+    setText('hasGruesaEjecucionAntony', info.antony.hasGruesa)
 
-    document.getElementById(`hasCoberturaEjecucionBety`).innerText = info.bety.hasCobertura
-    document.getElementById(`hasCoberturaEjecucionPichi`).innerText = info.pichi.hasCobertura
-    if (document.getElementById(`hasCoberturaEjecucionAntony`)) document.getElementById(`hasCoberturaEjecucionAntony`).innerText = info.antony.hasCobertura
-
-    document.getElementById(`hasFinaEjecucionBety`).innerText = info.bety.hasFina
-    document.getElementById(`hasFinaEjecucionPichi`).innerText = info.pichi.hasFina
-    if (document.getElementById(`hasFinaEjecucionAntony`)) document.getElementById(`hasFinaEjecucionAntony`).innerText = info.antony.hasFina
-
-    document.getElementById(`hasGruesaEjecucionBety`).innerText = info.bety.hasGruesa
-    document.getElementById(`hasGruesaEjecucionPichi`).innerText = info.pichi.hasGruesa
-    if (document.getElementById(`hasGruesaEjecucionAntony`)) document.getElementById(`hasGruesaEjecucionAntony`).innerText = info.antony.hasGruesa
-
-
+    ;['Bety','Pichi','Antony'].forEach(campoId => {
+      let campo = campoId.toLowerCase()
+      setText(`hasTardioEjecucion${campoId}`, info[campo].hasTardio)
+      setText(`totalCostoTardioEjecucion${campoId}`, info[campo].costoTardio.toLocaleString('de-DE'))
+      setText(`costoTardioEjecucionHas${campoId}`, (Number(info[campo].hasTardio) > 0)
+        ? (Number(info[campo].costoTardio) / Number(info[campo].hasTardio)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : 0)
+    })
 
     // TOTALES
-
-    document.getElementById(`totalHasEjecucionBety`).innerText = (Number(info.bety.hasFina) + Number(info.bety.hasCobertura) + Number(info.bety.hasGruesa))
-    document.getElementById(`totalHasEjecucionPichi`).innerText = (Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura) + Number(info.pichi.hasGruesa))
-    if (document.getElementById(`totalHasEjecucionAntony`)) document.getElementById(`totalHasEjecucionAntony`).innerText = (Number(info.antony.hasFina) + Number(info.antony.hasCobertura) + Number(info.antony.hasGruesa))
-    
-    document.getElementById(`totalInversionEjecucionBety`).innerText = (info.bety.costoCobertura + info.bety.costoFina + info.bety.costoGruesa).toLocaleString('de-DE') 
-    document.getElementById(`totalInversionEjecucionPichi`).innerText = (info.pichi.costoCobertura + info.pichi.costoFina + info.pichi.costoGruesa).toLocaleString('de-DE') 
-    if (document.getElementById(`totalInversionEjecucionAntony`)) document.getElementById(`totalInversionEjecucionAntony`).innerText = (Number(info.antony.costoCobertura) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa)).toLocaleString('de-DE')
+    setText('totalHasEjecucionBety', (Number(info.bety.hasFina) + Number(info.bety.hasCobertura) + Number(info.bety.hasGruesa) + Number(info.bety.hasTardio)))
+    setText('totalHasEjecucionPichi', (Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura) + Number(info.pichi.hasGruesa) + Number(info.pichi.hasTardio)))
+    setText('totalHasEjecucionAntony', (Number(info.antony.hasFina) + Number(info.antony.hasCobertura) + Number(info.antony.hasGruesa) + Number(info.antony.hasTardio)))
+    setText('totalInversionEjecucionBety', (info.bety.costoCobertura + info.bety.costoFina + info.bety.costoGruesa + info.bety.costoTardio).toLocaleString('de-DE'))
+    setText('totalInversionEjecucionPichi', (info.pichi.costoCobertura + info.pichi.costoFina + info.pichi.costoGruesa + info.pichi.costoTardio).toLocaleString('de-DE'))
+    setText('totalInversionEjecucionAntony', (Number(info.antony.costoCobertura) + Number(info.antony.costoFina) + Number(info.antony.costoGruesa) + Number(info.antony.costoTardio)).toLocaleString('de-DE'))
 
     let ratioBety = (info.bety.hasGruesa > 0) ? ((Number(info.bety.hasFina) + Number(info.bety.hasCobertura)) / Number(info.bety.hasGruesa)).toFixed(2) : ''
-    let ratioPichi = (info.pichi.hasGruesa > 0) ? ((Number(info.bety.hasFina) + Number(info.bety.hasCobertura)) / Number(info.bety.hasGruesa)).toFixed(2) : ''
+    let ratioPichi = (info.pichi.hasGruesa > 0) ? ((Number(info.pichi.hasFina) + Number(info.pichi.hasCobertura)) / Number(info.pichi.hasGruesa)).toFixed(2) : ''
     let ratioAntony = (Number(info.antony.hasGruesa) > 0) ? ((Number(info.antony.hasFina) + Number(info.antony.hasCobertura)) / Number(info.antony.hasGruesa)).toFixed(2) : ''
 
-    document.getElementById(`ratioEjecucionBety`).innerText = ratioBety
-    document.getElementById(`ratioEjecucionPichi`).innerText = ratioPichi
-    if (document.getElementById(`ratioEjecucionAntony`)) document.getElementById(`ratioEjecucionAntony`).innerText = ratioAntony
+    setText('ratioEjecucionBety', ratioBety)
+    setText('ratioEjecucionPichi', ratioPichi)
+    setText('ratioEjecucionAntony', ratioAntony)
     
  
     // LOTES ACTIVIDAD
@@ -788,12 +632,20 @@ $('#etapaEjecucion').on('change',()=>{
       $('.info-gruesa').show(250)
       $('.info-fina').hide(250)
       $('.info-cobertura').hide(250)
+      $('.info-tardio').hide(250)
+    } else if(etapa == 'tardio') {
+      $('.info-tardio').removeClass('hide')
+      $('.info-gruesa').hide(250)
+      $('.info-fina').hide(250)
+      $('.info-cobertura').hide(250)
+      $('.info-tardio').show(250)
     } else {
 
       $('.info-fina').removeClass('hide')
       $('.info-cobertura').removeClass('hide')
 
       $('.info-gruesa').hide(250)
+      $('.info-tardio').hide(250)
       $('.info-fina').show(250)
       $('.info-cobertura').show(250)
     }
@@ -810,18 +662,7 @@ $('#btnCargaLotes').on('click',function(){
 
   $('#selectEtapa').val(etapa)
 
-  if(etapa == 'gruesa'){
-    $('#inputPichiGruesa').show(250)
-    $('#inputBetyGruesa').show(250)
-    $('#inputPichiFina').hide(250)
-    $('#inputBetyFina').hide(250)
-  } else {
-    $('#inputPichiGruesa').hide(250)
-    $('#inputBetyGruesa').hide(250)
-    $('#inputPichiFina').show(250)
-    $('#inputBetyFina').show(250)
-
-  }
+  mostrarGruposCargaEtapa(etapa)
 
 })
 
