@@ -18,6 +18,9 @@
                             <span class="info-gruesa">| Cosecha: <span id="cosechaGruesaProduccion<?php echo $campoId;?>"></span><br>
                             | Rinde: <span id="rindeGruesaProduccion<?php echo $campoId;?>"></span><br>
                             | Flete: <span id="fleteGruesaProduccion<?php echo $campoId;?>"></span><br></span>
+                            <span class="info-tardio hide">| Cosecha: <span id="cosechaTardioProduccion<?php echo $campoId;?>"></span><br>
+                            | Rinde: <span id="rindeTardioProduccion<?php echo $campoId;?>"></span><br>
+                            | Flete: <span id="fleteTardioProduccion<?php echo $campoId;?>"></span><br></span>
                         </h2>
                     
                     </div>
@@ -68,6 +71,22 @@
                                         <span id="cosechaGruesaProduccionDetalle<?php echo $campoId;?>"></span> Has<br>
                                         <span id="rindeGruesaProduccionDetalle<?php echo $campoId;?>"></span> U$S/Has<br>
                                         <span id="fleteGruesaProduccionDetalle<?php echo $campoId;?>"></span> U$S<br>
+                                    </h4>
+
+                                </div>
+        
+                            </div>
+
+                            <div class="col-sm-4 border-right info-tardio hide">
+        
+                                <div class="description-block">
+
+                                    <span class="description-text">MAÍZ TARDÍO</span>
+
+                                    <h4 class="description-text">
+                                        <span id="cosechaTardioProduccionDetalle<?php echo $campoId;?>"></span> Has<br>
+                                        <span id="rindeTardioProduccionDetalle<?php echo $campoId;?>"></span> U$S/Has<br>
+                                        <span id="fleteTardioProduccionDetalle<?php echo $campoId;?>"></span> U$S<br>
                                     </h4>
 
                                 </div>

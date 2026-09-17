@@ -76,7 +76,6 @@
         
                                 <div class="description-block">
 
-                                    <span class="description-text">MAÍZ TARDÍO</span>
 
                                     <h4 class="description-text">
                                         <span id="hasTardioEjecucion<?php echo $campoId;?>"></span> Has. <br>

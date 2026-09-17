@@ -31,9 +31,9 @@
             <input type="hidden" name="campania" id="inputCampaniaEjecucion" value="">
             <input type="hidden" name="idPlanificacion" id="idPlanificacion" value="">
             <select class="form-control" id="selectEtapa" name="etapaEjecucion">
-              <option value="fina">Al 31 de Diciembre</option>
               <option value="gruesa">Al 31 de Mayo</option>
-              <option value="tardio">Maíz Tardío</option>
+              <option value="tardio">Al 31 de Julio</option>
+              <option value="fina">Al 31 de Diciembre</option>
             </select>
 
           </div>

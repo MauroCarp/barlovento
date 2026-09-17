@@ -1,22 +1,25 @@
+function etapaProduccionActual(){
+  return String($('#etapaProduccion').val() || 'gruesa').trim()
+}
+
 $('#produccionTab').on('click', function(){
-  const url = 'ajax/agro.ajax.php'
   const campania = $('#campania').html()
   if(!campania) return
   $('#inputCampaniaProduccion').val(campania)
-  // Ajusta visibilidad según etapa seleccionada (por defecto GRUESA)
-  actualizarVistaEtapaProduccion()
-
-  cargarInfoProduccion(campania)
+  const etapa = etapaProduccionActual()
+  actualizarVistaEtapaProduccion(etapa)
+  cargarInfoProduccion(campania, etapa)
 })
 
-$('#selectEtapaProduccion, #etapaProduccion').on('change', function(){
+$('#etapaProduccion').on('change', function(){
   const campania = $('#campania').html()
-  actualizarVistaEtapaProduccion()
-  cargarInfoProduccion(campania)
+  const etapa = etapaProduccionActual()
+  actualizarVistaEtapaProduccion(etapa)
+  cargarInfoProduccion(campania, etapa)
 })
 
-function cargarInfoProduccion(campania){
-  console.log('cargarInfoProduccion')
+function cargarInfoProduccion(campania, etapa){
+  const etapaRender = etapa || etapaProduccionActual()
   const url = 'ajax/agro.ajax.php'
   $.ajax({
     method:'POST',
@@ -24,15 +27,13 @@ function cargarInfoProduccion(campania){
     data:{accion:'objetoProduccion',campania},
     success:function(resp){
       let respuesta = JSON.parse(resp)
-      console.log(respuesta)
-      renderInfoProduccion(respuesta)
+      renderInfoProduccion(respuesta, etapaRender)
     }
   })
 }
 
-function renderInfoProduccion(resp){
-  console.log(resp)
-  const etapa = $('#etapaProduccion').val() || 'gruesa'
+function renderInfoProduccion(resp, etapa){
+  etapa = String(etapa || etapaProduccionActual()).trim()
 
   const calcularSuggestedMax = (datos,tipo)=>{
     if(!Array.isArray(datos) || datos.length === 0) return 0
@@ -51,15 +52,32 @@ function renderInfoProduccion(resp){
   let rindeAcum = 0
   let rindeCount = 0
   campos.forEach(campo=>{
-    const infoCampo = resp[campo] 
+    const infoCampo = resp[campo]
+    if(!infoCampo) return
 
+    const tardio = infoCampo.tardio || {cosecha: 0, rinde: 0, flete: 0}
     const finaCob = infoCampo.fina.cosecha + infoCampo.cobertura.cosecha
     const fleteFinaCob = infoCampo.fina.flete + infoCampo.cobertura.flete
     const rindeFina = infoCampo.fina.rinde
     const rindeGruesa = infoCampo.gruesa.rinde
-    const cosecha = (etapa==='gruesa') ? infoCampo.gruesa.cosecha : finaCob
-    const flete = (etapa==='gruesa') ? infoCampo.gruesa.flete : fleteFinaCob
-    const rinde = (etapa==='gruesa') ? rindeGruesa : rindeFina // simplificado promedio
+
+    let cosecha, flete, rinde, rowsBase
+    if(etapa === 'tardio'){
+      cosecha = tardio.cosecha
+      flete = tardio.flete
+      rinde = tardio.rinde
+      rowsBase = infoCampo.lotesTardio || []
+    } else if(etapa === 'fina'){
+      cosecha = finaCob
+      flete = fleteFinaCob
+      rinde = rindeFina
+      rowsBase = infoCampo.lotesFina || []
+    } else {
+      cosecha = infoCampo.gruesa.cosecha
+      flete = infoCampo.gruesa.flete
+      rinde = rindeGruesa
+      rowsBase = infoCampo.lotesGruesa || []
+    }
 
     totalCosecha += cosecha
     totalFlete += flete
@@ -81,6 +99,10 @@ function renderInfoProduccion(resp){
     $(`#rindeCoberturaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.rinde).toLocaleString('de-DE'))
     $(`#fleteCoberturaProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.flete).toLocaleString('de-DE'))
 
+    $(`#cosechaTardioProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(tardio.cosecha).toLocaleString('de-DE'))
+    $(`#rindeTardioProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(tardio.rinde).toLocaleString('de-DE'))
+    $(`#fleteTardioProduccion${capitalizarPrimeraLetra(campo)}`).html(Number(tardio.flete).toLocaleString('de-DE'))
+
     // Detalles de cajas
     $(`#cosechaGruesaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.cosecha).toLocaleString('de-DE'))
     $(`#rindeGruesaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.gruesa.rinde).toLocaleString('de-DE'))
@@ -94,10 +116,13 @@ function renderInfoProduccion(resp){
     $(`#rindeCoberturaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.rinde).toLocaleString('de-DE'))
     $(`#fleteCoberturaProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(infoCampo.cobertura.flete).toLocaleString('de-DE'))
 
+    $(`#cosechaTardioProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(tardio.cosecha).toLocaleString('de-DE'))
+    $(`#rindeTardioProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(tardio.rinde).toLocaleString('de-DE'))
+    $(`#fleteTardioProduccionDetalle${capitalizarPrimeraLetra(campo)}`).html(Number(tardio.flete).toLocaleString('de-DE'))
+
     // Tablas
     const tbody = $(`#tablaProduccion${capitalizarPrimeraLetra(campo)} tbody`)
     tbody.html('')
-    const rowsBase = (etapa==='gruesa') ? infoCampo.lotesGruesa : infoCampo.lotesFina
     // Normalizar filas: asegurar propiedades costo, kg, kgtotal siempre presentes
     const rows = rowsBase.map(r => Object.assign({ costo: 0, kg: 0, kgtotal: 0 }, r))
     rows.forEach(item=>{
@@ -193,29 +218,23 @@ function renderInfoProduccion(resp){
 
 }
 
-function actualizarVistaEtapaProduccion(){
-  const etapa = $('#etapaProduccion').val() || 'gruesa'
-  if(etapa === 'gruesa'){
-    $('.info-gruesa').show(250)
-    $('.info-fina').hide(250)
-    $('.info-cobertura').hide(250)
+function actualizarVistaEtapaProduccion(etapa){
+  etapa = String(etapa || etapaProduccionActual()).trim()
+  const $tab = $('#tab_3')
+  $tab.find('.info-gruesa, .info-fina, .info-cobertura, .info-tardio').addClass('hide')
+  if(etapa === 'tardio'){
+    $tab.find('.info-tardio').removeClass('hide')
+  } else if(etapa === 'fina'){
+    $tab.find('.info-fina, .info-cobertura').removeClass('hide')
   } else {
-    $('.info-fina').removeClass('hide')
-    $('.info-cobertura').removeClass('hide')
-    $('.info-gruesa').hide(250)
-    $('.info-fina').show(250)
-    $('.info-cobertura').show(250)
+    $tab.find('.info-gruesa').removeClass('hide')
   }
-  // Modal inputs (si está abierto): alterna grupos de archivos por etapa
-  const etapaModal = $('#selectEtapaProduccion').val() || etapa
-  if(etapaModal === 'gruesa'){
-    $("div[id$='Gruesa']").show(250)
-    $("div[id$='Fina']").hide(250)
-  } else {
-    $("div[id$='Gruesa']").hide(250)
-    $("div[id$='Fina']").show(250)
-  }
+  $('#selectEtapaProduccionCarga').val(etapa)
 }
+
+$('#btnCargaLotesProduccion').on('click', function(){
+  $('#selectEtapaProduccionCarga').val($('#etapaProduccion').val())
+})
 
 // Event listener para botones de eliminar producción
 $(document).on('click', '.btnEliminarProduccion', function(){
@@ -276,7 +295,7 @@ function eliminarRegistroProduccion(id, lote, cultivo, campo){
               })
               
               // Recargar la información de producción
-              cargarInfoProduccion(campania)
+              cargarInfoProduccion(campania, etapaProduccionActual())
               
             } else {
               swal({
@@ -296,7 +315,7 @@ function eliminarRegistroProduccion(id, lote, cultivo, campo){
               })
               
               // Recargar la información de producción
-              cargarInfoProduccion(campania)
+              cargarInfoProduccion(campania, etapaProduccionActual())
             } else {
               swal({
                 title: 'Error',

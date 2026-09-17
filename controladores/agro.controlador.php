@@ -91,6 +91,22 @@ function tipoCultivo($cultivo){
 
 }
 
+function normalizarCultivoAgro($cultivo) {
+    $c = limpiarTexto((string)$cultivo);
+    $acentos = array(
+        'á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u',
+        'ä'=>'a','ë'=>'e','ï'=>'i','ö'=>'o','ü'=>'u',
+        'Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o','Ú'=>'u'
+    );
+    return strtr($c, $acentos);
+}
+
+function esMaizTardio($cultivo, $etapa = '') {
+    $c = normalizarCultivoAgro($cultivo);
+    $e = mb_strtolower(trim((string)$etapa), 'UTF-8');
+    return ($c === 'maiz2' || $c === 'maiz2da' || strpos($c, 'maiz2') === 0 || $e === 'tardio');
+}
+
 function getEtapa($etapa){
 
     switch ($etapa) {
@@ -617,29 +633,35 @@ class ControladorAgro{
                 'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'tardio' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'lotesGruesa' => array(),
-                'lotesFina' => array()
+                'lotesFina' => array(),
+                'lotesTardio' => array()
             ),
             'pichi' => array(
                 'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'tardio' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'lotesGruesa' => array(),
-                'lotesFina' => array()
+                'lotesFina' => array(),
+                'lotesTardio' => array()
             ),
             'antony' => array(
                 'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'tardio' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'lotesGruesa' => array(),
-                'lotesFina' => array()
+                'lotesFina' => array(),
+                'lotesTardio' => array()
             )
         );
 
         $acumRinde = array(
-            'bety' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0)),
-            'pichi' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0)),
-            'antony' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0))
+            'bety' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0), 'tardio' => array('suma' => 0, 'count' => 0)),
+            'pichi' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0), 'tardio' => array('suma' => 0, 'count' => 0)),
+            'antony' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0), 'tardio' => array('suma' => 0, 'count' => 0))
         );
 
         $mapCampo = function($campo){
@@ -655,12 +677,18 @@ class ControladorAgro{
             if(!isset($obj[$campo])) continue;
 
             $cultivo = mb_strtolower(trim($row['cultivo']), 'UTF-8');
-            $tipo = tipoCultivo($cultivo);
-            if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
-                $tipo = $row['etapa'];
-            }
-            if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
-                $tipo = 'gruesa';
+            $etapaRow = isset($row['etapa']) ? mb_strtolower(trim($row['etapa']), 'UTF-8') : '';
+
+            if(esMaizTardio($row['cultivo'], $etapaRow)){
+                $tipo = 'tardio';
+            } else {
+                $tipo = tipoCultivo($cultivo);
+                if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
+                    $tipo = $row['etapa'];
+                }
+                if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
+                    $tipo = 'gruesa';
+                }
             }
 
             $has = floatval($row['has']);
@@ -688,7 +716,9 @@ class ControladorAgro{
                 'flete' => $flete
             );
 
-            if($tipo === 'gruesa'){
+            if($tipo === 'tardio'){
+                $obj[$campo]['lotesTardio'][] = $loteData;
+            } elseif($tipo === 'gruesa'){
                 $obj[$campo]['lotesGruesa'][] = $loteData;
             } else {
                 $obj[$campo]['lotesFina'][] = $loteData;
@@ -696,7 +726,7 @@ class ControladorAgro{
         }
 
         foreach ($obj as $campo => $dataCampo) {
-            foreach (array('fina','cobertura','gruesa') as $tipo) {
+            foreach (array('fina','cobertura','gruesa','tardio') as $tipo) {
                 $count = $acumRinde[$campo][$tipo]['count'];
                 $suma = $acumRinde[$campo][$tipo]['suma'];
                 $obj[$campo][$tipo]['rinde'] = ($count > 0) ? round($suma / $count, 2) : 0;

@@ -42,6 +42,7 @@ const nombreCultivos = {
   'maiz': 'Maíz 1°',
   'maiz1': 'Maíz 1°',
   'maiz2': 'Maíz 2°',
+  'maiz2da': 'Maíz 2da',
   'trigo': 'Trigo',
   'girasol': 'Girasol',
   'camelina': 'Camelina',
@@ -622,33 +623,26 @@ const cargarInfoEjecucion = (campania)=>{
 
 }
 
+function actualizarVistaEtapaEjecucion(etapa){
+  etapa = String(etapa || $('#etapaEjecucion').val() || 'gruesa').trim()
+  const $tab = $('#tab_2')
+  $tab.find('.info-gruesa, .info-fina, .info-cobertura, .info-tardio').addClass('hide')
+  if(etapa === 'tardio'){
+    $tab.find('.info-tardio').removeClass('hide')
+  } else if(etapa === 'fina'){
+    $tab.find('.info-fina, .info-cobertura').removeClass('hide')
+  } else {
+    $tab.find('.info-gruesa').removeClass('hide')
+  }
+}
+
 $('#etapaEjecucion').on('change',()=>{
 
     $('#actividadLotesBety').html('')
     $('#actividadLotesPichi').html('')
 
-    let etapa = $('#etapaEjecucion').val()
-    if(etapa == 'gruesa'){  
-      $('.info-gruesa').show(250)
-      $('.info-fina').hide(250)
-      $('.info-cobertura').hide(250)
-      $('.info-tardio').hide(250)
-    } else if(etapa == 'tardio') {
-      $('.info-tardio').removeClass('hide')
-      $('.info-gruesa').hide(250)
-      $('.info-fina').hide(250)
-      $('.info-cobertura').hide(250)
-      $('.info-tardio').show(250)
-    } else {
-
-      $('.info-fina').removeClass('hide')
-      $('.info-cobertura').removeClass('hide')
-
-      $('.info-gruesa').hide(250)
-      $('.info-tardio').hide(250)
-      $('.info-fina').show(250)
-      $('.info-cobertura').show(250)
-    }
+    let etapa = String($('#etapaEjecucion').val() || 'gruesa').trim()
+    actualizarVistaEtapaEjecucion(etapa)
 
     let campania =  $('#campania').html()
 

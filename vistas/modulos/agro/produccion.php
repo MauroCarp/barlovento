@@ -63,6 +63,7 @@
                     <select class="form-control" id="etapaProduccion">
                         <option value="gruesa">Al 31 de Mayo</option>
                         <option value="fina">Al 31 de Diciembre</option>
+                        <option value="tardio">Al 31 de Julio</option>
                     </select>
                 </div>
 
