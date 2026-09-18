@@ -42,6 +42,7 @@ function tipoEstInv($cultivo){
 
         case 'maiz1':
         case 'maiz2':
+        case 'maiz2da':
         case 'soja1':
         case 'soja2':
         case 'girasol':
@@ -68,6 +69,7 @@ function tipoCultivo($cultivo){
         case 'maiz':
         case 'maiz1':
         case 'maiz2':
+        case 'maiz2da':
         case 'soja1':
         case 'soja2':
         case 'sorgo':
@@ -1032,7 +1034,8 @@ class ControladorAgro{
                 case 'soja2': return 'Soja 2da';
                 case 'maiz': return 'Maíz';
                 case 'maiz1': return 'Maíz';
-                case 'maiz2': return 'Maíz 2da';
+                case 'maiz2':
+                case 'maiz2da': return 'Maíz 2da';
                 case 'avena': return 'Avena Cobertura';
                 case 'triticale-vicia':
                 case 'vicia-triticale': return 'Vicia-Triticale';
@@ -1050,12 +1053,16 @@ class ControladorAgro{
         $planPorCultivo = [];
 
         foreach ($cultivosPlan as $row) {
-            $cultivo = $row['cultivo'];
+            $cultivoOriginal = $row['cultivo'];
+            $cultivo = esMaizTardio($cultivoOriginal) ? 'maiz2' : $cultivoOriginal;
             $has = floatval($row['has']);
-            $costoUnit = isset($costos[$cultivo]) ? floatval($costos[$cultivo]) : 0;
+            $costoUnit = isset($costos[$cultivoOriginal]) ? floatval($costos[$cultivoOriginal]) : (isset($costos[$cultivo]) ? floatval($costos[$cultivo]) : 0);
             $dolares = $has * $costoUnit;
 
             $tipo = ($row['tipo'] == 'fina' && $cultivo != 'trigo') ? 'cobertura' : $row['tipo'];
+            if(esMaizTardio($cultivoOriginal)){
+                $tipo = 'gruesa';
+            }
             $tipoEI = $tipoPlural(tipoEstInv($cultivo));
 
             if(isset($planPorTipo[$tipo])){
@@ -1082,7 +1089,7 @@ class ControladorAgro{
     
         $totalPlanHas = array_reduce($planPorTipo, function($s,$v){ return $s + $v['has']; }, 0);
 
-        $etapas = ['fina','gruesa','cobertura'];
+        $etapas = ['fina','gruesa','cobertura','tardio'];
         $ejecPorTipo = ['fina'=>['has'=>0,'dolares'=>0],'gruesa'=>['has'=>0,'dolares'=>0],'cobertura'=>['has'=>0,'dolares'=>0],'invernales'=>['has'=>0,'dolares'=>0],'estivales'=>['has'=>0,'dolares'=>0]];
         $ejecPorCultivoHasMax = [];
         $ejecPorCultivoCostos = [];
@@ -1091,7 +1098,8 @@ class ControladorAgro{
             $rows = ModeloAgro::mdlMostrarDataEjecucion('ejecucion','campania',$campania,'etapa',$etapa);
 
             foreach ($rows as $r) {
-                $cultivo = $r['cultivo'];
+                $cultivoOriginal = $r['cultivo'];
+                $cultivo = esMaizTardio($cultivoOriginal) ? 'maiz2' : $cultivoOriginal;
                 $lote = trim($r['lote']);
                 $has = floatval($r['has']);
                 $cost = floatval($r['costoLabor']) + floatval($r['costoInsumo']);
@@ -1101,8 +1109,11 @@ class ControladorAgro{
                 } 
 
                 $etapaTemp = $etapa;
+                if($etapa === 'tardio' || esMaizTardio($cultivoOriginal, $etapa)){
+                    $etapaTemp = 'gruesa';
+                }
 
-                if(isset($ejecPorTipo[$etapa])){
+                if(isset($ejecPorTipo[$etapaTemp])){
                     
                     $key = $lote.'|'.$cultivo;
                     
