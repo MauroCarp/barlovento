@@ -189,7 +189,7 @@ class ControladorAgro{
 
                         }
 
-                        if($rowNumber == 3)
+                        if($rowNumber == 2)
                             $rowValida = true;
 
                         $rowNumber++;

@@ -114,7 +114,7 @@ class AjaxAgro{
 			
 		}
 
-
+		
 		echo ControladorAgro::ctrCargarCostos($tabla,implode(',',$cultivosSql));
 		
 	}

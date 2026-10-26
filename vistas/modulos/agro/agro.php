@@ -28,7 +28,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
   $idPlanificacion = $_GET['idPlanificacion'];
 
   $cultivos = ControladorAgro::ctrCultivosUnicosPorPlanificacion($idPlanificacion);
-
+  
   $html = '<div class="row">';
 
   asort($cultivos);
@@ -80,7 +80,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
 
           let cultivo = $(this).attr('name')
           costosCultivos[cultivo] = $(this).val()
-
+          console.log(cultivo);
         })
 
         data.cultivos = costosCultivos;
@@ -89,7 +89,7 @@ if(isset($_GET['accion']) && $_GET['accion'] == 'costosCultivos'){
         $.ajax({
           method:'post',
           url,
-          data:`accion=cargarCostos&data=${JSON.stringify(data)}`,
+          data:`accion=cargarCostos&data=${encodeURIComponent(JSON.stringify(data))}`,
           success:function(response){
 
             if(response == 'ok'){
