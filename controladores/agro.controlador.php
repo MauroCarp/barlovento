@@ -42,6 +42,7 @@ function tipoEstInv($cultivo){
 
         case 'maiz1':
         case 'maiz2':
+        case 'maiz2da':
         case 'soja1':
         case 'soja2':
         case 'girasol':
@@ -68,6 +69,7 @@ function tipoCultivo($cultivo){
         case 'maiz':
         case 'maiz1':
         case 'maiz2':
+        case 'maiz2da':
         case 'soja1':
         case 'soja2':
         case 'sorgo':
@@ -89,6 +91,22 @@ function tipoCultivo($cultivo){
 
     return $tipo;
 
+}
+
+function normalizarCultivoAgro($cultivo) {
+    $c = limpiarTexto((string)$cultivo);
+    $acentos = array(
+        'á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u',
+        'ä'=>'a','ë'=>'e','ï'=>'i','ö'=>'o','ü'=>'u',
+        'Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o','Ú'=>'u'
+    );
+    return strtr($c, $acentos);
+}
+
+function esMaizTardio($cultivo, $etapa = '') {
+    $c = normalizarCultivoAgro($cultivo);
+    $e = mb_strtolower(trim((string)$etapa), 'UTF-8');
+    return ($c === 'maiz2' || $c === 'maiz2da' || strpos($c, 'maiz2') === 0 || $e === 'tardio');
 }
 
 function getEtapa($etapa){
@@ -351,7 +369,7 @@ class ControladorAgro{
                                 
                                 if ($etapa == 'fina' && $rowNumber == 5) {
                                     $rowValida = true;
-                                } elseif ($etapa == 'gruesa' && $rowNumber == 5) {
+                                } elseif (($etapa == 'gruesa' || $etapa == 'tardio') && $rowNumber == 5) {
                                     $rowValida = true;
                                 }
 
@@ -617,29 +635,35 @@ class ControladorAgro{
                 'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'tardio' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'lotesGruesa' => array(),
-                'lotesFina' => array()
+                'lotesFina' => array(),
+                'lotesTardio' => array()
             ),
             'pichi' => array(
                 'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'tardio' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'lotesGruesa' => array(),
-                'lotesFina' => array()
+                'lotesFina' => array(),
+                'lotesTardio' => array()
             ),
             'antony' => array(
                 'fina' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'cobertura' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'gruesa' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
+                'tardio' => array('cosecha' => 0, 'rinde' => 0, 'flete' => 0),
                 'lotesGruesa' => array(),
-                'lotesFina' => array()
+                'lotesFina' => array(),
+                'lotesTardio' => array()
             )
         );
 
         $acumRinde = array(
-            'bety' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0)),
-            'pichi' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0)),
-            'antony' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0))
+            'bety' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0), 'tardio' => array('suma' => 0, 'count' => 0)),
+            'pichi' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0), 'tardio' => array('suma' => 0, 'count' => 0)),
+            'antony' => array('fina' => array('suma' => 0, 'count' => 0), 'cobertura' => array('suma' => 0, 'count' => 0), 'gruesa' => array('suma' => 0, 'count' => 0), 'tardio' => array('suma' => 0, 'count' => 0))
         );
 
         $mapCampo = function($campo){
@@ -655,12 +679,18 @@ class ControladorAgro{
             if(!isset($obj[$campo])) continue;
 
             $cultivo = mb_strtolower(trim($row['cultivo']), 'UTF-8');
-            $tipo = tipoCultivo($cultivo);
-            if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
-                $tipo = $row['etapa'];
-            }
-            if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
-                $tipo = 'gruesa';
+            $etapaRow = isset($row['etapa']) ? mb_strtolower(trim($row['etapa']), 'UTF-8') : '';
+
+            if(esMaizTardio($row['cultivo'], $etapaRow)){
+                $tipo = 'tardio';
+            } else {
+                $tipo = tipoCultivo($cultivo);
+                if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
+                    $tipo = $row['etapa'];
+                }
+                if($tipo !== 'fina' && $tipo !== 'gruesa' && $tipo !== 'cobertura'){
+                    $tipo = 'gruesa';
+                }
             }
 
             $has = floatval($row['has']);
@@ -688,7 +718,9 @@ class ControladorAgro{
                 'flete' => $flete
             );
 
-            if($tipo === 'gruesa'){
+            if($tipo === 'tardio'){
+                $obj[$campo]['lotesTardio'][] = $loteData;
+            } elseif($tipo === 'gruesa'){
                 $obj[$campo]['lotesGruesa'][] = $loteData;
             } else {
                 $obj[$campo]['lotesFina'][] = $loteData;
@@ -696,7 +728,7 @@ class ControladorAgro{
         }
 
         foreach ($obj as $campo => $dataCampo) {
-            foreach (array('fina','cobertura','gruesa') as $tipo) {
+            foreach (array('fina','cobertura','gruesa','tardio') as $tipo) {
                 $count = $acumRinde[$campo][$tipo]['count'];
                 $suma = $acumRinde[$campo][$tipo]['suma'];
                 $obj[$campo][$tipo]['rinde'] = ($count > 0) ? round($suma / $count, 2) : 0;
@@ -1002,7 +1034,8 @@ class ControladorAgro{
                 case 'soja2': return 'Soja 2da';
                 case 'maiz': return 'Maíz';
                 case 'maiz1': return 'Maíz';
-                case 'maiz2': return 'Maíz 2da';
+                case 'maiz2':
+                case 'maiz2da': return 'Maíz 2da';
                 case 'avena': return 'Avena Cobertura';
                 case 'triticale-vicia':
                 case 'vicia-triticale': return 'Vicia-Triticale';
@@ -1020,12 +1053,16 @@ class ControladorAgro{
         $planPorCultivo = [];
 
         foreach ($cultivosPlan as $row) {
-            $cultivo = $row['cultivo'];
+            $cultivoOriginal = $row['cultivo'];
+            $cultivo = esMaizTardio($cultivoOriginal) ? 'maiz2' : $cultivoOriginal;
             $has = floatval($row['has']);
-            $costoUnit = isset($costos[$cultivo]) ? floatval($costos[$cultivo]) : 0;
+            $costoUnit = isset($costos[$cultivoOriginal]) ? floatval($costos[$cultivoOriginal]) : (isset($costos[$cultivo]) ? floatval($costos[$cultivo]) : 0);
             $dolares = $has * $costoUnit;
 
             $tipo = ($row['tipo'] == 'fina' && $cultivo != 'trigo') ? 'cobertura' : $row['tipo'];
+            if(esMaizTardio($cultivoOriginal)){
+                $tipo = 'gruesa';
+            }
             $tipoEI = $tipoPlural(tipoEstInv($cultivo));
 
             if(isset($planPorTipo[$tipo])){
@@ -1052,7 +1089,7 @@ class ControladorAgro{
     
         $totalPlanHas = array_reduce($planPorTipo, function($s,$v){ return $s + $v['has']; }, 0);
 
-        $etapas = ['fina','gruesa','cobertura'];
+        $etapas = ['fina','gruesa','cobertura','tardio'];
         $ejecPorTipo = ['fina'=>['has'=>0,'dolares'=>0],'gruesa'=>['has'=>0,'dolares'=>0],'cobertura'=>['has'=>0,'dolares'=>0],'invernales'=>['has'=>0,'dolares'=>0],'estivales'=>['has'=>0,'dolares'=>0]];
         $ejecPorCultivoHasMax = [];
         $ejecPorCultivoCostos = [];
@@ -1061,7 +1098,8 @@ class ControladorAgro{
             $rows = ModeloAgro::mdlMostrarDataEjecucion('ejecucion','campania',$campania,'etapa',$etapa);
 
             foreach ($rows as $r) {
-                $cultivo = $r['cultivo'];
+                $cultivoOriginal = $r['cultivo'];
+                $cultivo = esMaizTardio($cultivoOriginal) ? 'maiz2' : $cultivoOriginal;
                 $lote = trim($r['lote']);
                 $has = floatval($r['has']);
                 $cost = floatval($r['costoLabor']) + floatval($r['costoInsumo']);
@@ -1071,8 +1109,11 @@ class ControladorAgro{
                 } 
 
                 $etapaTemp = $etapa;
+                if($etapa === 'tardio' || esMaizTardio($cultivoOriginal, $etapa)){
+                    $etapaTemp = 'gruesa';
+                }
 
-                if(isset($ejecPorTipo[$etapa])){
+                if(isset($ejecPorTipo[$etapaTemp])){
                     
                     $key = $lote.'|'.$cultivo;
                     

@@ -43,6 +43,7 @@
             <span class="input-group-addon"><b>ETAPA</B></span>
             <select class="form-control" id="etapaEjecucion">
                 <option value="gruesa">Al 31 de Mayo</option>
+                <option value="tardio">Al 31 de Julio</option>
                 <option value="fina">Al 31 de Diciembre</option>
             </select>
         </div>
