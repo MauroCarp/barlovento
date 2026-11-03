@@ -38,7 +38,7 @@
 
           <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
 
-          <button type="submit" class="btn btn-primary" id="btnCargarEjecucionRindes" name="btnCargarEjecucionRindes" data-carga="">Cargar Rindes</button>
+          <!-- <button type="submit" class="btn btn-primary" id="btnCargarEjecucionRindes" name="btnCargarEjecucionRindes" data-carga="">Cargar Rindes</button> -->
 
         </div>
 

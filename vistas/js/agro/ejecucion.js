@@ -68,15 +68,44 @@ const esMaizTardio = (cultivo) => {
 
 const htmlInputLote = (lote) => {
   let loteId = lote['lote'].split(' ').join('')
-  return `<div class="form-group">
-            <label for="${loteId}">${lote['lote']} - ${capitalizarPrimeraLetra(lote['cultivo'])}</label>
-            <div class="input-group">
-              <div class="custom-file"><input type="file" class="custom-file-input" name="${loteId}_${lote['cultivo']}">
-                <input type="hidden" name="${loteId}_${lote['cultivo']}campo" value="${lote['campo']}"/>
-              </div>
+  let fileName = `${loteId}_${lote['cultivo']}`
+  let titulo = `${lote['lote']} - ${capitalizarPrimeraLetra(lote['cultivo'])}`
+  return `<div class="form-group lote-carga-row" data-file-name="${fileName}" data-campo="${lote['campo']}">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span class="lote-carga-titulo">${titulo}</span>
+              <button type="button" class="btn btn-sm btn-primary btn-cargar-lote">Cargar</button>
+              <span class="text-muted lote-carga-archivo"></span>
             </div>
-          </div>`
+            <div class="lote-carga-inputs"></div>
+          </div>
+          <hr>`
 }
+
+$('#formCargaEjecucion').on('click', '.btn-cargar-lote', function () {
+  const $row = $(this).closest('.lote-carga-row')
+  const fileName = $row.data('file-name')
+  const campo = $row.data('campo')
+  const $container = $row.find('.lote-carga-inputs')
+  const $label = $row.find('.lote-carga-archivo')
+
+  $container.empty()
+  $label.text('')
+
+  const $file = $('<input>', { type: 'file', class: 'lote-carga-file' })
+  $file.on('change', function () {
+    if (!this.files || !this.files.length) {
+      $container.empty()
+      $label.text('')
+      return
+    }
+    $(this).attr('name', fileName)
+    $container.find(`input[type="hidden"][name="${fileName}campo"]`).remove()
+    $container.append($('<input>', { type: 'hidden', name: fileName + 'campo', value: campo }))
+    $label.text(this.files[0].name)
+  })
+  $container.append($file)
+  $file.trigger('click')
+})
 
 const setText = (id, value) => {
   const el = document.getElementById(id)
@@ -97,9 +126,24 @@ const mostrarGruposCargaEtapa = (etapa) => {
   }
 }
 
+const htmlBoxCampoCarga = (titulo, bodyId) => {
+  return `<div class="box box-success collapsed-box">
+            <div class="box-header with-border">
+              <h3 class="box-title">${titulo}</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body" id="${bodyId}"></div>
+          </div>`
+}
+
 const generarInputFile = (lotes) => {
 
   $('#inputCampaniaEjecucion').val(localStorage.getItem('campaniaAgro'))
+  $('#formEjecucion').empty()
   
   let grupos = {
     pichi: { gruesa: [], fina: [], tardio: [] },
@@ -107,48 +151,9 @@ const generarInputFile = (lotes) => {
     antony: { gruesa: [], fina: [], tardio: [] }
   }
 
-  $('#formEjecucion').append($(`
-                              <div class="box box-success">
-      
-                                  <div class="box-header with-border">
-                              
-                                  <h3 class="box-title">Pichi</h3>
-                              
-                                  </div>
-                            
-                                  <div class="box-body" id="inputPichi">
-                            
-                                  </div>
-
-                              </div>
-                              <div class="box box-success">
-      
-                                  <div class="box-header with-border">
-                              
-                                  <h3 class="box-title">Bety</h3>
-                              
-                                  </div>
-                            
-                                  <div class="box-body" id="inputBety">
-                            
-                                  </div>
-
-                              </div>
-
-                              <div class="box box-success">
-      
-                                  <div class="box-header with-border">
-                              
-                                  <h3 class="box-title">Antony</h3>
-                              
-                                  </div>
-                            
-                                  <div class="box-body" id="inputAntony">
-                            
-                                  </div>
-
-                              </div>
-  `))
+  $('#formEjecucion').append($(htmlBoxCampoCarga('Pichi', 'inputPichi')))
+  $('#formEjecucion').append($(htmlBoxCampoCarga('Bety', 'inputBety')))
+  $('#formEjecucion').append($(htmlBoxCampoCarga('Antony', 'inputAntony')))
   for (const key in lotes) {
 
     let campo = lotes[key]['campo']
@@ -171,9 +176,15 @@ const generarInputFile = (lotes) => {
     ;['gruesa','fina','tardio'].forEach(tipo => {
       let id = `input${capitalizarPrimeraLetra(campo)}${capitalizarPrimeraLetra(tipo)}`
       $(`#input${capitalizarPrimeraLetra(campo)}`).append($(`<div id="${id}" style="display:${displayInicial[tipo]}"></div>`))
-      $(`#${id}`).append($(`<div class="bg-info" style="font-size:1.5em"><b>${titulos[tipo]}</b></div>`))
+      $(`#${id}`).append($(`<div class="bg-info" style="font-size:1.5em;margin-bottom:10px"><b>${titulos[tipo]}</b></div>`))
       $(`#${id}`).append($(`${grupos[campo][tipo].join('')}`))
     })
+  })
+
+  $('#formEjecucion .box').each(function () {
+    if (!$(this).data('lte.boxwidget')) {
+      $(this).boxWidget()
+    }
   })
 
 }

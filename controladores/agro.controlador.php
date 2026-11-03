@@ -293,10 +293,6 @@ class ControladorAgro{
 
             $etapa = $_POST['etapaEjecucion'];
 
-            
-            // CARGA Ejecucion
-            $arrLotesCargados = array();
-
             $campania = $_POST['campania'];
 
             foreach ($_FILES as $key => $file) {
@@ -333,8 +329,7 @@ class ControladorAgro{
                         $explode = explode('_',$key);
                         $cultivo = $explode[1];
                         $lote = $explode[0];
-
-                        $arrLotesCargados[] = array('lote'=>$lote,'campo'=>$_POST[$key.'campo']);
+                        $campoLote = $_POST[$key.'campo'];
                     
                         for($i=0;$i<$sheetCount;$i++){
                 
@@ -356,7 +351,7 @@ class ControladorAgro{
                                                      'has'=>"'" . number_format(str_replace(',','',$Row[1]),0,'.','') . "'",
                                                      'costoLabor'=>"'" . number_format(str_replace(',','',$Row[2]),2,'.','') . "'",
                                                      'costoInsumo'=>"'" . number_format(str_replace(',','',$Row[4]),2,'.','') . "'",
-                                                     'campo'=>"'" . $_POST[$key.'campo'] . "'",
+                                                     'campo'=>"'" . $campoLote . "'",
                                                      'etapa'=>"'" . $etapa . "'"
                                             );
 
@@ -381,6 +376,48 @@ class ControladorAgro{
                         }
                     
                         $tabla = 'ejecucionLabores';
+
+                        if(empty($data)){
+
+                            echo'<script>
+
+                            swal({
+                                    type: "error",
+                                    title: "El archivo no tiene filas válidas para cargar",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "Cerrar"
+                                    }).then(function(result) {
+                                            if (result.value) {
+                                                window.location = "index.php?ruta=agro/agro"
+
+                                            }
+                                        })
+
+                            </script>';
+                            die();
+                        }
+
+                        $eliminarPrevio = ModeloAgro::mdlEliminarLaboresEjecucionLote($idEjecucion, $lote, $campoLote, $etapa, $cultivo);
+
+                        if($eliminarPrevio != 'ok'){
+
+                            echo'<script>
+
+                            swal({
+                                    type: "error",
+                                    title: "Hubo un error al reemplazar los datos del lote. Informar",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "Cerrar"
+                                    }).then(function(result) {
+                                            if (result.value) {
+                                                window.location = "index.php?ruta=agro/agro"
+
+                                            }
+                                        })
+
+                            </script>';
+                            die();
+                        }
                         
                         $respuesta = ModeloAgro::mdlCargarLabores($tabla,implode(',',$data));
                         
@@ -410,14 +447,6 @@ class ControladorAgro{
 
             }
 
-            $tabla = 'ejecucionLotes';
-
-            
-            foreach ($arrLotesCargados as $key => $lote) {
-                
-                $validarLotes = ModeloAgro::mdlValidarLotes($tabla,$campania,$lote['lote'],$lote['campo'],$etapa);
-            }
-            
             echo'<script>
 
                 swal({
@@ -907,10 +936,31 @@ class ControladorAgro{
 
     static public function ctrGetLotes($campania){
 
-        $tabla = 'ejecucionLotes';
+        $ultima = ModeloAgro::mdlUltimaCarga('planificaciones', $campania);
 
-		$lotes = ModeloAgro::mdlGetLotes($tabla,$campania);
-        
+        if(empty($ultima) || is_null($ultima['lastUpload'])){
+            return array();
+        }
+
+        $idPlanificacion = ModeloAgro::mdlGetCampaignId('planificaciones', $campania, $ultima['lastUpload']);
+
+        if(empty($idPlanificacion) || empty($idPlanificacion['id'])){
+            return array();
+        }
+
+        $cultivos = ModeloAgro::mdlMostrarDataCultivosPlanificacion('cultivosplanificacion', $idPlanificacion['id']);
+
+        $lotes = array();
+
+        foreach ($cultivos as $fila) {
+            $lotes[] = array(
+                'lote' => $fila['lote'],
+                'cultivo' => $fila['cultivo'],
+                'campo' => $fila['campo'],
+                'etapa' => $fila['tipo']
+            );
+        }
+
         return $lotes;
 
     }

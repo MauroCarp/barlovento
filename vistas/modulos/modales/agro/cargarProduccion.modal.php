@@ -29,9 +29,9 @@
             <label for="selectEtapaProduccionCarga">Etapa</label>
             <input type="hidden" name="campania" id="inputCampaniaProduccion" value="">
             <select class="form-control" id="selectEtapaProduccionCarga" name="etapaProduccion">
-              <option value="fina">Al 31 de Diciembre</option>
-              <option value="tardio">Al 31 de Julio</option>
               <option value="gruesa">Al 31 de Mayo</option>
+              <option value="tardio">Al 31 de Julio</option>
+              <option value="fina">Al 31 de Diciembre</option>
             </select>
 
           </div>

@@ -343,7 +343,7 @@ class ModeloAgro{
 
 	static public function mdlGetLotes($tabla, $campania){
 
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE campania = :campania AND cargado = 0");
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE campania = :campania");
 
 		$stmt -> bindParam(":campania", $campania, PDO::PARAM_STR);
 
@@ -410,6 +410,26 @@ class ModeloAgro{
 		}else{
 			return $stmt -> errorInfo();
 		}
+	}
+
+	/*=============================================
+	ELIMINAR LABORES DE UN LOTE (RECARGA)
+	=============================================*/
+	static public function mdlEliminarLaboresEjecucionLote($idEjecucion, $lote, $campo, $etapa, $cultivo){
+
+		$stmt = Conexion::conectar()->prepare("DELETE FROM ejecucionLabores WHERE idEjecucion = :idEjecucion AND lote = :lote AND campo = :campo AND etapa = :etapa AND cultivo = :cultivo");
+
+		$stmt->bindParam(":idEjecucion", $idEjecucion, PDO::PARAM_INT);
+		$stmt->bindParam(":lote", $lote, PDO::PARAM_STR);
+		$stmt->bindParam(":campo", $campo, PDO::PARAM_STR);
+		$stmt->bindParam(":etapa", $etapa, PDO::PARAM_STR);
+		$stmt->bindParam(":cultivo", $cultivo, PDO::PARAM_STR);
+
+		if($stmt->execute()){
+			return "ok";
+		}
+
+		return $stmt->errorInfo();
 	}
 
 	/*=============================================
